@@ -3,12 +3,15 @@ obj-$(CONFIG_FB_TFT)             += fbtft.o
 fbtft-y                          += fbtft-core.o fbtft-sysfs.o fbtft-bus.o fbtft-io.o
 
 # drivers
+obj-$(CONFIG_FB_TFT_ILI9341A)    += fb_ili9341a.o
+obj-$(CONFIG_FB_TFT_ILI9325A)    += fb_ili9325a.o
+obj-$(CONFIG_FB_TFT_ILI9331A)    += fb_ili9331a.o
+obj-$(CONFIG_FB_TFT_HX8357HD)    += fb_hx8357hd.o
 obj-$(CONFIG_FB_TFT_AGM1264K_FL) += fb_agm1264k-fl.o
 obj-$(CONFIG_FB_TFT_BD663474)    += fb_bd663474.o
 obj-$(CONFIG_FB_TFT_HX8340BN)    += fb_hx8340bn.o
 obj-$(CONFIG_FB_TFT_HX8347D)     += fb_hx8347d.o
 obj-$(CONFIG_FB_TFT_HX8353D)     += fb_hx8353d.o
-obj-$(CONFIG_FB_TFT_HX8357D)     += fb_hx8357d.o
 obj-$(CONFIG_FB_TFT_ILI9163)     += fb_ili9163.o
 obj-$(CONFIG_FB_TFT_ILI9320)     += fb_ili9320.o
 obj-$(CONFIG_FB_TFT_ILI9325)     += fb_ili9325.o
@@ -25,10 +28,8 @@ obj-$(CONFIG_FB_TFT_SSD1306)     += fb_ssd1306.o
 obj-$(CONFIG_FB_TFT_SSD1331)     += fb_ssd1331.o
 obj-$(CONFIG_FB_TFT_SSD1351)     += fb_ssd1351.o
 obj-$(CONFIG_FB_TFT_ST7735R)     += fb_st7735r.o
-obj-$(CONFIG_FB_TFT_ST7789V)     += fb_st7789v.o
 obj-$(CONFIG_FB_TFT_TINYLCD)     += fb_tinylcd.o
 obj-$(CONFIG_FB_TFT_TLS8204)     += fb_tls8204.o
-obj-$(CONFIG_FB_TFT_UC1611)      += fb_uc1611.o
 obj-$(CONFIG_FB_TFT_UC1701)      += fb_uc1701.o
 obj-$(CONFIG_FB_TFT_UPD161704)   += fb_upd161704.o
 obj-$(CONFIG_FB_TFT_WATTEROTT)   += fb_watterott.o

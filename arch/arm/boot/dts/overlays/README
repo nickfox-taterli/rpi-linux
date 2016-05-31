@@ -378,6 +378,66 @@ Load:   dtoverlay=hifiberry-digi
 Params: <None>
 
 
+Name:   pi-tft22a
+Info:   PI-TFT22A - 2.2" TFT LCD Display Module by 52Pi
+Load:   dtoverlay=pi-tft22a,<param>=<val>
+Params: speed                   Display SPI bus speed
+
+        rotate                  Display rotation {0,90,180,270}
+
+        fps                     Delay between frame updates
+
+        debug                   Debug output level {0-7}
+
+
+Name:   pi-tft24a
+Info:   PI-TFT24A - 2.4" TFT LCD Display Module by 52Pi
+Load:   dtoverlay=pi-tft24a,<param>=<val>
+Params: speed                   Display SPI bus speed
+
+        rotate                  Display rotation {0,90,180,270}
+
+        fps                     Delay between frame updates
+
+        debug                   Debug output level {0-7}
+
+
+Name:   pi-tft35a
+Info:   PI-TFT35A - 3.5" TFT LCD Display Module by 52Pi
+Load:   dtoverlay=pi-tft35a,<param>=<val>
+Params: speed                   Display SPI bus speed
+
+        rotate                  Display rotation {0,90,180,270}
+
+        fps                     Delay between frame updates
+
+        debug                   Debug output level {0-7}
+
+
+Name:   seeed-tft24a
+Info:   SEEED-TFT24A - 2.4" TFT LCD Display Module by Seeed
+Load:   dtoverlay=seeed-tft24a,<param>=<val>
+Params: speed                   Display SPI bus speed
+
+        rotate                  Display rotation {0,90,180,270}
+
+        fps                     Delay between frame updates
+
+        debug                   Debug output level {0-7}
+
+
+Name:   seeed-tft28b
+Info:   SEEED-TFT28B - 2.8" TFT LCD Display Module by Seeed
+Load:   dtoverlay=seeed-tft28b,<param>=<val>
+Params: speed                   Display SPI bus speed
+
+        rotate                  Display rotation {0,90,180,270}
+
+        fps                     Delay between frame updates
+
+        debug                   Debug output level {0-7}
+
+
 Name:   hy28a
 Info:   HY28A - 2.8" TFT LCD Display Module by HAOYU Electronics
         Default values match Texy's display shield
