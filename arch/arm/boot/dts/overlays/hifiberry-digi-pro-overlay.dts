@@ -1,4 +1,4 @@
-// Definitions for BoomBerry DAC
+// Definitions for HiFiBerry Digi Pro
 /dts-v1/;
 /plugin/;
 
@@ -19,10 +19,10 @@
 			#size-cells = <0>;
 			status = "okay";
 
-			pcm5122@4d {
+			wm8804@3b {
 				#sound-dai-cells = <0>;
-				compatible = "ti,pcm5122";
-				reg = <0x4d>;
+				compatible = "wlf,wm8804";
+				reg = <0x3b>;
 				status = "okay";
 			};
 		};
@@ -30,14 +30,12 @@
 
 	fragment@2 {
 		target = <&sound>;
-		frag2: __overlay__ {
-			compatible = "boomberry,boomberry-dac";
+		__overlay__ {
+			compatible = "hifiberry,hifiberry-digi";
 			i2s-controller = <&i2s>;
 			status = "okay";
+			clock44-gpio = <&gpio 5 0>;
+			clock48-gpio = <&gpio 6 0>;
 		};
-	};
-
-	__overrides__ {
-		24db_digital_gain = <&frag2>,"boomberry,24db_digital_gain?";
 	};
 };

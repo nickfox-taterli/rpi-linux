@@ -23,9 +23,9 @@
 };
 
 
-&mmc {
+&sdhost {
 	pinctrl-names = "default";
-	pinctrl-0 = <&mmc_pins>;
+	pinctrl-0 = <&sdhost_pins>;
 	non-removable;
 	bus-width = <4>;
 	status = "okay";
@@ -34,6 +34,11 @@
 
 &fb {
 	status = "okay";
+};
+
+&audio {
+	pinctrl-names = "default";
+	pinctrl-0 = <&audio_pins>;
 };
 
 / {

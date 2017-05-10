@@ -64,8 +64,6 @@
 
 /* set the default GPIO input pin */
 static int gpio_in_pin = 18;
-/* set the default pull behaviour for input pin */
-static int gpio_in_pull = BCM2708_PULL_DOWN;
 /* set the default GPIO output pin */
 static int gpio_out_pin = 17;
 /* enable debugging messages */
@@ -79,6 +77,7 @@ static bool invert = 0;
 
 struct gpio_chip *gpiochip;
 static int irq_num;
+static int auto_sense = 1;
 
 /* forward declarations */
 static long send_pulse(unsigned long length);
@@ -279,7 +278,9 @@ static irqreturn_t irq_handler(int i, void *blah, struct pt_regs *regs)
 				 * detecting pulse while this
 				 * MUST be a space!
 				 */
-				sense = sense ? 0 : 1;
+				if (auto_sense) {
+					sense = sense ? 0 : 1;
+				}
 			}
 		} else {
 			data = (int) (deltv*1000000 +
@@ -417,6 +418,7 @@ static int init_port(void)
 		printk(KERN_INFO LIRC_DRIVER_NAME
 		       ": manually using active %s receiver on GPIO pin %d\n",
 		       sense ? "low" : "high", gpio_in_pin);
+		auto_sense = 0;
 	}
 
 	return 0;
@@ -711,10 +713,6 @@ MODULE_PARM_DESC(gpio_out_pin, "GPIO output/transmitter pin number of the BCM"
 module_param(gpio_in_pin, int, S_IRUGO);
 MODULE_PARM_DESC(gpio_in_pin, "GPIO input pin number of the BCM processor."
 		 " (default 18");
-
-module_param(gpio_in_pull, int, S_IRUGO);
-MODULE_PARM_DESC(gpio_in_pull, "GPIO input pin pull configuration."
-		 " (0 = off, 1 = up, 2 = down, default down)");
 
 module_param(sense, int, S_IRUGO);
 MODULE_PARM_DESC(sense, "Override autodetection of IR receiver circuit"

@@ -1,4 +1,4 @@
-// Definitions for BoomBerry Digi
+// Definitions for JustBoom DAC
 /dts-v1/;
 /plugin/;
 
@@ -19,10 +19,10 @@
 			#size-cells = <0>;
 			status = "okay";
 
-			wm8804@3b {
+			pcm5122@4d {
 				#sound-dai-cells = <0>;
-				compatible = "wlf,wm8804";
-				reg = <0x3b>;
+				compatible = "ti,pcm5122";
+				reg = <0x4d>;
 				status = "okay";
 			};
 		};
@@ -30,10 +30,14 @@
 
 	fragment@2 {
 		target = <&sound>;
-		__overlay__ {
-			compatible = "boomberry,boomberry-digi";
+		frag2: __overlay__ {
+			compatible = "justboom,justboom-dac";
 			i2s-controller = <&i2s>;
 			status = "okay";
 		};
+	};
+
+	__overrides__ {
+		24db_digital_gain = <&frag2>,"justboom,24db_digital_gain?";
 	};
 };
