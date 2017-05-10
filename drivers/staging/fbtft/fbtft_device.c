@@ -273,6 +273,31 @@ static int waveshare32b_init_sequence[] = {
 /* Supported displays in alphabetical order */
 static struct fbtft_device_display displays[] = {
 	{
+        .name = "seeed-tft28b",
+        .spi = &(struct spi_board_info)
+        {
+            .modalias = "fb_ili9341a",
+            .max_speed_hz = 32000000,
+            .mode = SPI_MODE_0,
+            .platform_data = &(struct fbtft_platform_data)
+            {
+                .display =
+                {
+                    .buswidth = 8,
+                    .backlight = 1,
+                },
+                .rotate = 270,
+                 .bgr = true,
+                  .gpios = (const struct fbtft_gpio [])
+                {
+                    { "reset", 23 },
+                    { "dc", 24 },
+                    { "led", 18 },
+                    {},
+                },
+            }
+        }
+    },{
 		.name = "adafruit18",
 		.spi = &(struct spi_board_info) {
 			.modalias = "fb_st7735r",
