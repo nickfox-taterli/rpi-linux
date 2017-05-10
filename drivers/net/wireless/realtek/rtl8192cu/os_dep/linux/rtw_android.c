@@ -96,7 +96,17 @@ typedef struct cmd_tlv {
 #endif /* PNO_SUPPORT */
 
 typedef struct android_wifi_priv_cmd {
+<<<<<<< HEAD
 	char *buf;
+=======
+
+#ifdef CONFIG_COMPAT
+	compat_uptr_t buf;
+#else
+	char *buf;
+#endif
+
+>>>>>>> upstream/rpi-4.4.y
 	int used_len;
 	int total_len;
 } android_wifi_priv_cmd;

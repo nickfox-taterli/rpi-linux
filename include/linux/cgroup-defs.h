@@ -445,9 +445,15 @@ struct cgroup_subsys {
 	void (*cancel_attach)(struct cgroup_taskset *tset);
 	void (*attach)(struct cgroup_taskset *tset);
 	void (*post_attach)(void);
+<<<<<<< HEAD
 	int (*can_fork)(struct task_struct *task);
 	void (*cancel_fork)(struct task_struct *task);
 	void (*fork)(struct task_struct *task);
+=======
+	int (*can_fork)(struct task_struct *task, void **priv_p);
+	void (*cancel_fork)(struct task_struct *task, void *priv);
+	void (*fork)(struct task_struct *task, void *priv);
+>>>>>>> upstream/rpi-4.4.y
 	void (*exit)(struct task_struct *task);
 	void (*free)(struct task_struct *task);
 	void (*bind)(struct cgroup_subsys_state *root_css);

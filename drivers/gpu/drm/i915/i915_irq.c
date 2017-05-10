@@ -2410,7 +2410,11 @@ gen8_de_irq_handler(struct drm_i915_private *dev_priv, u32 master_ctl)
 			if (HAS_PCH_SPT(dev_priv) || HAS_PCH_KBP(dev_priv))
 				spt_irq_handler(dev_priv, iir);
 			else
+<<<<<<< HEAD
 				cpt_irq_handler(dev_priv, iir);
+=======
+				cpt_irq_handler(dev, pch_iir);
+>>>>>>> upstream/rpi-4.4.y
 		} else {
 			/*
 			 * Like on previous PCH there seems to be something
@@ -2420,6 +2424,7 @@ gen8_de_irq_handler(struct drm_i915_private *dev_priv, u32 master_ctl)
 		}
 	}
 
+<<<<<<< HEAD
 	return ret;
 }
 
@@ -2449,6 +2454,8 @@ static irqreturn_t gen8_irq_handler(int irq, void *arg)
 	gen8_gt_irq_handler(dev_priv, gt_iir);
 	ret |= gen8_de_irq_handler(dev_priv, master_ctl);
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 	I915_WRITE_FW(GEN8_MASTER_IRQ, GEN8_MASTER_IRQ_CONTROL);
 	POSTING_READ_FW(GEN8_MASTER_IRQ);
 

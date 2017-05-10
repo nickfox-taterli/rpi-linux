@@ -11,7 +11,10 @@
 
 #include <linux/bug.h>
 #include <linux/string.h>
+<<<<<<< HEAD
 #include <linux/thread_info.h>
+=======
+>>>>>>> upstream/rpi-4.4.y
 
 #define VERIFY_READ 0
 #define VERIFY_WRITE 1
@@ -276,6 +279,7 @@ copy_from_user(void *to, const void __user *from, unsigned long n)
 static __always_inline unsigned long __must_check
 copy_to_user(void __user *to, const void *from, unsigned long n)
 {
+<<<<<<< HEAD
 	int sz = __compiletime_object_size(from);
 
 	if (likely(sz < 0 || sz >= n)) {
@@ -287,6 +291,18 @@ copy_to_user(void __user *to, const void *from, unsigned long n)
 		__bad_copy_user();
 
 	return n;
+=======
+        int sz = __compiletime_object_size(to);
+        unsigned long ret = n;
+
+        if (likely(sz == -1 || !__builtin_constant_p(n) || sz >= n))
+                ret = __copy_from_user(to, from, n);
+        else
+                copy_from_user_overflow();
+	if (unlikely(ret))
+		memset(to + (n - ret), 0, ret);
+        return ret;
+>>>>>>> upstream/rpi-4.4.y
 }
 
 struct pt_regs;

@@ -2718,7 +2718,10 @@ void tcp_get_info(struct sock *sk, struct tcp_info *info)
 	const struct inet_connection_sock *icsk = inet_csk(sk);
 	u32 now = tcp_time_stamp, intv;
 	unsigned int start;
+<<<<<<< HEAD
 	int notsent_bytes;
+=======
+>>>>>>> upstream/rpi-4.4.y
 	u64 rate64;
 	u32 rate;
 

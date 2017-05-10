@@ -757,9 +757,12 @@ static int __init opal_init(void)
 	opal_pdev_init(opal_node, "ibm,opal-flash");
 	opal_pdev_init(opal_node, "ibm,opal-prd");
 
+<<<<<<< HEAD
 	/* Initialise platform device: oppanel interface */
 	opal_pdev_init(opal_node, "ibm,opal-oppanel");
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 	/* Initialise OPAL kmsg dumper for flushing console on panic */
 	opal_kmsg_init();
 

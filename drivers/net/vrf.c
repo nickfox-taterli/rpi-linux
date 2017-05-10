@@ -63,12 +63,62 @@ struct pcpu_dstats {
 
 static void vrf_rx_stats(struct net_device *dev, int len)
 {
+<<<<<<< HEAD
 	struct pcpu_dstats *dstats = this_cpu_ptr(dev->dstats);
 
 	u64_stats_update_begin(&dstats->syncp);
 	dstats->rx_pkts++;
 	dstats->rx_bytes += len;
 	u64_stats_update_end(&dstats->syncp);
+=======
+	const struct ipv6hdr *ipv6h;
+	struct ipv6hdr _ipv6h;
+	bool rc = true;
+
+	ipv6h = skb_header_pointer(skb, 0, sizeof(_ipv6h), &_ipv6h);
+	if (!ipv6h)
+		goto out;
+
+	if (ipv6h->nexthdr == NEXTHDR_ICMP) {
+		const struct icmp6hdr *icmph;
+		struct icmp6hdr _icmph;
+
+		icmph = skb_header_pointer(skb, sizeof(_ipv6h),
+					   sizeof(_icmph), &_icmph);
+		if (!icmph)
+			goto out;
+
+		switch (icmph->icmp6_type) {
+		case NDISC_ROUTER_SOLICITATION:
+		case NDISC_ROUTER_ADVERTISEMENT:
+		case NDISC_NEIGHBOUR_SOLICITATION:
+		case NDISC_NEIGHBOUR_ADVERTISEMENT:
+		case NDISC_REDIRECT:
+			rc = false;
+			break;
+		}
+	}
+
+out:
+	return rc;
+}
+#else
+static bool check_ipv6_frame(const struct sk_buff *skb)
+{
+	return false;
+}
+#endif
+
+static bool is_ip_rx_frame(struct sk_buff *skb)
+{
+	switch (skb->protocol) {
+	case htons(ETH_P_IP):
+		return true;
+	case htons(ETH_P_IPV6):
+		return check_ipv6_frame(skb);
+	}
+	return false;
+>>>>>>> upstream/rpi-4.4.y
 }
 
 static void vrf_tx_error(struct net_device *vrf_dev, struct sk_buff *skb)
@@ -262,7 +312,12 @@ static netdev_tx_t vrf_process_v4_outbound(struct sk_buff *skb,
 		.flowi4_oif = vrf_dev->ifindex,
 		.flowi4_iif = LOOPBACK_IFINDEX,
 		.flowi4_tos = RT_TOS(ip4h->tos),
+<<<<<<< HEAD
 		.flowi4_flags = FLOWI_FLAG_ANYSRC | FLOWI_FLAG_SKIP_NH_OIF,
+=======
+		.flowi4_flags = FLOWI_FLAG_ANYSRC | FLOWI_FLAG_L3MDEV_SRC |
+				FLOWI_FLAG_SKIP_NH_OIF,
+>>>>>>> upstream/rpi-4.4.y
 		.flowi4_proto = ip4h->protocol,
 		.daddr = ip4h->daddr,
 		.saddr = ip4h->saddr,

@@ -738,11 +738,16 @@ enum inode_i_mutex_lock_class
 
 static inline void inode_lock(struct inode *inode)
 {
+<<<<<<< HEAD
 	down_write(&inode->i_rwsem);
+=======
+	mutex_lock(&inode->i_mutex);
+>>>>>>> upstream/rpi-4.4.y
 }
 
 static inline void inode_unlock(struct inode *inode)
 {
+<<<<<<< HEAD
 	up_write(&inode->i_rwsem);
 }
 
@@ -754,26 +759,41 @@ static inline void inode_lock_shared(struct inode *inode)
 static inline void inode_unlock_shared(struct inode *inode)
 {
 	up_read(&inode->i_rwsem);
+=======
+	mutex_unlock(&inode->i_mutex);
+>>>>>>> upstream/rpi-4.4.y
 }
 
 static inline int inode_trylock(struct inode *inode)
 {
+<<<<<<< HEAD
 	return down_write_trylock(&inode->i_rwsem);
 }
 
 static inline int inode_trylock_shared(struct inode *inode)
 {
 	return down_read_trylock(&inode->i_rwsem);
+=======
+	return mutex_trylock(&inode->i_mutex);
+>>>>>>> upstream/rpi-4.4.y
 }
 
 static inline int inode_is_locked(struct inode *inode)
 {
+<<<<<<< HEAD
 	return rwsem_is_locked(&inode->i_rwsem);
+=======
+	return mutex_is_locked(&inode->i_mutex);
+>>>>>>> upstream/rpi-4.4.y
 }
 
 static inline void inode_lock_nested(struct inode *inode, unsigned subclass)
 {
+<<<<<<< HEAD
 	down_write_nested(&inode->i_rwsem, subclass);
+=======
+	mutex_lock_nested(&inode->i_mutex, subclass);
+>>>>>>> upstream/rpi-4.4.y
 }
 
 void lock_two_nondirectories(struct inode *, struct inode*);
@@ -1262,7 +1282,16 @@ static inline struct inode *file_inode(const struct file *f)
 
 static inline struct dentry *file_dentry(const struct file *file)
 {
+<<<<<<< HEAD
 	return d_real(file->f_path.dentry, file_inode(file), 0);
+=======
+	struct dentry *dentry = file->f_path.dentry;
+
+	if (unlikely(dentry->d_flags & DCACHE_OP_REAL))
+		return dentry->d_op->d_real(dentry, file_inode(file));
+	else
+		return dentry;
+>>>>>>> upstream/rpi-4.4.y
 }
 
 static inline int locks_lock_file_wait(struct file *filp, struct file_lock *fl)
@@ -3196,6 +3225,7 @@ static inline bool dir_relax(struct inode *inode)
 {
 	inode_unlock(inode);
 	inode_lock(inode);
+<<<<<<< HEAD
 	return !IS_DEADDIR(inode);
 }
 
@@ -3203,6 +3233,8 @@ static inline bool dir_relax_shared(struct inode *inode)
 {
 	inode_unlock_shared(inode);
 	inode_lock_shared(inode);
+=======
+>>>>>>> upstream/rpi-4.4.y
 	return !IS_DEADDIR(inode);
 }
 

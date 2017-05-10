@@ -1458,8 +1458,11 @@ intel_hdmi_set_edid(struct drm_connector *connector)
 	edid = drm_get_edid(connector,
 			    intel_gmbus_get_adapter(dev_priv,
 			    intel_hdmi->ddc_bus));
+<<<<<<< HEAD
 
 	intel_hdmi_dp_dual_mode_detect(connector, edid != NULL);
+=======
+>>>>>>> upstream/rpi-4.4.y
 
 	intel_display_power_put(dev_priv, POWER_DOMAIN_GMBUS);
 
@@ -1855,11 +1858,14 @@ void intel_hdmi_init_connector(struct intel_digital_port *intel_dig_port,
 
 	DRM_DEBUG_KMS("Adding HDMI connector on port %c\n",
 		      port_name(port));
+<<<<<<< HEAD
 
 	if (WARN(intel_dig_port->max_lanes < 4,
 		 "Not enough lanes (%d) for HDMI on port %c\n",
 		 intel_dig_port->max_lanes, port_name(port)))
 		return;
+=======
+>>>>>>> upstream/rpi-4.4.y
 
 	drm_connector_init(dev, connector, &intel_hdmi_connector_funcs,
 			   DRM_MODE_CONNECTOR_HDMIA);

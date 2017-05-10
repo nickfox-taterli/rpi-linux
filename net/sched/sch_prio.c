@@ -186,10 +186,42 @@ static int prio_tune(struct Qdisc *sch, struct nlattr *opt)
 
 	for (i = q->bands; i < oldbands; i++) {
 		struct Qdisc *child = q->queues[i];
+<<<<<<< HEAD
 
 		qdisc_tree_reduce_backlog(child, child->q.qlen,
 					  child->qstats.backlog);
 		qdisc_destroy(child);
+=======
+		q->queues[i] = &noop_qdisc;
+		if (child != &noop_qdisc) {
+			qdisc_tree_reduce_backlog(child, child->q.qlen, child->qstats.backlog);
+			qdisc_destroy(child);
+		}
+	}
+	sch_tree_unlock(sch);
+
+	for (i = 0; i < q->bands; i++) {
+		if (q->queues[i] == &noop_qdisc) {
+			struct Qdisc *child, *old;
+
+			child = qdisc_create_dflt(sch->dev_queue,
+						  &pfifo_qdisc_ops,
+						  TC_H_MAKE(sch->handle, i + 1));
+			if (child) {
+				sch_tree_lock(sch);
+				old = q->queues[i];
+				q->queues[i] = child;
+
+				if (old != &noop_qdisc) {
+					qdisc_tree_reduce_backlog(old,
+								  old->q.qlen,
+								  old->qstats.backlog);
+					qdisc_destroy(old);
+				}
+				sch_tree_unlock(sch);
+			}
+		}
+>>>>>>> upstream/rpi-4.4.y
 	}
 
 	for (i = oldbands; i < q->bands; i++)

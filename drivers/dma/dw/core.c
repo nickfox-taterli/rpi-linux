@@ -148,11 +148,16 @@ static void dwc_initialize(struct dw_dma_chan *dwc)
 	if (test_bit(DW_DMA_IS_INITIALIZED, &dwc->flags))
 		return;
 
+<<<<<<< HEAD
 	cfghi |= DWC_CFGH_DST_PER(dwc->dws.dst_id);
 	cfghi |= DWC_CFGH_SRC_PER(dwc->dws.src_id);
 
 	/* Set polarity of handshake interface */
 	cfglo |= hs_polarity ? DWC_CFGL_HS_DST_POL | DWC_CFGL_HS_SRC_POL : 0;
+=======
+	cfghi |= DWC_CFGH_DST_PER(dwc->dst_id);
+	cfghi |= DWC_CFGH_SRC_PER(dwc->src_id);
+>>>>>>> upstream/rpi-4.4.y
 
 	channel_writel(dwc, CFG_LO, cfglo);
 	channel_writel(dwc, CFG_HI, cfghi);
@@ -1162,11 +1167,25 @@ static void dwc_free_chan_resources(struct dma_chan *chan)
 	BUG_ON(dma_readl(to_dw_dma(chan->device), CH_EN) & dwc->mask);
 
 	spin_lock_irqsave(&dwc->lock, flags);
+<<<<<<< HEAD
 
 	/* Clear custom channel configuration */
 	memset(&dwc->dws, 0, sizeof(struct dw_dma_slave));
 
 	clear_bit(DW_DMA_IS_INITIALIZED, &dwc->flags);
+=======
+	list_splice_init(&dwc->free_list, &list);
+	dwc->descs_allocated = 0;
+
+	/* Clear custom channel configuration */
+	dwc->src_id = 0;
+	dwc->dst_id = 0;
+
+	dwc->src_master = 0;
+	dwc->dst_master = 0;
+
+	dwc->initialized = false;
+>>>>>>> upstream/rpi-4.4.y
 
 	/* Disable interrupts */
 	channel_clear_bit(dw, MASK.XFER, dwc->mask);

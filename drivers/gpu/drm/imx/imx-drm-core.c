@@ -175,8 +175,30 @@ static int imx_drm_atomic_commit(struct drm_device *dev,
 		}
 	}
 
+<<<<<<< HEAD
 	return drm_atomic_helper_commit(dev, state, nonblock);
 }
+=======
+	/*
+	 * All components are now initialised, so setup the fb helper.
+	 * The fb helper takes copies of key hardware information, so the
+	 * crtcs/connectors/encoders must not change after this point.
+	 */
+#if IS_ENABLED(CONFIG_DRM_IMX_FB_HELPER)
+	if (legacyfb_depth != 16 && legacyfb_depth != 32) {
+		dev_warn(drm->dev, "Invalid legacyfb_depth.  Defaulting to 16bpp\n");
+		legacyfb_depth = 16;
+	}
+	drm_helper_disable_unused_functions(drm);
+	imxdrm->fbhelper = drm_fbdev_cma_init(drm, legacyfb_depth,
+				drm->mode_config.num_crtc, MAX_CRTC);
+	if (IS_ERR(imxdrm->fbhelper)) {
+		ret = PTR_ERR(imxdrm->fbhelper);
+		imxdrm->fbhelper = NULL;
+		goto err_unbind;
+	}
+#endif
+>>>>>>> upstream/rpi-4.4.y
 
 static const struct drm_mode_config_funcs imx_drm_mode_config_funcs = {
 	.fb_create = drm_fb_cma_create,

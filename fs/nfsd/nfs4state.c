@@ -3566,6 +3566,10 @@ init_open_stateid(struct nfs4_file *fp, struct nfsd4_open *open)
 	mutex_init(&stp->st_mutex);
 	mutex_lock(&stp->st_mutex);
 
+	/* We are moving these outside of the spinlocks to avoid the warnings */
+	mutex_init(&stp->st_mutex);
+	mutex_lock(&stp->st_mutex);
+
 	spin_lock(&oo->oo_owner.so_client->cl_lock);
 	spin_lock(&fp->fi_lock);
 
@@ -3591,11 +3595,18 @@ out_unlock:
 	spin_unlock(&oo->oo_owner.so_client->cl_lock);
 	if (retstp) {
 		mutex_lock(&retstp->st_mutex);
+<<<<<<< HEAD
 		/* To keep mutex tracking happy */
 		mutex_unlock(&stp->st_mutex);
 		stp = retstp;
 	}
 	return stp;
+=======
+		/* Not that we need to, just for neatness */
+		mutex_unlock(&stp->st_mutex);
+	}
+	return retstp;
+>>>>>>> upstream/rpi-4.4.y
 }
 
 /*
@@ -4427,10 +4438,23 @@ nfsd4_process_open2(struct svc_rqst *rqstp, struct svc_fh *current_fh, struct nf
 			goto out;
 		}
 	} else {
+<<<<<<< HEAD
 		/* stp is returned locked. */
 		stp = init_open_stateid(fp, open);
 		/* See if we lost the race to some other thread */
 		if (stp->st_access_bmap != 0) {
+=======
+		stp = open->op_stp;
+		open->op_stp = NULL;
+		/*
+		 * init_open_stateid() either returns a locked stateid
+		 * it found, or initializes and locks the new one we passed in
+		 */
+		swapstp = init_open_stateid(stp, fp, open);
+		if (swapstp) {
+			nfs4_put_stid(&stp->st_stid);
+			stp = swapstp;
+>>>>>>> upstream/rpi-4.4.y
 			status = nfs4_upgrade_open(rqstp, fp, current_fh,
 						stp, open);
 			if (status) {

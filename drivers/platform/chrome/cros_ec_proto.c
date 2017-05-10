@@ -440,6 +440,7 @@ int cros_ec_cmd_xfer_status(struct cros_ec_device *ec_dev,
 	return ret;
 }
 EXPORT_SYMBOL(cros_ec_cmd_xfer_status);
+<<<<<<< HEAD
 
 static int get_next_event(struct cros_ec_device *ec_dev)
 {
@@ -489,3 +490,5 @@ int cros_ec_get_next_event(struct cros_ec_device *ec_dev)
 		return get_keyboard_state_event(ec_dev);
 }
 EXPORT_SYMBOL(cros_ec_get_next_event);
+=======
+>>>>>>> upstream/rpi-4.4.y

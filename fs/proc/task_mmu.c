@@ -266,6 +266,7 @@ static int do_maps_open(struct inode *inode, struct file *file,
  * /proc/PID/maps that is the stack of the main task.
  */
 static int is_stack(struct proc_maps_private *priv,
+<<<<<<< HEAD
 		    struct vm_area_struct *vma)
 {
 	/*
@@ -275,6 +276,26 @@ static int is_stack(struct proc_maps_private *priv,
 	 */
 	return vma->vm_start <= vma->vm_mm->start_stack &&
 		vma->vm_end >= vma->vm_mm->start_stack;
+=======
+		    struct vm_area_struct *vma, int is_pid)
+{
+	int stack = 0;
+
+	if (is_pid) {
+		stack = vma->vm_start <= vma->vm_mm->start_stack &&
+			vma->vm_end >= vma->vm_mm->start_stack;
+	} else {
+		struct inode *inode = priv->inode;
+		struct task_struct *task;
+
+		rcu_read_lock();
+		task = pid_task(proc_pid(inode), PIDTYPE_PID);
+		if (task)
+			stack = vma_is_stack_for_task(vma, task);
+		rcu_read_unlock();
+	}
+	return stack;
+>>>>>>> upstream/rpi-4.4.y
 }
 
 static void
@@ -345,7 +366,11 @@ show_map_vma(struct seq_file *m, struct vm_area_struct *vma, int is_pid)
 			goto done;
 		}
 
+<<<<<<< HEAD
 		if (is_stack(priv, vma))
+=======
+		if (is_stack(priv, vma, is_pid))
+>>>>>>> upstream/rpi-4.4.y
 			name = "[stack]";
 	}
 
@@ -1571,8 +1596,12 @@ static int gather_pte_stats(pmd_t *pmd, unsigned long addr,
 	pte_t *pte;
 
 #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+<<<<<<< HEAD
 	ptl = pmd_trans_huge_lock(pmd, vma);
 	if (ptl) {
+=======
+	if (pmd_trans_huge_lock(pmd, vma, &ptl) == 1) {
+>>>>>>> upstream/rpi-4.4.y
 		struct page *page;
 
 		page = can_gather_numa_stats_pmd(*pmd, vma, addr);
@@ -1667,7 +1696,11 @@ static int show_numa_map(struct seq_file *m, void *v, int is_pid)
 		seq_file_path(m, file, "\n\t= ");
 	} else if (vma->vm_start <= mm->brk && vma->vm_end >= mm->start_brk) {
 		seq_puts(m, " heap");
+<<<<<<< HEAD
 	} else if (is_stack(proc_priv, vma)) {
+=======
+	} else if (is_stack(proc_priv, vma, is_pid)) {
+>>>>>>> upstream/rpi-4.4.y
 		seq_puts(m, " stack");
 	}
 

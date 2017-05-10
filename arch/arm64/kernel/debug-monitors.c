@@ -139,9 +139,23 @@ static int clear_os_lock(unsigned int cpu)
 
 static int debug_monitors_init(void)
 {
+<<<<<<< HEAD
 	return cpuhp_setup_state(CPUHP_AP_ARM64_DEBUG_MONITORS_STARTING,
 				 "CPUHP_AP_ARM64_DEBUG_MONITORS_STARTING",
 				 clear_os_lock, NULL);
+=======
+	cpu_notifier_register_begin();
+
+	/* Clear the OS lock. */
+	on_each_cpu(clear_os_lock, NULL, 1);
+	isb();
+
+	/* Register hotplug handler. */
+	__register_cpu_notifier(&os_lock_nb);
+
+	cpu_notifier_register_done();
+	return 0;
+>>>>>>> upstream/rpi-4.4.y
 }
 postcore_initcall(debug_monitors_init);
 

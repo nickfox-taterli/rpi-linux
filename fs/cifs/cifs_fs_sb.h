@@ -49,7 +49,10 @@
 #define CIFS_MOUNT_USE_PREFIX_PATH 0x1000000 /* make subpath with unaccessible
 					      * root mountable
 					      */
+<<<<<<< HEAD
 #define CIFS_MOUNT_UID_FROM_ACL 0x2000000 /* try to get UID via special SID */
+=======
+>>>>>>> upstream/rpi-4.4.y
 
 struct cifs_sb_info {
 	struct rb_root tlink_tree;

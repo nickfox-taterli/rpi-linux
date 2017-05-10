@@ -63,6 +63,7 @@
 #define BCM_DMA_FEATURE_COUNT		4
 
 struct bcm2708_dma_cb {
+<<<<<<< HEAD
 	u32 info;
 	u32 src;
 	u32 dst;
@@ -70,6 +71,15 @@ struct bcm2708_dma_cb {
 	u32 stride;
 	u32 next;
 	u32 pad[2];
+=======
+	unsigned long info;
+	unsigned long src;
+	unsigned long dst;
+	unsigned long length;
+	unsigned long stride;
+	unsigned long next;
+	unsigned long pad[2];
+>>>>>>> upstream/rpi-4.4.y
 };
 
 struct scatterlist;

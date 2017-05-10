@@ -511,6 +511,10 @@ struct usb3_lpm_parameters {
  * @usb2_hw_lpm_besl_capable: device can perform USB2 hardware BESL LPM
  * @usb2_hw_lpm_enabled: USB2 hardware LPM is enabled
  * @usb2_hw_lpm_allowed: Userspace allows USB 2.0 LPM to be enabled
+<<<<<<< HEAD
+=======
+ * @usb3_lpm_enabled: USB3 hardware LPM enabled
+>>>>>>> upstream/rpi-4.4.y
  * @usb3_lpm_u1_enabled: USB3 hardware U1 LPM enabled
  * @usb3_lpm_u2_enabled: USB3 hardware U2 LPM enabled
  * @string_langid: language ID for strings
@@ -585,6 +589,10 @@ struct usb_device {
 	unsigned usb2_hw_lpm_besl_capable:1;
 	unsigned usb2_hw_lpm_enabled:1;
 	unsigned usb2_hw_lpm_allowed:1;
+<<<<<<< HEAD
+=======
+	unsigned usb3_lpm_enabled:1;
+>>>>>>> upstream/rpi-4.4.y
 	unsigned usb3_lpm_u1_enabled:1;
 	unsigned usb3_lpm_u2_enabled:1;
 	int string_langid;

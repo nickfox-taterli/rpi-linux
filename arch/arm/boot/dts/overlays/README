@@ -168,12 +168,15 @@ Load:   dtoverlay=adau1977-adc
 Params: <None>
 
 
+<<<<<<< HEAD
 Name:   adau7002-simple
 Info:   Overlay for the activation of ADAU7002 stereo PDM to I2S converter.
 Load:   dtoverlay=adau7002-simple,<param>=<val>
 Params: card-name               Override the default, "adau7002", card name.
 
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 Name:   ads1015
 Info:   Overlay for activation of Texas Instruments ADS1015 ADC over I2C
 Load:   dtoverlay=ads1015,<param>=<val>
@@ -196,6 +199,7 @@ Params: addr                    I2C bus address of device. Set based on how the
         http://www.ti.com/lit/ds/symlink/ads1015.pdf
 
 
+<<<<<<< HEAD
 Name:   ads1115
 Info:   Texas Instruments ADS1115 ADC
 Load:   dtoverlay=ads1115,<param>[=<val>]
@@ -218,6 +222,8 @@ Params: addr                    I2C bus address of device. Set based on how the
         http://www.ti.com/lit/ds/symlink/ads1115.pdf
 
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 Name:   ads7846
 Info:   ADS7846 Touch controller
 Load:   dtoverlay=ads7846,<param>=<val>
@@ -263,6 +269,7 @@ Params: 24db_digital_gain       Allow gain to be applied via the PCM512x codec
                                 that does not result in clipping/distortion!)
 
 
+<<<<<<< HEAD
 Name:   allo-boss-dac-pcm512x-audio
 Info:   Configures the Allo Boss DAC audio cards.
 Load:   dtoverlay=allo-boss-dac-pcm512x-audio,<param>
@@ -287,6 +294,8 @@ Params: 24db_digital_gain       Allow gain to be applied via the PCM512x codec
                                 slave"
 
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 Name:   allo-piano-dac-pcm512x-audio
 Info:   Configures the Allo Piano DAC (2.0/2.1) audio cards.
         (NB. This initial support is for 2.0 channel audio ONLY! ie. stereo.
@@ -307,6 +316,7 @@ Params: 24db_digital_gain       Allow gain to be applied via the PCM512x codec
                                 that does not result in clipping/distortion!)
 
 
+<<<<<<< HEAD
 Name:   allo-piano-dac-plus-pcm512x-audio
 Info:   Configures the Allo Piano DAC (2.1) audio cards.
 Load:   dtoverlay=allo-piano-dac-plus-pcm512x-audio,<param>
@@ -328,6 +338,8 @@ Params: 24db_digital_gain       Allow gain to be applied via the PCM512x codec
                                 better voice quality. (default Off)
 
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 Name:   at86rf233
 Info:   Configures the Atmel AT86RF233 802.15.4 low-power WPAN transceiver,
         connected to spi0.0
@@ -340,12 +352,15 @@ Params: interrupt               GPIO used for INT (default 23)
                                 arrays (0=+0pF, 15=+4.5pF, default 15)
 
 
+<<<<<<< HEAD
 Name:   audioinjector-addons
 Info:   Configures the audioinjector.net audio add on soundcards
 Load:   dtoverlay=audioinjector-addons
 Params: <None>
 
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 Name:   audioinjector-wm8731-audio
 Info:   Configures the audioinjector.net audio add on soundcard
 Load:   dtoverlay=audioinjector-wm8731-audio
@@ -381,6 +396,7 @@ Load:   dtoverlay=dionaudio-loco
 Params: <None>
 
 
+<<<<<<< HEAD
 Name:   dionaudio-loco-v2
 Info:   Configures the Dion Audio LOCO-V2 DAC-AMP
 Load:   dtoverlay=dionaudio-loco-v2,<param>=<val>
@@ -400,6 +416,8 @@ Params: 24db_digital_gain       Allow gain to be applied via the PCM512x codec
                                 that does not result in clipping/distortion!)
 
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 Name:   dpi18
 Info:   Overlay for a generic 18-bit DPI display
         This uses GPIOs 0-21 (so no I2C, uart etc.), and activates the output
@@ -433,6 +451,12 @@ Params: dr_mode                 Dual role mode: "host", "peripheral" or "otg"
         g-np-tx-fifo-size       Size of non-periodic tx fifo size in gadget
                                 mode
 
+<<<<<<< HEAD
+=======
+        g-tx-fifo-size          Size of periodic tx fifo per endpoint
+                                (except ep0) in gadget mode
+
+>>>>>>> upstream/rpi-4.4.y
 
 [ The ds1307-rtc overlay has been deleted. See i2c-rtc. ]
 
@@ -453,6 +477,7 @@ Params: int_pin                 GPIO used for INT (default 39)
         speed                   SPI bus speed (default 12000000)
 
 
+<<<<<<< HEAD
 Name:   fe-pi-audio
 Info:   Configures the Fe-Pi Audio Sound Card
 Load:   dtoverlay=fe-pi-audio
@@ -465,6 +490,8 @@ Load:   dtoverlay=googlevoicehat-soundcard
 Params: <None>
 
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 Name:   gpio-ir
 Info:   Use GPIO pin as rc-core style infrared receiver input. The rc-core-
         based gpio_ir_recv driver maps received keys directly to a
@@ -577,12 +604,15 @@ Params: speed                   Display SPI bus speed
         ledgpio                 GPIO used to control backlight
 
 
+<<<<<<< HEAD
 Name:   i2c-bcm2708
 Info:   Fall back to the i2c_bcm2708 driver for the i2c_arm bus.
 Load:   dtoverlay=i2c-bcm2708
 Params: <None>
 
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 Name:   i2c-gpio
 Info:   Adds support for software i2c controller on gpio pins
 Load:   dtoverlay=i2c-gpio,<param>=<val>
@@ -652,6 +682,7 @@ Name:   i2c-sensor
 Info:   Adds support for a number of I2C barometric pressure and temperature
         sensors on i2c_arm
 Load:   dtoverlay=i2c-sensor,<param>=<val>
+<<<<<<< HEAD
 Params: addr                    Set the address for the BME280, BMP280 or
                                 TMP102
 
@@ -669,13 +700,21 @@ Params: addr                    Set the address for the BME280, BMP280 or
 
         lm75addr                Choose the address for the LM75 (0x48-0x4f -
                                 default 0x4f)
+=======
+Params: bmp085                  Select the Bosch sensortronic BMP085
+
+        bmp280                  Select the Bosch sensortronic BMP280
+>>>>>>> upstream/rpi-4.4.y
 
         si7020                  Select the Silicon Labs Si7013/20/21 humidity/
                                 temperature sensor
 
+<<<<<<< HEAD
         tmp102                  Select the Texas Instruments TMP102 temp sensor
                                 Valid addresses 0x48-0x4b, default 0x48
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 
 Name:   i2c0-bcm2708
 Info:   Enable the i2c_bcm2708 driver for the i2c0 bus. Not all pin combinations
@@ -704,6 +743,15 @@ Load:   dtoverlay=i2s-gpio28-31
 Params: <None>
 
 
+<<<<<<< HEAD
+=======
+Name:   i2s-mmap
+Info:   Enables mmap support in the bcm2708-i2s driver
+Load:   dtoverlay=i2s-mmap
+Params: <None>
+
+
+>>>>>>> upstream/rpi-4.4.y
 Name:   iqaudio-dac
 Info:   Configures the IQaudio DAC audio card
 Load:   dtoverlay=iqaudio-dac,<param>
@@ -869,6 +917,7 @@ Params: spi<n>-<m>-present      boolean, configure device at spi<n>, cs<m>
         spi<n>-<m>-speed        integer, set the spi bus speed for this device
 
 
+<<<<<<< HEAD
 Name:   midi-uart0
 Info:   Configures UART0 (ttyAMA0) so that a requested 38.4kbaud actually gets
         31.25kbaud, the frequency required for MIDI
@@ -876,6 +925,8 @@ Load:   dtoverlay=midi-uart0
 Params: <None>
 
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 Name:   mmc
 Info:   Selects the bcm2835-mmc SD/MMC driver, optionally with overclock
 Load:   dtoverlay=mmc,<param>=<val>
@@ -1113,12 +1164,15 @@ Load:   dtoverlay=rpi-backlight
 Params: <None>
 
 
+<<<<<<< HEAD
 Name:   rpi-cirrus-wm5102
 Info:   Configures the Cirrus Logic Audio Card
 Load:   dtoverlay=rpi-cirrus-wm5102
 Params: <None>
 
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 Name:   rpi-dac
 Info:   Configures the RPi DAC audio card
 Load:   dtoverlay=rpi-dac
@@ -1154,12 +1208,15 @@ Load:   dtoverlay=rpi-sense
 Params: <None>
 
 
+<<<<<<< HEAD
 Name:   rpi-tv
 Info:   Raspberry Pi TV HAT
 Load:   dtoverlay=rpi-tv
 Params: <None>
 
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 Name:   rra-digidac1-wm8741-audio
 Info:   Configures the Red Rocks Audio DigiDAC1 soundcard
 Load:   dtoverlay=rra-digidac1-wm8741-audio

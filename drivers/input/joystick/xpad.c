@@ -365,9 +365,13 @@ struct usb_xpad {
 	dma_addr_t idata_dma;
 
 	struct urb *irq_out;		/* urb for interrupt out report */
+<<<<<<< HEAD
 	struct usb_anchor irq_out_anchor;
 	bool irq_out_active;		/* we must not use an active URB */
 	u8 odata_serial;		/* serial number for xbox one protocol */
+=======
+	bool irq_out_active;		/* we must not use an active URB */
+>>>>>>> upstream/rpi-4.4.y
 	unsigned char *odata;		/* output data */
 	dma_addr_t odata_dma;
 	spinlock_t odata_lock;
@@ -789,13 +793,19 @@ static int xpad_try_sending_next_out_packet(struct usb_xpad *xpad)
 	int error;
 
 	if (!xpad->irq_out_active && xpad_prepare_next_out_packet(xpad)) {
+<<<<<<< HEAD
 		usb_anchor_urb(xpad->irq_out, &xpad->irq_out_anchor);
+=======
+>>>>>>> upstream/rpi-4.4.y
 		error = usb_submit_urb(xpad->irq_out, GFP_ATOMIC);
 		if (error) {
 			dev_err(&xpad->intf->dev,
 				"%s - usb_submit_urb failed with result %d\n",
 				__func__, error);
+<<<<<<< HEAD
 			usb_unanchor_urb(xpad->irq_out);
+=======
+>>>>>>> upstream/rpi-4.4.y
 			return -EIO;
 		}
 
@@ -837,13 +847,19 @@ static void xpad_irq_out(struct urb *urb)
 	}
 
 	if (xpad->irq_out_active) {
+<<<<<<< HEAD
 		usb_anchor_urb(urb, &xpad->irq_out_anchor);
+=======
+>>>>>>> upstream/rpi-4.4.y
 		error = usb_submit_urb(urb, GFP_ATOMIC);
 		if (error) {
 			dev_err(dev,
 				"%s - usb_submit_urb failed with result %d\n",
 				__func__, error);
+<<<<<<< HEAD
 			usb_unanchor_urb(urb);
+=======
+>>>>>>> upstream/rpi-4.4.y
 			xpad->irq_out_active = false;
 		}
 	}
@@ -920,6 +936,7 @@ static int xpad_inquiry_pad_presence(struct usb_xpad *xpad)
 	struct xpad_output_packet *packet =
 			&xpad->out_packets[XPAD_OUT_CMD_IDX];
 	unsigned long flags;
+<<<<<<< HEAD
 	int retval;
 
 	spin_lock_irqsave(&xpad->odata_lock, flags);
@@ -970,6 +987,55 @@ static int xpad_start_xbox_one(struct usb_xpad *xpad)
 	xpad->last_out_packet = -1;
 	retval = xpad_try_sending_next_out_packet(xpad);
 
+=======
+	int retval;
+
+	spin_lock_irqsave(&xpad->odata_lock, flags);
+
+	packet->data[0] = 0x08;
+	packet->data[1] = 0x00;
+	packet->data[2] = 0x0F;
+	packet->data[3] = 0xC0;
+	packet->data[4] = 0x00;
+	packet->data[5] = 0x00;
+	packet->data[6] = 0x00;
+	packet->data[7] = 0x00;
+	packet->data[8] = 0x00;
+	packet->data[9] = 0x00;
+	packet->data[10] = 0x00;
+	packet->data[11] = 0x00;
+	packet->len = 12;
+	packet->pending = true;
+
+	/* Reset the sequence so we send out presence first */
+	xpad->last_out_packet = -1;
+	retval = xpad_try_sending_next_out_packet(xpad);
+
+	spin_unlock_irqrestore(&xpad->odata_lock, flags);
+
+	return retval;
+}
+
+static int xpad_start_xbox_one(struct usb_xpad *xpad)
+{
+	struct xpad_output_packet *packet =
+			&xpad->out_packets[XPAD_OUT_CMD_IDX];
+	unsigned long flags;
+	int retval;
+
+	spin_lock_irqsave(&xpad->odata_lock, flags);
+
+	/* Xbox one controller needs to be initialized. */
+	packet->data[0] = 0x05;
+	packet->data[1] = 0x20;
+	packet->len = 2;
+	packet->pending = true;
+
+	/* Reset the sequence so we send out start packet first */
+	xpad->last_out_packet = -1;
+	retval = xpad_try_sending_next_out_packet(xpad);
+
+>>>>>>> upstream/rpi-4.4.y
 	spin_unlock_irqrestore(&xpad->odata_lock, flags);
 
 	return retval;
@@ -1037,6 +1103,7 @@ static int xpad_play_effect(struct input_dev *dev, void *data, struct ff_effect 
 
 	case XTYPE_XBOXONE:
 		packet->data[0] = 0x09; /* activate rumble */
+<<<<<<< HEAD
 		packet->data[1] = 0x00;
 		packet->data[2] = xpad->odata_serial++;
 		packet->data[3] = 0x09;
@@ -1050,6 +1117,20 @@ static int xpad_play_effect(struct input_dev *dev, void *data, struct ff_effect 
 		packet->data[11] = 0x00;
 		packet->data[12] = 0x00;
 		packet->len = 13;
+=======
+		packet->data[1] = 0x08;
+		packet->data[2] = 0x00;
+		packet->data[3] = 0x08; /* continuous effect */
+		packet->data[4] = 0x00; /* simple rumble mode */
+		packet->data[5] = 0x03; /* L and R actuator only */
+		packet->data[6] = 0x00; /* TODO: LT actuator */
+		packet->data[7] = 0x00; /* TODO: RT actuator */
+		packet->data[8] = strong / 256;	/* left actuator */
+		packet->data[9] = weak / 256;	/* right actuator */
+		packet->data[10] = 0x80;	/* length of pulse */
+		packet->data[11] = 0x00;	/* stop period of pulse */
+		packet->len = 12;
+>>>>>>> upstream/rpi-4.4.y
 		packet->pending = true;
 		break;
 
@@ -1238,6 +1319,7 @@ static int xpad_start_input(struct usb_xpad *xpad)
 	if (usb_submit_urb(xpad->irq_in, GFP_KERNEL))
 		return -EIO;
 
+<<<<<<< HEAD
 	if (xpad->xtype == XTYPE_XBOXONE) {
 		error = xpad_start_xbox_one(xpad);
 		if (error) {
@@ -1245,6 +1327,10 @@ static int xpad_start_input(struct usb_xpad *xpad)
 			return error;
 		}
 	}
+=======
+	if (xpad->xtype == XTYPE_XBOXONE)
+		return xpad_start_xbox_one(xpad);
+>>>>>>> upstream/rpi-4.4.y
 
 	return 0;
 }

@@ -1829,6 +1829,7 @@ static struct ctl_table fs_table[] = {
 		.mode		= 0644,
 		.proc_handler	= proc_doulongvec_minmax,
 	},
+<<<<<<< HEAD
 	{
 		.procname	= "mount-max",
 		.data		= &sysctl_mount_max,
@@ -1837,6 +1838,8 @@ static struct ctl_table fs_table[] = {
 		.proc_handler	= proc_dointvec_minmax,
 		.extra1		= &one,
 	},
+=======
+>>>>>>> upstream/rpi-4.4.y
 	{ }
 };
 

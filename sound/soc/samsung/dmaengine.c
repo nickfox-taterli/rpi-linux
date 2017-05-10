@@ -37,11 +37,27 @@ int samsung_asoc_dma_platform_register(struct device *dev, dma_filter_fn filter,
 	pcm_conf->prepare_slave_config = snd_dmaengine_pcm_prepare_slave_config;
 	pcm_conf->compat_filter_fn = filter;
 
+<<<<<<< HEAD
 	if (dev->of_node) {
 		pcm_conf->chan_names[SNDRV_PCM_STREAM_PLAYBACK] = tx;
 		pcm_conf->chan_names[SNDRV_PCM_STREAM_CAPTURE] = rx;
 	} else {
 		flags |= SND_DMAENGINE_PCM_FLAG_CUSTOM_CHANNEL_NAME;
+=======
+	if (playback) {
+		playback_data = &playback->dma_data;
+		playback_data->filter_data = playback->slave;
+		playback_data->chan_name = playback->ch_name;
+		playback_data->addr = playback->dma_addr;
+		playback_data->addr_width = playback->dma_size;
+	}
+	if (capture) {
+		capture_data = &capture->dma_data;
+		capture_data->filter_data = capture->slave;
+		capture_data->chan_name = capture->ch_name;
+		capture_data->addr = capture->dma_addr;
+		capture_data->addr_width = capture->dma_size;
+>>>>>>> upstream/rpi-4.4.y
 	}
 
 	return devm_snd_dmaengine_pcm_register(dev, pcm_conf, flags);

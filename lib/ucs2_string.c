@@ -56,7 +56,11 @@ ucs2_utf8size(const ucs2_char_t *src)
 	unsigned long i;
 	unsigned long j = 0;
 
+<<<<<<< HEAD
 	for (i = 0; src[i]; i++) {
+=======
+	for (i = 0; i < ucs2_strlen(src); i++) {
+>>>>>>> upstream/rpi-4.4.y
 		u16 c = src[i];
 
 		if (c >= 0x800)

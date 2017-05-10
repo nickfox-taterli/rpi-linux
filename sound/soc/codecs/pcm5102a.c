@@ -14,6 +14,10 @@
  * General Public License for more details.
  */
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> upstream/rpi-4.4.y
 #include <linux/init.h>
 #include <linux/module.h>
 #include <linux/platform_device.h>
@@ -53,10 +57,18 @@ static const struct of_device_id pcm5102a_of_match[] = {
 MODULE_DEVICE_TABLE(of, pcm5102a_of_match);
 
 static struct platform_driver pcm5102a_codec_driver = {
+<<<<<<< HEAD
 	.probe		= pcm5102a_probe,
 	.remove		= pcm5102a_remove,
 	.driver		= {
 		.name	= "pcm5102a-codec",
+=======
+	.probe 		= pcm5102a_probe,
+	.remove 	= pcm5102a_remove,
+	.driver		= {
+		.name	= "pcm5102a-codec",
+		.owner	= THIS_MODULE,
+>>>>>>> upstream/rpi-4.4.y
 		.of_match_table = pcm5102a_of_match,
 	},
 };

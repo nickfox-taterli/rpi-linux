@@ -116,10 +116,13 @@ static const struct {
 	HDMI_REG(VC4_HDMI_SW_RESET_CONTROL),
 	HDMI_REG(VC4_HDMI_HOTPLUG_INT),
 	HDMI_REG(VC4_HDMI_HOTPLUG),
+<<<<<<< HEAD
 	HDMI_REG(VC4_HDMI_MAI_CHANNEL_MAP),
 	HDMI_REG(VC4_HDMI_MAI_CONFIG),
 	HDMI_REG(VC4_HDMI_MAI_FORMAT),
 	HDMI_REG(VC4_HDMI_AUDIO_PACKET_CONFIG),
+=======
+>>>>>>> upstream/rpi-4.4.y
 	HDMI_REG(VC4_HDMI_RAM_PACKET_CONFIG),
 	HDMI_REG(VC4_HDMI_HORZA),
 	HDMI_REG(VC4_HDMI_HORZB),
@@ -327,7 +330,11 @@ static void vc4_hdmi_write_infoframe(struct drm_encoder *encoder,
 	struct drm_device *dev = encoder->dev;
 	struct vc4_dev *vc4 = to_vc4_dev(dev);
 	u32 packet_id = frame->any.type - 0x80;
+<<<<<<< HEAD
 	u32 packet_reg = VC4_HDMI_RAM_PACKET(packet_id);
+=======
+	u32 packet_reg = VC4_HDMI_GCP_0 + VC4_HDMI_PACKET_STRIDE * packet_id;
+>>>>>>> upstream/rpi-4.4.y
 	uint8_t buffer[VC4_HDMI_PACKET_STRIDE];
 	ssize_t len, i;
 	int ret;
@@ -412,6 +419,7 @@ static void vc4_hdmi_set_spd_infoframe(struct drm_encoder *encoder)
 	vc4_hdmi_write_infoframe(encoder, &frame);
 }
 
+<<<<<<< HEAD
 static void vc4_hdmi_set_audio_infoframe(struct drm_encoder *encoder)
 {
 	struct drm_device *drm = encoder->dev;
@@ -430,6 +438,8 @@ static void vc4_hdmi_set_audio_infoframe(struct drm_encoder *encoder)
 	vc4_hdmi_write_infoframe(encoder, &frame);
 }
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 static void vc4_hdmi_set_infoframes(struct drm_encoder *encoder)
 {
 	vc4_hdmi_set_avi_infoframe(encoder);

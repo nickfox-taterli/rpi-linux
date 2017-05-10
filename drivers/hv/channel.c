@@ -534,6 +534,7 @@ static void reset_channel_cb(void *arg)
 static int vmbus_close_internal(struct vmbus_channel *channel)
 {
 	struct vmbus_channel_close_channel *msg;
+	struct tasklet_struct *tasklet;
 	int ret;
 
 	/*
@@ -545,6 +546,7 @@ static int vmbus_close_internal(struct vmbus_channel *channel)
 	 * To resolve the race, we can serialize them by disabling the
 	 * tasklet when the latter is running here.
 	 */
+<<<<<<< HEAD
 	hv_event_tasklet_disable(channel);
 
 	/*
@@ -558,6 +560,10 @@ static int vmbus_close_internal(struct vmbus_channel *channel)
 		ret = -EINVAL;
 		goto out;
 	}
+=======
+	tasklet = hv_context.event_dpc[channel->target_cpu];
+	tasklet_disable(tasklet);
+>>>>>>> upstream/rpi-4.4.y
 
 	channel->state = CHANNEL_OPEN_STATE;
 	channel->sc_creation_callback = NULL;
@@ -612,7 +618,11 @@ static int vmbus_close_internal(struct vmbus_channel *channel)
 		get_order(channel->ringbuffer_pagecount * PAGE_SIZE));
 
 out:
+<<<<<<< HEAD
 	hv_event_tasklet_enable(channel);
+=======
+	tasklet_enable(tasklet);
+>>>>>>> upstream/rpi-4.4.y
 
 	return ret;
 }
@@ -677,8 +687,37 @@ int vmbus_sendpacket_ctl(struct vmbus_channel *channel, void *buffer,
 	bufferlist[2].iov_base = &aligned_data;
 	bufferlist[2].iov_len = (packetlen_aligned - packetlen);
 
+<<<<<<< HEAD
 	return hv_ringbuffer_write(channel, bufferlist, num_vecs,
 				   lock, kick_q);
+=======
+	ret = hv_ringbuffer_write(&channel->outbound, bufferlist, num_vecs,
+				  &signal);
+
+	/*
+	 * Signalling the host is conditional on many factors:
+	 * 1. The ring state changed from being empty to non-empty.
+	 *    This is tracked by the variable "signal".
+	 * 2. The variable kick_q tracks if more data will be placed
+	 *    on the ring. We will not signal if more data is
+	 *    to be placed.
+	 *
+	 * Based on the channel signal state, we will decide
+	 * which signaling policy will be applied.
+	 *
+	 * If we cannot write to the ring-buffer; signal the host
+	 * even if we may not have written anything. This is a rare
+	 * enough condition that it should not matter.
+	 */
+
+	if (channel->signal_policy)
+		signal = true;
+	else
+		kick_q = true;
+
+	if (((ret == 0) && kick_q && signal) || (ret))
+		vmbus_setevent(channel);
+>>>>>>> upstream/rpi-4.4.y
 
 }
 EXPORT_SYMBOL(vmbus_sendpacket_ctl);
@@ -764,8 +803,38 @@ int vmbus_sendpacket_pagebuffer_ctl(struct vmbus_channel *channel,
 	bufferlist[2].iov_base = &aligned_data;
 	bufferlist[2].iov_len = (packetlen_aligned - packetlen);
 
+<<<<<<< HEAD
 	return hv_ringbuffer_write(channel, bufferlist, 3,
 				   lock, kick_q);
+=======
+	ret = hv_ringbuffer_write(&channel->outbound, bufferlist, 3, &signal);
+
+	/*
+	 * Signalling the host is conditional on many factors:
+	 * 1. The ring state changed from being empty to non-empty.
+	 *    This is tracked by the variable "signal".
+	 * 2. The variable kick_q tracks if more data will be placed
+	 *    on the ring. We will not signal if more data is
+	 *    to be placed.
+	 *
+	 * Based on the channel signal state, we will decide
+	 * which signaling policy will be applied.
+	 *
+	 * If we cannot write to the ring-buffer; signal the host
+	 * even if we may not have written anything. This is a rare
+	 * enough condition that it should not matter.
+	 */
+
+	if (channel->signal_policy)
+		signal = true;
+	else
+		kick_q = true;
+
+	if (((ret == 0) && kick_q && signal) || (ret))
+		vmbus_setevent(channel);
+
+	return ret;
+>>>>>>> upstream/rpi-4.4.y
 }
 EXPORT_SYMBOL_GPL(vmbus_sendpacket_pagebuffer_ctl);
 

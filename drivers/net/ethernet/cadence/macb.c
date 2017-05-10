@@ -2508,6 +2508,7 @@ static int macb_init(struct platform_device *pdev)
 		dev->hw_features &= ~NETIF_F_SG;
 	dev->features = dev->hw_features;
 
+<<<<<<< HEAD
 	if (!(bp->caps & MACB_CAPS_USRIO_DISABLED)) {
 		val = 0;
 		if (bp->phy_interface == PHY_INTERFACE_MODE_RGMII)
@@ -2517,6 +2518,16 @@ static int macb_init(struct platform_device *pdev)
 			val = MACB_BIT(RMII);
 		else if (!(bp->caps & MACB_CAPS_USRIO_DEFAULT_IS_MII_GMII))
 			val = MACB_BIT(MII);
+=======
+	val = 0;
+	if (bp->phy_interface == PHY_INTERFACE_MODE_RGMII)
+		val = GEM_BIT(RGMII);
+	else if (bp->phy_interface == PHY_INTERFACE_MODE_RMII &&
+		 (bp->caps & MACB_CAPS_USRIO_DEFAULT_IS_MII_GMII))
+		val = MACB_BIT(RMII);
+	else if (!(bp->caps & MACB_CAPS_USRIO_DEFAULT_IS_MII_GMII))
+		val = MACB_BIT(MII);
+>>>>>>> upstream/rpi-4.4.y
 
 		if (bp->caps & MACB_CAPS_USRIO_HAS_CLKEN)
 			val |= MACB_BIT(CLKEN);

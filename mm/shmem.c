@@ -2727,8 +2727,13 @@ static long shmem_fallocate(struct file *file, int mode, loff_t offset,
 			/* Remove the !PageUptodate pages we added */
 			if (index > start) {
 				shmem_undo_range(inode,
+<<<<<<< HEAD
 				    (loff_t)start << PAGE_SHIFT,
 				    ((loff_t)index << PAGE_SHIFT) - 1, true);
+=======
+				 (loff_t)start << PAGE_CACHE_SHIFT,
+				 ((loff_t)index << PAGE_CACHE_SHIFT) - 1, true);
+>>>>>>> upstream/rpi-4.4.y
 			}
 			goto undone;
 		}
@@ -3630,8 +3635,12 @@ static struct inode *shmem_alloc_inode(struct super_block *sb)
 static void shmem_destroy_callback(struct rcu_head *head)
 {
 	struct inode *inode = container_of(head, struct inode, i_rcu);
+<<<<<<< HEAD
 	if (S_ISLNK(inode->i_mode))
 		kfree(inode->i_link);
+=======
+	kfree(inode->i_link);
+>>>>>>> upstream/rpi-4.4.y
 	kmem_cache_free(shmem_inode_cachep, SHMEM_I(inode));
 }
 

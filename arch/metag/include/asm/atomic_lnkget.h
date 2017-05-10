@@ -62,6 +62,7 @@ static inline int atomic_##op##_return(int i, atomic_t *v)		\
 		"	BNZ 1b\n"					\
 		: "=&d" (temp), "=&da" (result)				\
 		: "da" (&v->counter), "br" (i)				\
+<<<<<<< HEAD
 		: "cc");						\
 									\
 	smp_mb();							\
@@ -86,6 +87,8 @@ static inline int atomic_fetch_##op(int i, atomic_t *v)			\
 		"	BNZ 1b\n"					\
 		: "=&d" (temp), "=&d" (result)				\
 		: "da" (&v->counter), "bd" (i)				\
+=======
+>>>>>>> upstream/rpi-4.4.y
 		: "cc");						\
 									\
 	smp_mb();							\

@@ -946,7 +946,10 @@ static noinline size_t if_nlmsg_size(const struct net_device *dev,
 	       + nla_total_size(MAX_PHYS_ITEM_ID_LEN) /* IFLA_PHYS_PORT_ID */
 	       + nla_total_size(MAX_PHYS_ITEM_ID_LEN) /* IFLA_PHYS_SWITCH_ID */
 	       + nla_total_size(IFNAMSIZ) /* IFLA_PHYS_PORT_NAME */
+<<<<<<< HEAD
 	       + rtnl_xdp_size(dev) /* IFLA_XDP */
+=======
+>>>>>>> upstream/rpi-4.4.y
 	       + nla_total_size(1); /* IFLA_PROTO_DOWN */
 
 }
@@ -1246,7 +1249,11 @@ static int rtnl_fill_link_ifmap(struct sk_buff *skb, struct net_device *dev)
 	map.dma         = dev->dma;
 	map.port        = dev->if_port;
 
+<<<<<<< HEAD
 	if (nla_put_64bit(skb, IFLA_MAP, sizeof(map), &map, IFLA_PAD))
+=======
+	if (nla_put(skb, IFLA_MAP, sizeof(map), &map))
+>>>>>>> upstream/rpi-4.4.y
 		return -EMSGSIZE;
 
 	return 0;

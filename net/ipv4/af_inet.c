@@ -1441,6 +1441,19 @@ __be32 inet_current_timestamp(void)
 }
 EXPORT_SYMBOL(inet_current_timestamp);
 
+static struct sk_buff **ipip_gro_receive(struct sk_buff **head,
+					 struct sk_buff *skb)
+{
+	if (NAPI_GRO_CB(skb)->encap_mark) {
+		NAPI_GRO_CB(skb)->flush = 1;
+		return NULL;
+	}
+
+	NAPI_GRO_CB(skb)->encap_mark = 1;
+
+	return inet_gro_receive(head, skb);
+}
+
 int inet_recv_error(struct sock *sk, struct msghdr *msg, int len, int *addr_len)
 {
 	if (sk->sk_family == AF_INET)
@@ -1490,6 +1503,13 @@ static int ipip_gro_complete(struct sk_buff *skb, int nhoff)
 {
 	skb->encapsulation = 1;
 	skb_shinfo(skb)->gso_type |= SKB_GSO_IPXIP4;
+	return inet_gro_complete(skb, nhoff);
+}
+
+static int ipip_gro_complete(struct sk_buff *skb, int nhoff)
+{
+	skb->encapsulation = 1;
+	skb_shinfo(skb)->gso_type |= SKB_GSO_IPIP;
 	return inet_gro_complete(skb, nhoff);
 }
 

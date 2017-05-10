@@ -286,6 +286,9 @@ struct mmc_card {
 #define MMC_QUIRK_ERASE_BROKEN	(1<<31)		/* Skip erase */
 
 
+#define MMC_QUIRK_ERASE_BROKEN	(1<<31)		/* Skip erase */
+
+
 	unsigned int		erase_size;	/* erase size in sectors */
  	unsigned int		erase_shift;	/* if erase unit is power 2 */
  	unsigned int		pref_erase;	/* in sectors */

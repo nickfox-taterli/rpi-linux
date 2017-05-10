@@ -1377,9 +1377,16 @@ zero_bind (struct usb_gadget *gadget)
 
 
 	/* ok, we made sense of the hardware ... */
+<<<<<<< HEAD
 	dev = kzalloc (sizeof *dev, SLAB_KERNEL);
 	if (!dev)
 		return -ENOMEM;
+=======
+	dev = kmalloc (sizeof *dev, SLAB_KERNEL);
+	if (!dev)
+		return -ENOMEM;
+	memset (dev, 0, sizeof *dev);
+>>>>>>> upstream/rpi-4.4.y
 	spin_lock_init (&dev->lock);
 	dev->gadget = gadget;
 	set_gadget_data (gadget, dev);

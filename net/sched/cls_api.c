@@ -348,8 +348,12 @@ replay:
 				struct tcf_proto *next = rtnl_dereference(tp->next);
 
 				tfilter_notify(net, skb, n, tp,
+<<<<<<< HEAD
 					       t->tcm_handle,
 					       RTM_DELTFILTER, false);
+=======
+					       t->tcm_handle, RTM_DELTFILTER);
+>>>>>>> upstream/rpi-4.4.y
 				if (tcf_destroy(tp, false))
 					RCU_INIT_POINTER(*back, next);
 			}

@@ -87,12 +87,24 @@ __do_hyp_init:
 #endif
 	/*
 	 * Read the PARange bits from ID_AA64MMFR0_EL1 and set the PS bits in
+<<<<<<< HEAD
 	 * TCR_EL2.
+=======
+	 * TCR_EL2 and VTCR_EL2.
+>>>>>>> upstream/rpi-4.4.y
 	 */
 	mrs	x5, ID_AA64MMFR0_EL1
 	bfi	x4, x5, #16, #3
 
 	msr	tcr_el2, x4
+<<<<<<< HEAD
+=======
+
+	ldr	x4, =VTCR_EL2_FLAGS
+	bfi	x4, x5, #16, #3
+
+	msr	vtcr_el2, x4
+>>>>>>> upstream/rpi-4.4.y
 
 	mrs	x4, mair_el1
 	msr	mair_el2, x4

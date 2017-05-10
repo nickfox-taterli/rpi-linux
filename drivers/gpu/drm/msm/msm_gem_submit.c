@@ -58,6 +58,7 @@ static struct msm_gem_submit *submit_create(struct drm_device *dev,
 	return submit;
 }
 
+<<<<<<< HEAD
 void msm_gem_submit_free(struct msm_gem_submit *submit)
 {
 	fence_put(submit->fence);
@@ -66,6 +67,8 @@ void msm_gem_submit_free(struct msm_gem_submit *submit)
 	kfree(submit);
 }
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 static inline unsigned long __must_check
 copy_from_user_inatomic(void *to, const void __user *from, unsigned long n)
 {
@@ -90,11 +93,14 @@ static int submit_lookup_objects(struct msm_gem_submit *submit,
 		void __user *userptr =
 			u64_to_user_ptr(args->bos + (i * sizeof(submit_bo)));
 
+<<<<<<< HEAD
 		/* make sure we don't have garbage flags, in case we hit
 		 * error path before flags is initialized:
 		 */
 		submit->bos[i].flags = 0;
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 		ret = copy_from_user_inatomic(&submit_bo, userptr, sizeof(submit_bo));
 		if (unlikely(ret)) {
 			pagefault_enable();

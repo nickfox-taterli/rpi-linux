@@ -93,11 +93,15 @@ static int tegra_reset_usb_controller(struct platform_device *pdev)
 	if (!usb1_reset_attempted) {
 		struct reset_control *usb1_reset;
 
+<<<<<<< HEAD
 		if (!has_utmi_pad_registers)
 			usb1_reset = of_reset_control_get(phy_np, "utmi-pads");
 		else
 			usb1_reset = tegra->rst;
 
+=======
+		usb1_reset = of_reset_control_get(phy_np, "utmi-pads");
+>>>>>>> upstream/rpi-4.4.y
 		if (IS_ERR(usb1_reset)) {
 			dev_warn(&pdev->dev,
 				 "can't get utmi-pads reset from the PHY\n");

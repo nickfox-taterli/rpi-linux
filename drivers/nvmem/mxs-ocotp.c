@@ -92,7 +92,11 @@ static int mxs_ocotp_read(void *context, unsigned int offset,
 	if (ret)
 		goto close_banks;
 
+<<<<<<< HEAD
 	while (bytes) {
+=======
+	while (val_size >= reg_size) {
+>>>>>>> upstream/rpi-4.4.y
 		if ((offset < OCOTP_DATA_OFFSET) || (offset % 16)) {
 			/* fill up non-data register */
 			*buf++ = 0;
@@ -100,8 +104,14 @@ static int mxs_ocotp_read(void *context, unsigned int offset,
 			*buf++ = readl(otp->base + offset);
 		}
 
+<<<<<<< HEAD
 		bytes -= 4;
 		offset += 4;
+=======
+		buf++;
+		val_size -= reg_size;
+		offset += reg_size;
+>>>>>>> upstream/rpi-4.4.y
 	}
 
 close_banks:

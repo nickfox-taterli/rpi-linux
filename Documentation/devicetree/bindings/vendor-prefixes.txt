@@ -41,7 +41,10 @@ avago	Avago Technologies
 avic	Shanghai AVIC Optoelectronics Co., Ltd.
 axis	Axis Communications AB
 blokaslabs	Vilniaus Blokas UAB
+<<<<<<< HEAD
 boe	BOE Technology Group Co., Ltd.
+=======
+>>>>>>> upstream/rpi-4.4.y
 bosch	Bosch Sensortec GmbH
 boundary	Boundary Devices Inc.
 brcm	Broadcom Corporation

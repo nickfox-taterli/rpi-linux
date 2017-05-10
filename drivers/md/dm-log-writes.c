@@ -277,7 +277,11 @@ static int log_one_block(struct log_writes_c *lc,
 				   block->vecs[i].bv_len, 0);
 		if (ret != block->vecs[i].bv_len) {
 			atomic_inc(&lc->io_blocks);
+<<<<<<< HEAD
 			submit_bio(bio);
+=======
+			submit_bio(WRITE, bio);
+>>>>>>> upstream/rpi-4.4.y
 			bio = bio_alloc(GFP_KERNEL, min(block->vec_cnt - i, BIO_MAX_PAGES));
 			if (!bio) {
 				DMERR("Couldn't alloc log bio");

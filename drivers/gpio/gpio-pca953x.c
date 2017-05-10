@@ -94,6 +94,7 @@ MODULE_DEVICE_TABLE(acpi, pca953x_acpi_ids);
 #define BANK_SZ 8
 
 #define NBANK(chip) DIV_ROUND_UP(chip->gpio_chip.ngpio, BANK_SZ)
+<<<<<<< HEAD
 
 struct pca953x_reg_config {
 	int direction;
@@ -112,6 +113,8 @@ static const struct pca953x_reg_config pca957x_regs = {
 	.output = PCA957X_OUT,
 	.input = PCA957X_IN,
 };
+=======
+>>>>>>> upstream/rpi-4.4.y
 
 struct pca953x_chip {
 	unsigned gpio_start;

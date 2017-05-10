@@ -558,7 +558,49 @@ early_idt_handler_common:
 
 	incl %ss:early_recursion_flag
 
+<<<<<<< HEAD
 	/* The vector number is in pt_regs->gs */
+=======
+	push %eax		# 16(%esp)
+	push %ecx		# 12(%esp)
+	push %edx		#  8(%esp)
+	push %ds		#  4(%esp)
+	push %es		#  0(%esp)
+	movl $(__KERNEL_DS),%eax
+	movl %eax,%ds
+	movl %eax,%es
+
+	cmpw $(__KERNEL_CS),32(%esp)
+	jne 10f
+
+	leal 28(%esp),%eax	# Pointer to %eip
+	call early_fixup_exception
+	andl %eax,%eax
+	jnz ex_entry		/* found an exception entry */
+
+10:
+#ifdef CONFIG_PRINTK
+	xorl %eax,%eax
+	movw %ax,2(%esp)	/* clean up the segment values on some cpus */
+	movw %ax,6(%esp)
+	movw %ax,34(%esp)
+	leal  40(%esp),%eax
+	pushl %eax		/* %esp before the exception */
+	pushl %ebx
+	pushl %ebp
+	pushl %esi
+	pushl %edi
+	movl %cr2,%eax
+	pushl %eax
+	pushl (20+6*4)(%esp)	/* trapno */
+	pushl $fault_msg
+	call printk
+#endif
+	call dump_stack
+hlt_loop:
+	hlt
+	jmp hlt_loop
+>>>>>>> upstream/rpi-4.4.y
 
 	cld
 	pushl	%fs		/* pt_regs->fs */

@@ -27,7 +27,10 @@
 #include <asm/cpufeature.h>
 #include <asm/errno.h>
 #include <asm/esr.h>
+<<<<<<< HEAD
 #include <asm/irq.h>
+=======
+>>>>>>> upstream/rpi-4.4.y
 #include <asm/memory.h>
 #include <asm/thread_info.h>
 #include <asm/unistd.h>
@@ -104,7 +107,10 @@
 	str	x20, [sp, #S_ORIG_ADDR_LIMIT]
 	mov	x20, #TASK_SIZE_64
 	str	x20, [tsk, #TI_ADDR_LIMIT]
+<<<<<<< HEAD
 	/* No need to reset PSTATE.UAO, hardware's already set it to 0 for us */
+=======
+>>>>>>> upstream/rpi-4.4.y
 	.endif /* \el == 0 */
 	mrs	x22, elr_el1
 	mrs	x23, spsr_el1
@@ -140,8 +146,11 @@
 	/* Restore the task's original addr_limit. */
 	ldr	x20, [sp, #S_ORIG_ADDR_LIMIT]
 	str	x20, [tsk, #TI_ADDR_LIMIT]
+<<<<<<< HEAD
 
 	/* No need to restore UAO, it will be restored from SPSR_EL1 */
+=======
+>>>>>>> upstream/rpi-4.4.y
 	.endif
 
 	ldp	x21, x22, [sp, #S_PC]		// load ELR, SPSR

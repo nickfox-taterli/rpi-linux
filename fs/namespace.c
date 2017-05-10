@@ -2484,6 +2484,29 @@ static int do_new_mount(struct path *path, const char *fstype, int flags,
 	if (!type)
 		return -ENODEV;
 
+<<<<<<< HEAD
+=======
+	if (user_ns != &init_user_ns) {
+		if (!(type->fs_flags & FS_USERNS_MOUNT)) {
+			put_filesystem(type);
+			return -EPERM;
+		}
+		/* Only in special cases allow devices from mounts
+		 * created outside the initial user namespace.
+		 */
+		if (!(type->fs_flags & FS_USERNS_DEV_MOUNT)) {
+			flags |= MS_NODEV;
+			mnt_flags |= MNT_NODEV | MNT_LOCK_NODEV;
+		}
+		if (type->fs_flags & FS_USERNS_VISIBLE) {
+			if (!fs_fully_visible(type, &mnt_flags)) {
+				put_filesystem(type);
+				return -EPERM;
+			}
+		}
+	}
+
+>>>>>>> upstream/rpi-4.4.y
 	mnt = vfs_kern_mount(type, flags, name, data);
 	if (!IS_ERR(mnt) && (type->fs_flags & FS_HAS_SUBTYPE) &&
 	    !mnt->mnt_sb->s_subtype)
@@ -3337,6 +3360,10 @@ static bool mnt_already_visible(struct mnt_namespace *ns, struct vfsmount *new,
 
 		/* A local view of the mount flags */
 		mnt_flags = mnt->mnt.mnt_flags;
+
+		/* Don't miss readonly hidden in the superblock flags */
+		if (mnt->mnt.mnt_sb->s_flags & MS_RDONLY)
+			mnt_flags |= MNT_LOCK_READONLY;
 
 		/* Don't miss readonly hidden in the superblock flags */
 		if (mnt->mnt.mnt_sb->s_flags & MS_RDONLY)

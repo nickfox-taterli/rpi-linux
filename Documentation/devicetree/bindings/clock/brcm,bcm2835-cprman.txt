@@ -20,9 +20,12 @@ Required properties:
 		  the following order:
 
 		  - External oscillator
+<<<<<<< HEAD
 		  - DSI0 byte clock
 		  - DSI0 DDR2 clock
 		  - DSI0 DDR clock
+=======
+>>>>>>> upstream/rpi-4.4.y
 		  - DSI1 byte clock
 		  - DSI1 DDR2 clock
 		  - DSI1 DDR clock

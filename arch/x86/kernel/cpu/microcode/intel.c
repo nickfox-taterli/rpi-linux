@@ -537,6 +537,40 @@ static bool __init load_builtin_intel_microcode(struct cpio_data *cp)
 #endif
 }
 
+<<<<<<< HEAD
+=======
+static __initdata char ucode_name[] = "kernel/x86/microcode/GenuineIntel.bin";
+static __init enum ucode_state
+scan_microcode(struct mc_saved_data *mc_saved_data, unsigned long *initrd,
+	       unsigned long start, unsigned long size,
+	       struct ucode_cpu_info *uci)
+{
+	struct cpio_data cd;
+	long offset = 0;
+#ifdef CONFIG_X86_32
+	char *p = (char *)__pa_nodebug(ucode_name);
+#else
+	char *p = ucode_name;
+#endif
+
+	cd.data = NULL;
+	cd.size = 0;
+
+	/* try built-in microcode if no initrd */
+	if (!size) {
+		if (!load_builtin_intel_microcode(&cd))
+			return UCODE_ERROR;
+	} else {
+		cd = find_cpio_data(p, (void *)start, size, &offset);
+		if (!cd.data)
+			return UCODE_ERROR;
+	}
+
+	return get_matching_model_microcode(0, start, cd.data, cd.size,
+					    mc_saved_data, initrd, uci);
+}
+
+>>>>>>> upstream/rpi-4.4.y
 /*
  * Print ucode update info.
  */
@@ -671,6 +705,10 @@ int __init save_microcode_in_initrd_intel(void)
 
 	copy_ptrs(mc_saved, mc_tmp_ptrs, offset, count);
 
+<<<<<<< HEAD
+=======
+	copy_initrd_ptrs(mc_saved, mc_saved_in_initrd, get_initrd_start(), count);
+>>>>>>> upstream/rpi-4.4.y
 	ret = save_microcode(&mc_saved_data, mc_saved, count);
 	if (ret)
 		pr_err("Cannot save microcode patches from initrd.\n");
@@ -773,6 +811,7 @@ _load_ucode_intel_bsp(struct mc_saved_data *mcs, unsigned long *mc_ptrs,
 
 void __init load_ucode_intel_bsp(void)
 {
+<<<<<<< HEAD
 	struct ucode_blobs *blobs_p;
 	struct mc_saved_data *mcs;
 	unsigned long *ptrs;
@@ -785,6 +824,29 @@ void __init load_ucode_intel_bsp(void)
 	mcs	= &mc_saved_data;
 	ptrs	= mc_tmp_ptrs;
 	blobs_p = &blobs;
+=======
+	u64 start, size;
+#ifdef CONFIG_X86_32
+	struct boot_params *p;
+
+	p	= (struct boot_params *)__pa_nodebug(&boot_params);
+	size	= p->hdr.ramdisk_size;
+
+	/*
+	 * Set start only if we have an initrd image. We cannot use initrd_start
+	 * because it is not set that early yet.
+	 */
+	start	= (size ? p->hdr.ramdisk_image : 0);
+
+	_load_ucode_intel_bsp((struct mc_saved_data *)__pa_nodebug(&mc_saved_data),
+			      (unsigned long *)__pa_nodebug(&mc_saved_in_initrd),
+			      start, size);
+#else
+	size	= boot_params.hdr.ramdisk_size;
+	start	= (size ? boot_params.hdr.ramdisk_image + PAGE_OFFSET : 0);
+
+	_load_ucode_intel_bsp(&mc_saved_data, mc_saved_in_initrd, start, size);
+>>>>>>> upstream/rpi-4.4.y
 #endif
 
 	_load_ucode_intel_bsp(mcs, ptrs, blobs_p);
@@ -796,6 +858,7 @@ void load_ucode_intel_ap(void)
 	unsigned long *ptrs, start = 0;
 	struct mc_saved_data *mcs;
 	struct ucode_cpu_info uci;
+<<<<<<< HEAD
 	enum ucode_state ret;
 
 #ifdef CONFIG_X86_32
@@ -806,6 +869,17 @@ void load_ucode_intel_ap(void)
 	mcs	= &mc_saved_data;
 	ptrs	= mc_tmp_ptrs;
 	blobs_p = &blobs;
+=======
+	unsigned long *mc_saved_in_initrd_p;
+	enum ucode_state ret;
+#ifdef CONFIG_X86_32
+
+	mc_saved_in_initrd_p = (unsigned long *)__pa_nodebug(mc_saved_in_initrd);
+	mc_saved_data_p = (struct mc_saved_data *)__pa_nodebug(&mc_saved_data);
+#else
+	mc_saved_in_initrd_p = mc_saved_in_initrd;
+	mc_saved_data_p = &mc_saved_data;
+>>>>>>> upstream/rpi-4.4.y
 #endif
 
 	/*
@@ -815,8 +889,14 @@ void load_ucode_intel_ap(void)
 	if (!mcs->num_saved)
 		return;
 
+<<<<<<< HEAD
 	if (blobs_p->valid) {
 		start = blobs_p->start;
+=======
+	collect_cpu_info_early(&uci);
+	ret = load_microcode(mc_saved_data_p, mc_saved_in_initrd_p,
+			     get_initrd_start_addr(), &uci);
+>>>>>>> upstream/rpi-4.4.y
 
 		/*
 		 * Pay attention to CONFIG_RANDOMIZE_MEMORY=y as it shuffles

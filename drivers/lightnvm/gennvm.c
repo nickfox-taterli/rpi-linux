@@ -284,6 +284,10 @@ static int gen_block_bb(struct gen_dev *gn, struct ppa_addr ppa,
 
 		blk = &lun->vlun.blocks[i];
 		list_move_tail(&blk->list, &lun->bb_list);
+<<<<<<< HEAD
+=======
+		lun->vlun.nr_bad_blocks++;
+>>>>>>> upstream/rpi-4.4.y
 		lun->vlun.nr_free_blocks--;
 	}
 
@@ -524,7 +528,50 @@ static void gen_put_blk(struct nvm_dev *dev, struct nvm_block *blk)
 
 static void gen_mark_blk(struct nvm_dev *dev, struct ppa_addr ppa, int type)
 {
+<<<<<<< HEAD
 	struct gen_dev *gn = dev->mp;
+=======
+	int i;
+
+	if (rqd->nr_pages > 1) {
+		for (i = 0; i < rqd->nr_pages; i++)
+			rqd->ppa_list[i] = dev_to_generic_addr(dev,
+							rqd->ppa_list[i]);
+	} else {
+		rqd->ppa_addr = dev_to_generic_addr(dev, rqd->ppa_addr);
+	}
+}
+
+static void gennvm_generic_to_addr_mode(struct nvm_dev *dev, struct nvm_rq *rqd)
+{
+	int i;
+
+	if (rqd->nr_pages > 1) {
+		for (i = 0; i < rqd->nr_pages; i++)
+			rqd->ppa_list[i] = generic_to_dev_addr(dev,
+							rqd->ppa_list[i]);
+	} else {
+		rqd->ppa_addr = generic_to_dev_addr(dev, rqd->ppa_addr);
+	}
+}
+
+static int gennvm_submit_io(struct nvm_dev *dev, struct nvm_rq *rqd)
+{
+	if (!dev->ops->submit_io)
+		return -ENODEV;
+
+	/* Convert address space */
+	gennvm_generic_to_addr_mode(dev, rqd);
+
+	rqd->dev = dev;
+	return dev->ops->submit_io(dev, rqd);
+}
+
+static void gennvm_blk_set_type(struct nvm_dev *dev, struct ppa_addr *ppa,
+								int type)
+{
+	struct gen_nvm *gn = dev->mp;
+>>>>>>> upstream/rpi-4.4.y
 	struct gen_lun *lun;
 	struct nvm_block *blk;
 

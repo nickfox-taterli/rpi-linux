@@ -1334,6 +1334,10 @@ static int decode_new_up_state_weight(void **p, void *end,
 		if ((map->osd_state[osd] & CEPH_OSD_EXISTS) &&
 		    (xorstate & CEPH_OSD_EXISTS)) {
 			pr_info("osd%d does not exist\n", osd);
+<<<<<<< HEAD
+=======
+			map->osd_weight[osd] = CEPH_OSD_IN;
+>>>>>>> upstream/rpi-4.4.y
 			ret = set_primary_affinity(map, osd,
 						   CEPH_OSD_DEFAULT_PRIMARY_AFFINITY);
 			if (ret)

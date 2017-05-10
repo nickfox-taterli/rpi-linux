@@ -258,6 +258,11 @@ void ip_tunnel_xmit(struct sk_buff *skb, struct net_device *dev,
 void ip_md_tunnel_xmit(struct sk_buff *skb, struct net_device *dev,
 		       const u8 proto);
 int ip_tunnel_ioctl(struct net_device *dev, struct ip_tunnel_parm *p, int cmd);
+<<<<<<< HEAD
+=======
+int ip_tunnel_encap(struct sk_buff *skb, struct ip_tunnel *t,
+		    u8 *protocol, struct flowi4 *fl4);
+>>>>>>> upstream/rpi-4.4.y
 int __ip_tunnel_change_mtu(struct net_device *dev, int new_mtu, bool strict);
 int ip_tunnel_change_mtu(struct net_device *dev, int new_mtu);
 
@@ -391,7 +396,29 @@ static inline int iptunnel_pull_offloads(struct sk_buff *skb)
 	return 0;
 }
 
+<<<<<<< HEAD
 static inline void iptunnel_xmit_stats(struct net_device *dev, int pkt_len)
+=======
+static inline int iptunnel_pull_offloads(struct sk_buff *skb)
+{
+	if (skb_is_gso(skb)) {
+		int err;
+
+		err = skb_unclone(skb, GFP_ATOMIC);
+		if (unlikely(err))
+			return err;
+		skb_shinfo(skb)->gso_type &= ~(NETIF_F_GSO_ENCAP_ALL >>
+					       NETIF_F_GSO_SHIFT);
+	}
+
+	skb->encapsulation = 0;
+	return 0;
+}
+
+static inline void iptunnel_xmit_stats(int err,
+				       struct net_device_stats *err_stats,
+				       struct pcpu_sw_netstats __percpu *stats)
+>>>>>>> upstream/rpi-4.4.y
 {
 	if (pkt_len > 0) {
 		struct pcpu_sw_netstats *tstats = get_cpu_ptr(dev->tstats);

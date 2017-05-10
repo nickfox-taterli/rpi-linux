@@ -117,15 +117,22 @@ static ssize_t sysfs_kf_read(struct kernfs_open_file *of, char *buf,
 	if (WARN_ON_ONCE(buf != of->prealloc_buf))
 		return 0;
 	len = ops->show(kobj, of->kn->priv, buf);
+<<<<<<< HEAD
 	if (len < 0)
 		return len;
+=======
+>>>>>>> upstream/rpi-4.4.y
 	if (pos) {
 		if (len <= pos)
 			return 0;
 		len -= pos;
 		memmove(buf, buf + pos, len);
 	}
+<<<<<<< HEAD
 	return min_t(ssize_t, count, len);
+=======
+	return min(count, len);
+>>>>>>> upstream/rpi-4.4.y
 }
 
 /* kernfs write callback for regular sysfs files */

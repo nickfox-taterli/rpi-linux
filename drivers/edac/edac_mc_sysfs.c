@@ -1016,12 +1016,19 @@ void edac_remove_sysfs_mci_device(struct mem_ctl_info *mci)
 
 void edac_unregister_sysfs(struct mem_ctl_info *mci)
 {
+<<<<<<< HEAD
 	struct bus_type *bus = mci->bus;
+=======
+>>>>>>> upstream/rpi-4.4.y
 	const char *name = mci->bus->name;
 
 	edac_dbg(1, "Unregistering device %s\n", dev_name(&mci->dev));
 	device_unregister(&mci->dev);
+<<<<<<< HEAD
 	bus_unregister(bus);
+=======
+	bus_unregister(mci->bus);
+>>>>>>> upstream/rpi-4.4.y
 	kfree(name);
 }
 

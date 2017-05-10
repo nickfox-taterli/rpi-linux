@@ -610,6 +610,7 @@ static int rockchip_pm_domain_probe(struct platform_device *pdev)
 			dev_err(dev, "failed to handle node %s: %d\n",
 				node->name, error);
 			of_node_put(node);
+<<<<<<< HEAD
 			goto err_out;
 		}
 
@@ -618,6 +619,8 @@ static int rockchip_pm_domain_probe(struct platform_device *pdev)
 			dev_err(dev, "failed to handle subdomain node %s: %d\n",
 				node->name, error);
 			of_node_put(node);
+=======
+>>>>>>> upstream/rpi-4.4.y
 			goto err_out;
 		}
 	}

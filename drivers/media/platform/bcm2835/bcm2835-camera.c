@@ -242,9 +242,15 @@ static struct mmal_fmt *get_format(struct v4l2_format *f)
 	Videobuf queue operations
    ------------------------------------------------------------------*/
 
+<<<<<<< HEAD
 static int queue_setup(struct vb2_queue *vq,
 		       unsigned int *nbuffers, unsigned int *nplanes,
 		       unsigned int sizes[], struct device *alloc_ctxs[])
+=======
+static int queue_setup(struct vb2_queue *vq, const void *parg,
+		       unsigned int *nbuffers, unsigned int *nplanes,
+		       unsigned int sizes[], void *alloc_ctxs[])
+>>>>>>> upstream/rpi-4.4.y
 {
 	struct bm2835_mmal_dev *dev = vb2_get_drv_priv(vq);
 	unsigned long size;
@@ -356,6 +362,7 @@ static void buffer_cb(struct vchiq_mmal_instance *instance,
 		}
 	} else {
 		if (dev->capture.frame_count) {
+<<<<<<< HEAD
 			if (dev->capture.vc_start_timestamp == -1) {
 				buf->vb.vb2_buf.timestamp = ktime_get_ns();
 				v4l2_dbg(1, bcm2835_v4l2_debug, &dev->v4l2_dev,
@@ -364,6 +371,10 @@ static void buffer_cb(struct vchiq_mmal_instance *instance,
 
 			} else if(pts != 0) {
 				struct timeval timestamp;
+=======
+			if (dev->capture.vc_start_timestamp != -1 &&
+			    pts != 0) {
+>>>>>>> upstream/rpi-4.4.y
 				s64 runtime_us = pts -
 				    dev->capture.vc_start_timestamp;
 				u32 div = 0;
@@ -371,6 +382,7 @@ static void buffer_cb(struct vchiq_mmal_instance *instance,
 
 				div =
 				    div_u64_rem(runtime_us, USEC_PER_SEC, &rem);
+<<<<<<< HEAD
 				timestamp.tv_sec =
 				    dev->capture.kernel_start_ts.tv_sec + div;
 				timestamp.tv_usec =
@@ -380,6 +392,17 @@ static void buffer_cb(struct vchiq_mmal_instance *instance,
 				    USEC_PER_SEC) {
 					timestamp.tv_sec++;
 					timestamp.tv_usec -=
+=======
+				buf->vb.timestamp.tv_sec =
+				    dev->capture.kernel_start_ts.tv_sec + div;
+				buf->vb.timestamp.tv_usec =
+				    dev->capture.kernel_start_ts.tv_usec + rem;
+
+				if (buf->vb.timestamp.tv_usec >=
+				    USEC_PER_SEC) {
+					buf->vb.timestamp.tv_sec++;
+					buf->vb.timestamp.tv_usec -=
+>>>>>>> upstream/rpi-4.4.y
 					    USEC_PER_SEC;
 				}
 				v4l2_dbg(1, bcm2835_v4l2_debug, &dev->v4l2_dev,
@@ -390,6 +413,7 @@ static void buffer_cb(struct vchiq_mmal_instance *instance,
 					 (int)dev->capture.kernel_start_ts.
 					 tv_usec,
 					 dev->capture.vc_start_timestamp, pts,
+<<<<<<< HEAD
 					 (int)timestamp.tv_sec,
 					 (int)timestamp.tv_usec);
 				buf->vb.vb2_buf.timestamp = timestamp.tv_sec * 1000000000ULL +
@@ -419,6 +443,16 @@ static void buffer_cb(struct vchiq_mmal_instance *instance,
 			v4l2_dbg(1, bcm2835_v4l2_debug, &dev->v4l2_dev,
 				"Buffer has ts %llu",
 				dev->capture.last_timestamp);
+=======
+					 (int)buf->vb.timestamp.tv_sec,
+					 (int)buf->vb.timestamp.
+					 tv_usec);
+			} else {
+				v4l2_get_timestamp(&buf->vb.timestamp);
+			}
+
+			vb2_set_plane_payload(&buf->vb.vb2_buf, 0, length);
+>>>>>>> upstream/rpi-4.4.y
 			vb2_buffer_done(&buf->vb.vb2_buf, VB2_BUF_STATE_DONE);
 
 			if (mmal_flags & MMAL_BUFFER_HEADER_FLAG_EOS &&
@@ -584,8 +618,11 @@ static int start_streaming(struct vb2_queue *vq, unsigned int count)
 			 "Start time %lld size %d\n",
 			 dev->capture.vc_start_timestamp, parameter_size);
 
+<<<<<<< HEAD
 	dev->capture.last_timestamp = 0;
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 	v4l2_get_timestamp(&dev->capture.kernel_start_ts);
 
 	/* enable the camera port */

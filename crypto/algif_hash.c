@@ -39,6 +39,7 @@ struct algif_hash_tfm {
 	bool has_key;
 };
 
+<<<<<<< HEAD
 static int hash_alloc_result(struct sock *sk, struct hash_ctx *ctx)
 {
 	unsigned ds;
@@ -70,6 +71,8 @@ static void hash_free_result(struct sock *sk, struct hash_ctx *ctx)
 	ctx->result = NULL;
 }
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 static int hash_sendmsg(struct socket *sock, struct msghdr *msg,
 			size_t ignored)
 {
@@ -85,9 +88,12 @@ static int hash_sendmsg(struct socket *sock, struct msghdr *msg,
 
 	lock_sock(sk);
 	if (!ctx->more) {
+<<<<<<< HEAD
 		if ((msg->msg_flags & MSG_MORE))
 			hash_free_result(sk, ctx);
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 		err = af_alg_wait_for_completion(crypto_ahash_init(&ctx->req),
 						&ctx->completion);
 		if (err)
@@ -467,6 +473,10 @@ static int hash_accept_parent_nokey(void *private, struct sock *sk)
 	struct algif_hash_tfm *tfm = private;
 	struct crypto_ahash *hash = tfm->hash;
 	unsigned len = sizeof(*ctx) + crypto_ahash_reqsize(hash);
+<<<<<<< HEAD
+=======
+	unsigned ds = crypto_ahash_digestsize(hash);
+>>>>>>> upstream/rpi-4.4.y
 
 	ctx = sock_kmalloc(sk, len, GFP_KERNEL);
 	if (!ctx)

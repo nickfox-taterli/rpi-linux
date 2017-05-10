@@ -170,7 +170,10 @@ static int vc4_hvs_bind(struct device *dev, struct device *master, void *data)
 	struct vc4_dev *vc4 = drm->dev_private;
 	struct vc4_hvs *hvs = NULL;
 	int ret;
+<<<<<<< HEAD
 	u32 dispctrl;
+=======
+>>>>>>> upstream/rpi-4.4.y
 
 	hvs = devm_kzalloc(&pdev->dev, sizeof(*hvs), GFP_KERNEL);
 	if (!hvs)

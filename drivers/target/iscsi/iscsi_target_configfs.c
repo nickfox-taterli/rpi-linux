@@ -1512,13 +1512,30 @@ static int lio_tpg_check_prot_fabric_only(
 }
 
 /*
+<<<<<<< HEAD
  * This function calls iscsit_inc_session_usage_count() on the
+=======
+ * Called with spin_lock_irq(struct se_portal_group->session_lock) held
+ * or not held.
+ *
+ * Also, this function calls iscsit_inc_session_usage_count() on the
+>>>>>>> upstream/rpi-4.4.y
  * struct iscsi_session in question.
  */
 static void lio_tpg_close_session(struct se_session *se_sess)
 {
 	struct iscsi_session *sess = se_sess->fabric_sess_ptr;
+<<<<<<< HEAD
 	struct se_portal_group *se_tpg = &sess->tpg->tpg_se_tpg;
+=======
+	struct se_portal_group *se_tpg = se_sess->se_tpg;
+	bool local_lock = false;
+
+	if (!spin_is_locked(&se_tpg->session_lock)) {
+		spin_lock_irq(&se_tpg->session_lock);
+		local_lock = true;
+	}
+>>>>>>> upstream/rpi-4.4.y
 
 	spin_lock_bh(&se_tpg->session_lock);
 	spin_lock(&sess->conn_lock);
@@ -1526,14 +1543,28 @@ static void lio_tpg_close_session(struct se_session *se_sess)
 	    atomic_read(&sess->session_logout) ||
 	    (sess->time2retain_timer_flags & ISCSI_TF_EXPIRED)) {
 		spin_unlock(&sess->conn_lock);
+<<<<<<< HEAD
 		spin_unlock_bh(&se_tpg->session_lock);
 		return;
+=======
+		if (local_lock)
+			spin_unlock_irq(&sess->conn_lock);
+		return 0;
+>>>>>>> upstream/rpi-4.4.y
 	}
 	atomic_set(&sess->session_reinstatement, 1);
 	spin_unlock(&sess->conn_lock);
 
 	iscsit_stop_time2retain_timer(sess);
+<<<<<<< HEAD
 	spin_unlock_bh(&se_tpg->session_lock);
+=======
+	spin_unlock_irq(&se_tpg->session_lock);
+
+	iscsit_stop_session(sess, 1, 1);
+	if (!local_lock)
+		spin_lock_irq(&se_tpg->session_lock);
+>>>>>>> upstream/rpi-4.4.y
 
 	iscsit_stop_session(sess, 1, 1);
 	iscsit_close_session(sess);

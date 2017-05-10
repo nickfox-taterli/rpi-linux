@@ -132,6 +132,7 @@ static bool have_full_constraints(void)
 	return has_full_constraints || of_have_populated_dt();
 }
 
+<<<<<<< HEAD
 static bool regulator_ops_is_valid(struct regulator_dev *rdev, int ops)
 {
 	if (!rdev->constraints) {
@@ -145,6 +146,8 @@ static bool regulator_ops_is_valid(struct regulator_dev *rdev, int ops)
 	return false;
 }
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 static inline struct regulator_dev *rdev_get_supply(struct regulator_dev *rdev)
 {
 	if (rdev && rdev->supply)

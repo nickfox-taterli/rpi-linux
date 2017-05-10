@@ -654,8 +654,12 @@ static int ipip6_rcv(struct sk_buff *skb)
 			goto out;
 		}
 
+<<<<<<< HEAD
 		if (iptunnel_pull_header(skb, 0, htons(ETH_P_IPV6),
 		    !net_eq(tunnel->net, dev_net(tunnel->dev))))
+=======
+		if (iptunnel_pull_header(skb, 0, htons(ETH_P_IPV6)))
+>>>>>>> upstream/rpi-4.4.y
 			goto out;
 
 		err = IP_ECN_decapsulate(iph, skb);
@@ -1391,7 +1395,11 @@ static int ipip6_tunnel_init(struct net_device *dev)
 	if (err) {
 		free_percpu(dev->tstats);
 		dev->tstats = NULL;
+<<<<<<< HEAD
 		return err;
+=======
+		return -ENOMEM;
+>>>>>>> upstream/rpi-4.4.y
 	}
 
 	return 0;

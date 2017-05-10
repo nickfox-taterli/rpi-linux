@@ -148,16 +148,26 @@ efivarfs_ioc_setxflags(struct file *file, void __user *arg)
 	if (error)
 		return error;
 
+<<<<<<< HEAD
 	inode_lock(inode);
 	inode_set_flags(inode, i_flags, S_IMMUTABLE);
 	inode_unlock(inode);
+=======
+	mutex_lock(&inode->i_mutex);
+	inode_set_flags(inode, i_flags, S_IMMUTABLE);
+	mutex_unlock(&inode->i_mutex);
+>>>>>>> upstream/rpi-4.4.y
 
 	mnt_drop_write_file(file);
 
 	return 0;
 }
 
+<<<<<<< HEAD
 static long
+=======
+long
+>>>>>>> upstream/rpi-4.4.y
 efivarfs_file_ioctl(struct file *file, unsigned int cmd, unsigned long p)
 {
 	void __user *arg = (void __user *)p;

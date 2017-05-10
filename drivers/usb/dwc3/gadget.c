@@ -183,6 +183,7 @@ void dwc3_gadget_giveback(struct dwc3_ep *dep, struct dwc3_request *req,
 	if (req->request.status == -EINPROGRESS)
 		req->request.status = status;
 
+<<<<<<< HEAD
 	/*
 	 * NOTICE we don't want to unmap before calling ->complete() if we're
 	 * dealing with a bounced ep0 request. If we unmap it here, we would end
@@ -196,6 +197,13 @@ void dwc3_gadget_giveback(struct dwc3_ep *dep, struct dwc3_request *req,
 		usb_gadget_unmap_request(&dwc->gadget,
 				&req->request, req->direction);
 	}
+=======
+	if (dwc->ep0_bounced && dep->number <= 1)
+		dwc->ep0_bounced = false;
+
+	usb_gadget_unmap_request(&dwc->gadget, &req->request,
+			req->direction);
+>>>>>>> upstream/rpi-4.4.y
 
 	trace_dwc3_gadget_giveback(req);
 
@@ -448,6 +456,7 @@ static int dwc3_gadget_start_config(struct dwc3 *dwc, struct dwc3_ep *dep)
 	memset(&params, 0x00, sizeof(params));
 	cmd = DWC3_DEPCMD_DEPSTARTCFG;
 
+<<<<<<< HEAD
 	ret = dwc3_send_gadget_ep_cmd(dep, cmd, &params);
 	if (ret)
 		return ret;
@@ -458,6 +467,18 @@ static int dwc3_gadget_start_config(struct dwc3 *dwc, struct dwc3_ep *dep)
 		if (!dep)
 			continue;
 
+=======
+	ret = dwc3_send_gadget_ep_cmd(dwc, 0, cmd, &params);
+	if (ret)
+		return ret;
+
+	for (i = 0; i < DWC3_ENDPOINTS_NUM; i++) {
+		struct dwc3_ep *dep = dwc->eps[i];
+
+		if (!dep)
+			continue;
+
+>>>>>>> upstream/rpi-4.4.y
 		ret = dwc3_gadget_set_xfer_resource(dwc, dep);
 		if (ret)
 			return ret;
@@ -1643,6 +1664,7 @@ static int __dwc3_gadget_start(struct dwc3 *dwc)
 	}
 	dwc3_writel(dwc->regs, DWC3_DCFG, reg);
 
+<<<<<<< HEAD
 	/*
 	 * We are telling dwc3 that we want to use DCFG.NUMP as ACK TP's NUMP
 	 * field instead of letting dwc3 itself calculate that automatically.
@@ -1656,6 +1678,8 @@ static int __dwc3_gadget_start(struct dwc3 *dwc)
 
 	dwc3_gadget_setup_nump(dwc);
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 	/* Start with SuperSpeed Default */
 	dwc3_gadget_ep0_desc.wMaxPacketSize = cpu_to_le16(512);
 
@@ -1957,7 +1981,15 @@ static int __dwc3_cleanup_done_trbs(struct dwc3 *dwc, struct dwc3_ep *dep,
 			s_pkt = 1;
 	}
 
+<<<<<<< HEAD
 	if (s_pkt && !chain)
+=======
+	if (s_pkt)
+		return 1;
+	if ((event->status & DEPEVT_STATUS_LST) &&
+			(trb->ctrl & (DWC3_TRB_CTRL_LST |
+				DWC3_TRB_CTRL_HWO)))
+>>>>>>> upstream/rpi-4.4.y
 		return 1;
 
 	if ((event->status & DEPEVT_STATUS_IOC) &&
@@ -1972,6 +2004,7 @@ static int dwc3_cleanup_done_reqs(struct dwc3 *dwc, struct dwc3_ep *dep,
 {
 	struct dwc3_request	*req, *n;
 	struct dwc3_trb		*trb;
+<<<<<<< HEAD
 	bool			ioc = false;
 	int			ret;
 
@@ -1979,6 +2012,29 @@ static int dwc3_cleanup_done_reqs(struct dwc3 *dwc, struct dwc3_ep *dep,
 		unsigned length;
 		unsigned actual;
 		int chain;
+=======
+	unsigned int		slot;
+	unsigned int		i;
+	int			count = 0;
+	int			ret;
+
+	do {
+		req = next_request(&dep->req_queued);
+		if (!req) {
+			WARN_ON_ONCE(1);
+			return 1;
+		}
+		i = 0;
+		do {
+			slot = req->start_slot + i;
+			if ((slot == DWC3_TRB_NUM - 1) &&
+				usb_endpoint_xfer_isoc(dep->endpoint.desc))
+				slot++;
+			slot %= DWC3_TRB_NUM;
+			trb = &dep->trb_pool[slot];
+			count += trb->size & DWC3_TRB_SIZE_MASK;
+
+>>>>>>> upstream/rpi-4.4.y
 
 		length = req->request.length;
 		chain = req->num_pending_sgs > 0;
@@ -2018,6 +2074,14 @@ static int dwc3_cleanup_done_reqs(struct dwc3 *dwc, struct dwc3_ep *dep,
 		if (ret && chain && (actual < length) && req->num_pending_sgs)
 			return __dwc3_gadget_kick_transfer(dep, 0);
 
+		/*
+		 * We assume here we will always receive the entire data block
+		 * which we should receive. Meaning, if we program RX to
+		 * receive 4K but we receive only 2K, we assume that's all we
+		 * should receive and we simply bounce the request back to the
+		 * gadget driver for further processing.
+		 */
+		req->request.actual += req->request.length - count;
 		dwc3_gadget_giveback(dep, req, status);
 
 		if (ret) {
@@ -2053,9 +2117,16 @@ static int dwc3_cleanup_done_reqs(struct dwc3 *dwc, struct dwc3_ep *dep,
 		return 1;
 	}
 
+<<<<<<< HEAD
 	if (usb_endpoint_xfer_isoc(dep->endpoint.desc) && ioc)
 		return 0;
 
+=======
+	if (usb_endpoint_xfer_isoc(dep->endpoint.desc))
+		if ((event->status & DEPEVT_STATUS_IOC) &&
+				(trb->ctrl & DWC3_TRB_CTRL_IOC))
+			return 0;
+>>>>>>> upstream/rpi-4.4.y
 	return 1;
 }
 

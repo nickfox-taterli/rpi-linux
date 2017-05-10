@@ -319,6 +319,11 @@ int snd_timer_open(struct snd_timer_instance **ti,
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+static int _snd_timer_stop(struct snd_timer_instance *timeri, int event);
+
+>>>>>>> upstream/rpi-4.4.y
 /*
  * close a timer instance
  */
@@ -346,7 +351,15 @@ int snd_timer_close(struct snd_timer_instance *timeri)
 			spin_lock_irq(&timer->lock);
 		}
 		spin_unlock_irq(&timer->lock);
+<<<<<<< HEAD
 
+=======
+		mutex_lock(&register_mutex);
+		list_del(&timeri->open_list);
+		if (list_empty(&timer->open_list_head) &&
+		    timer->hw.close)
+			timer->hw.close(timer);
+>>>>>>> upstream/rpi-4.4.y
 		/* remove slave links */
 		spin_lock_irq(&slave_active_lock);
 		spin_lock(&timer->lock);
@@ -360,10 +373,17 @@ int snd_timer_close(struct snd_timer_instance *timeri)
 		}
 		spin_unlock(&timer->lock);
 		spin_unlock_irq(&slave_active_lock);
+<<<<<<< HEAD
 
 		/* slave doesn't need to release timer resources below */
 		if (timeri->flags & SNDRV_TIMER_IFLG_SLAVE)
 			timer = NULL;
+=======
+		/* release a card refcount for safe disconnection */
+		if (timer->card)
+			put_device(&timer->card->card_dev);
+		mutex_unlock(&register_mutex);
+>>>>>>> upstream/rpi-4.4.y
 	}
 
 	if (timeri->private_free)
@@ -427,6 +447,10 @@ static void snd_timer_notify1(struct snd_timer_instance *ti, int event)
 	list_for_each_entry(ts, &ti->slave_active_head, active_list)
 		if (ts->ccallback)
 			ts->ccallback(ts, event + 100, &tstamp, resolution);
+<<<<<<< HEAD
+=======
+	spin_unlock_irqrestore(&timer->lock, flags);
+>>>>>>> upstream/rpi-4.4.y
 }
 
 /* start/continue a master timer */
@@ -497,27 +521,95 @@ static int snd_timer_start_slave(struct snd_timer_instance *timeri,
 		spin_lock(&timeri->timer->lock);
 		list_add_tail(&timeri->active_list,
 			      &timeri->master->slave_active_head);
+<<<<<<< HEAD
 		snd_timer_notify1(timeri, start ? SNDRV_TIMER_EVENT_START :
 				  SNDRV_TIMER_EVENT_CONTINUE);
+=======
+>>>>>>> upstream/rpi-4.4.y
 		spin_unlock(&timeri->timer->lock);
 	}
 	spin_unlock_irqrestore(&slave_active_lock, flags);
 	return 1; /* delayed start */
 }
 
+<<<<<<< HEAD
 /* stop/pause a master timer */
 static int snd_timer_stop1(struct snd_timer_instance *timeri, bool stop)
+=======
+/*
+ *  start the timer instance
+ */
+int snd_timer_start(struct snd_timer_instance *timeri, unsigned int ticks)
+{
+	struct snd_timer *timer;
+	int result = -EINVAL;
+	unsigned long flags;
+
+	if (timeri == NULL || ticks < 1)
+		return -EINVAL;
+	if (timeri->flags & SNDRV_TIMER_IFLG_SLAVE) {
+		result = snd_timer_start_slave(timeri);
+		if (result >= 0)
+			snd_timer_notify1(timeri, SNDRV_TIMER_EVENT_START);
+		return result;
+	}
+	timer = timeri->timer;
+	if (timer == NULL)
+		return -EINVAL;
+	if (timer->card && timer->card->shutdown)
+		return -ENODEV;
+	spin_lock_irqsave(&timer->lock, flags);
+	if (timeri->flags & (SNDRV_TIMER_IFLG_RUNNING |
+			     SNDRV_TIMER_IFLG_START)) {
+		result = -EBUSY;
+		goto unlock;
+	}
+	timeri->ticks = timeri->cticks = ticks;
+	timeri->pticks = 0;
+	result = snd_timer_start1(timer, timeri, ticks);
+ unlock:
+	spin_unlock_irqrestore(&timer->lock, flags);
+	if (result >= 0)
+		snd_timer_notify1(timeri, SNDRV_TIMER_EVENT_START);
+	return result;
+}
+
+static int _snd_timer_stop(struct snd_timer_instance *timeri, int event)
+>>>>>>> upstream/rpi-4.4.y
 {
 	struct snd_timer *timer;
 	int result = 0;
 	unsigned long flags;
 
+<<<<<<< HEAD
+=======
+	if (snd_BUG_ON(!timeri))
+		return -ENXIO;
+
+	if (timeri->flags & SNDRV_TIMER_IFLG_SLAVE) {
+		spin_lock_irqsave(&slave_active_lock, flags);
+		if (!(timeri->flags & SNDRV_TIMER_IFLG_RUNNING)) {
+			spin_unlock_irqrestore(&slave_active_lock, flags);
+			return -EBUSY;
+		}
+		if (timeri->timer)
+			spin_lock(&timeri->timer->lock);
+		timeri->flags &= ~SNDRV_TIMER_IFLG_RUNNING;
+		list_del_init(&timeri->ack_list);
+		list_del_init(&timeri->active_list);
+		if (timeri->timer)
+			spin_unlock(&timeri->timer->lock);
+		spin_unlock_irqrestore(&slave_active_lock, flags);
+		goto __end;
+	}
+>>>>>>> upstream/rpi-4.4.y
 	timer = timeri->timer;
 	if (!timer)
 		return -EINVAL;
 	spin_lock_irqsave(&timer->lock, flags);
 	if (!(timeri->flags & (SNDRV_TIMER_IFLG_RUNNING |
 			       SNDRV_TIMER_IFLG_START))) {
+<<<<<<< HEAD
 		result = -EBUSY;
 		goto unlock;
 	}
@@ -528,6 +620,16 @@ static int snd_timer_stop1(struct snd_timer_instance *timeri, bool stop)
 	if (stop) {
 		timeri->cticks = timeri->ticks;
 		timeri->pticks = 0;
+=======
+		spin_unlock_irqrestore(&timer->lock, flags);
+		return -EBUSY;
+	}
+	list_del_init(&timeri->ack_list);
+	list_del_init(&timeri->active_list);
+	if (timer->card && timer->card->shutdown) {
+		spin_unlock_irqrestore(&timer->lock, flags);
+		return 0;
+>>>>>>> upstream/rpi-4.4.y
 	}
 	if ((timeri->flags & SNDRV_TIMER_IFLG_RUNNING) &&
 	    !(--timer->running)) {
@@ -542,6 +644,7 @@ static int snd_timer_stop1(struct snd_timer_instance *timeri, bool stop)
 		}
 	}
 	timeri->flags &= ~(SNDRV_TIMER_IFLG_RUNNING | SNDRV_TIMER_IFLG_START);
+<<<<<<< HEAD
 	if (stop)
 		timeri->flags &= ~SNDRV_TIMER_IFLG_PAUSED;
 	else
@@ -549,6 +652,8 @@ static int snd_timer_stop1(struct snd_timer_instance *timeri, bool stop)
 	snd_timer_notify1(timeri, stop ? SNDRV_TIMER_EVENT_STOP :
 			  SNDRV_TIMER_EVENT_CONTINUE);
  unlock:
+=======
+>>>>>>> upstream/rpi-4.4.y
 	spin_unlock_irqrestore(&timer->lock, flags);
 	return result;
 }
@@ -596,10 +701,28 @@ int snd_timer_start(struct snd_timer_instance *timeri, unsigned int ticks)
  */
 int snd_timer_stop(struct snd_timer_instance *timeri)
 {
+<<<<<<< HEAD
 	if (timeri->flags & SNDRV_TIMER_IFLG_SLAVE)
 		return snd_timer_stop_slave(timeri, true);
 	else
 		return snd_timer_stop1(timeri, true);
+=======
+	struct snd_timer *timer;
+	unsigned long flags;
+	int err;
+
+	err = _snd_timer_stop(timeri, SNDRV_TIMER_EVENT_STOP);
+	if (err < 0)
+		return err;
+	timer = timeri->timer;
+	if (!timer)
+		return -EINVAL;
+	spin_lock_irqsave(&timer->lock, flags);
+	timeri->cticks = timeri->ticks;
+	timeri->pticks = 0;
+	spin_unlock_irqrestore(&timer->lock, flags);
+	return 0;
+>>>>>>> upstream/rpi-4.4.y
 }
 
 /*
@@ -612,9 +735,31 @@ int snd_timer_continue(struct snd_timer_instance *timeri)
 		return -EINVAL;
 
 	if (timeri->flags & SNDRV_TIMER_IFLG_SLAVE)
+<<<<<<< HEAD
 		return snd_timer_start_slave(timeri, false);
 	else
 		return snd_timer_start1(timeri, false, 0);
+=======
+		return snd_timer_start_slave(timeri);
+	timer = timeri->timer;
+	if (! timer)
+		return -EINVAL;
+	if (timer->card && timer->card->shutdown)
+		return -ENODEV;
+	spin_lock_irqsave(&timer->lock, flags);
+	if (timeri->flags & SNDRV_TIMER_IFLG_RUNNING) {
+		result = -EBUSY;
+		goto unlock;
+	}
+	if (!timeri->cticks)
+		timeri->cticks = 1;
+	timeri->pticks = 0;
+	result = snd_timer_start1(timer, timeri, timer->sticks);
+ unlock:
+	spin_unlock_irqrestore(&timer->lock, flags);
+	snd_timer_notify1(timeri, SNDRV_TIMER_EVENT_CONTINUE);
+	return result;
+>>>>>>> upstream/rpi-4.4.y
 }
 
 /*
@@ -622,10 +767,14 @@ int snd_timer_continue(struct snd_timer_instance *timeri)
  */
 int snd_timer_pause(struct snd_timer_instance * timeri)
 {
+<<<<<<< HEAD
 	if (timeri->flags & SNDRV_TIMER_IFLG_SLAVE)
 		return snd_timer_stop_slave(timeri, false);
 	else
 		return snd_timer_stop1(timeri, false);
+=======
+	return _snd_timer_stop(timeri, SNDRV_TIMER_EVENT_PAUSE);
+>>>>>>> upstream/rpi-4.4.y
 }
 
 /*
@@ -930,6 +1079,11 @@ static int snd_timer_dev_register(struct snd_device *dev)
 	return 0;
 }
 
+/* just for reference in snd_timer_dev_disconnect() below */
+static void snd_timer_user_ccallback(struct snd_timer_instance *timeri,
+				     int event, struct timespec *tstamp,
+				     unsigned long resolution);
+
 static int snd_timer_dev_disconnect(struct snd_device *device)
 {
 	struct snd_timer *timer = device->device_data;
@@ -939,8 +1093,18 @@ static int snd_timer_dev_disconnect(struct snd_device *device)
 	list_del_init(&timer->device_list);
 	/* wake up pending sleepers */
 	list_for_each_entry(ti, &timer->open_list_head, open_list) {
+<<<<<<< HEAD
 		if (ti->disconnect)
 			ti->disconnect(ti);
+=======
+		/* FIXME: better to have a ti.disconnect() op */
+		if (ti->ccallback == snd_timer_user_ccallback) {
+			struct snd_timer_user *tu = ti->callback_data;
+
+			tu->disconnected = true;
+			wake_up(&tu->qchange_sleep);
+		}
+>>>>>>> upstream/rpi-4.4.y
 	}
 	mutex_unlock(&register_mutex);
 	return 0;

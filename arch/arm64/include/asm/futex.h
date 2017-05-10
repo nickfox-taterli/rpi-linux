@@ -132,8 +132,15 @@ ALTERNATIVE("nop", SET_PSTATE_PAN(0), ARM64_HAS_PAN, CONFIG_ARM64_PAN)
 "4:	mov	%w0, %w6\n"
 "	b	3b\n"
 "	.popsection\n"
+<<<<<<< HEAD
 	_ASM_EXTABLE(1b, 4b)
 	_ASM_EXTABLE(2b, 4b)
+=======
+"	.pushsection __ex_table,\"a\"\n"
+"	.align	3\n"
+"	.quad	1b, 4b, 2b, 4b\n"
+"	.popsection\n"
+>>>>>>> upstream/rpi-4.4.y
 ALTERNATIVE("nop", SET_PSTATE_PAN(1), ARM64_HAS_PAN, CONFIG_ARM64_PAN)
 	: "+r" (ret), "=&r" (val), "+Q" (*uaddr), "=&r" (tmp)
 	: "r" (oldval), "r" (newval), "Ir" (-EFAULT)

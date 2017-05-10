@@ -878,6 +878,10 @@ static int mei_hbm_fw_disconnect_req(struct mei_device *dev,
 					       NULL);
 		if (!cb)
 			return -ENOMEM;
+<<<<<<< HEAD
+=======
+		list_add_tail(&cb->list, &dev->ctrl_wr_list.list);
+>>>>>>> upstream/rpi-4.4.y
 	}
 	return 0;
 }

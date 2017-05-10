@@ -210,6 +210,7 @@ config ARM_SPEAR_CPUFREQ
 	help
 	  This adds the CPUFreq driver support for SPEAr SOCs.
 
+<<<<<<< HEAD
 config ARM_STI_CPUFREQ
 	tristate "STi CPUFreq support"
 	depends on SOC_STIH407
@@ -220,6 +221,8 @@ config ARM_STI_CPUFREQ
 	  this config option if you wish to add CPUFreq support for STi based
 	  SoCs.
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 config ARM_BCM2835_CPUFREQ
 	depends on RASPBERRYPI_FIRMWARE
 	bool "BCM2835 Driver"

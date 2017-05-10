@@ -133,7 +133,11 @@ static const char *safe_name(struct kobject *kobj, const char *orig_name)
 	if (name == orig_name) {
 		name = kstrdup(orig_name, GFP_KERNEL);
 	} else {
+<<<<<<< HEAD
 		pr_warn("Duplicate name in %s, renamed to \"%s\"\n",
+=======
+		pr_warn("device-tree: Duplicate name in %s, renamed to \"%s\"\n",
+>>>>>>> upstream/rpi-4.4.y
 			kobject_name(kobj), name);
 	}
 	return name;

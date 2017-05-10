@@ -1780,11 +1780,19 @@ void __target_execute_cmd(struct se_cmd *cmd, bool do_checks)
 		ret = target_scsi3_ua_check(cmd);
 		if (ret)
 			goto err;
+<<<<<<< HEAD
 
 		ret = target_alua_state_check(cmd);
 		if (ret)
 			goto err;
 
+=======
+
+		ret = target_alua_state_check(cmd);
+		if (ret)
+			goto err;
+
+>>>>>>> upstream/rpi-4.4.y
 		ret = target_check_reservation(cmd);
 		if (ret) {
 			cmd->scsi_status = SAM_STAT_RESERVATION_CONFLICT;
@@ -2552,9 +2560,13 @@ int target_get_sess_cmd(struct se_cmd *se_cmd, bool ack_kref)
 	 * invocations before se_cmd descriptor release.
 	 */
 	if (ack_kref) {
+<<<<<<< HEAD
 		if (!kref_get_unless_zero(&se_cmd->cmd_kref))
 			return -EINVAL;
 
+=======
+		kref_get(&se_cmd->cmd_kref);
+>>>>>>> upstream/rpi-4.4.y
 		se_cmd->se_cmd_flags |= SCF_ACK_KREF;
 	}
 
@@ -2647,16 +2659,24 @@ void target_sess_cmd_list_set_waiting(struct se_session *se_sess)
 	se_sess->sess_tearing_down = 1;
 	list_splice_init(&se_sess->sess_cmd_list, &se_sess->sess_wait_list);
 
+<<<<<<< HEAD
 	list_for_each_entry_safe(se_cmd, tmp_cmd,
 				 &se_sess->sess_wait_list, se_cmd_list) {
+=======
+	list_for_each_entry(se_cmd, &se_sess->sess_wait_list, se_cmd_list) {
+>>>>>>> upstream/rpi-4.4.y
 		rc = kref_get_unless_zero(&se_cmd->cmd_kref);
 		if (rc) {
 			se_cmd->cmd_wait_set = 1;
 			spin_lock(&se_cmd->t_state_lock);
 			se_cmd->transport_state |= CMD_T_FABRIC_STOP;
 			spin_unlock(&se_cmd->t_state_lock);
+<<<<<<< HEAD
 		} else
 			list_del_init(&se_cmd->se_cmd_list);
+=======
+		}
+>>>>>>> upstream/rpi-4.4.y
 	}
 
 	spin_unlock_irqrestore(&se_sess->sess_cmd_lock, flags);
@@ -2788,6 +2808,7 @@ __transport_wait_for_tasks(struct se_cmd *cmd, bool fabric_stop,
 
 	return true;
 }
+<<<<<<< HEAD
 
 /**
  * transport_wait_for_tasks - wait for completion to occur
@@ -2801,6 +2822,21 @@ bool transport_wait_for_tasks(struct se_cmd *cmd)
 	unsigned long flags;
 	bool ret, aborted = false, tas = false;
 
+=======
+
+/**
+ * transport_wait_for_tasks - wait for completion to occur
+ * @cmd:	command to wait
+ *
+ * Called from frontend fabric context to wait for storage engine
+ * to pause and/or release frontend generated struct se_cmd.
+ */
+bool transport_wait_for_tasks(struct se_cmd *cmd)
+{
+	unsigned long flags;
+	bool ret, aborted = false, tas = false;
+
+>>>>>>> upstream/rpi-4.4.y
 	spin_lock_irqsave(&cmd->t_state_lock, flags);
 	ret = __transport_wait_for_tasks(cmd, false, &aborted, &tas, &flags);
 	spin_unlock_irqrestore(&cmd->t_state_lock, flags);

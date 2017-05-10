@@ -1585,7 +1585,11 @@ static int nvme_pci_enable(struct nvme_dev *dev)
 	    dma_set_mask_and_coherent(dev->dev, DMA_BIT_MASK(32)))
 		goto disable;
 
+<<<<<<< HEAD
 	if (readl(dev->bar + NVME_REG_CSTS) == -1) {
+=======
+	if (readl(&dev->bar->csts) == -1) {
+>>>>>>> upstream/rpi-4.4.y
 		result = -ENODEV;
 		goto disable;
 	}
@@ -1595,11 +1599,19 @@ static int nvme_pci_enable(struct nvme_dev *dev)
 	 * interrupts. Pre-enable a single MSIX or MSI vec for setup. We'll
 	 * adjust this later.
 	 */
+<<<<<<< HEAD
 	result = pci_alloc_irq_vectors(pdev, 1, 1, PCI_IRQ_ALL_TYPES);
 	if (result < 0)
 		return result;
 
 	cap = lo_hi_readq(dev->bar + NVME_REG_CAP);
+=======
+	if (!pdev->irq) {
+		result = pci_enable_msix(pdev, dev->entry, 1);
+		if (result < 0)
+			goto disable;
+	}
+>>>>>>> upstream/rpi-4.4.y
 
 	dev->q_depth = min_t(int, NVME_CAP_MQES(cap) + 1, NVME_Q_DEPTH);
 	dev->db_stride = 1 << NVME_CAP_STRIDE(cap);
@@ -1641,6 +1653,7 @@ static int nvme_pci_enable(struct nvme_dev *dev)
 
  disable:
 	pci_disable_device(pdev);
+
 	return result;
 }
 
@@ -1648,7 +1661,82 @@ static void nvme_dev_unmap(struct nvme_dev *dev)
 {
 	if (dev->bar)
 		iounmap(dev->bar);
+<<<<<<< HEAD
 	pci_release_mem_regions(to_pci_dev(dev->dev));
+=======
+	pci_release_regions(to_pci_dev(dev->dev));
+}
+
+static void nvme_pci_disable(struct nvme_dev *dev)
+{
+	struct pci_dev *pdev = to_pci_dev(dev->dev);
+
+	if (pdev->msi_enabled)
+		pci_disable_msi(pdev);
+	else if (pdev->msix_enabled)
+		pci_disable_msix(pdev);
+
+	if (pci_is_enabled(pdev))
+		pci_disable_device(pdev);
+}
+
+struct nvme_delq_ctx {
+	struct task_struct *waiter;
+	struct kthread_worker *worker;
+	atomic_t refcount;
+};
+
+static void nvme_wait_dq(struct nvme_delq_ctx *dq, struct nvme_dev *dev)
+{
+	dq->waiter = current;
+	mb();
+
+	for (;;) {
+		set_current_state(TASK_KILLABLE);
+		if (!atomic_read(&dq->refcount))
+			break;
+		if (!schedule_timeout(ADMIN_TIMEOUT) ||
+					fatal_signal_pending(current)) {
+			/*
+			 * Disable the controller first since we can't trust it
+			 * at this point, but leave the admin queue enabled
+			 * until all queue deletion requests are flushed.
+			 * FIXME: This may take a while if there are more h/w
+			 * queues than admin tags.
+			 */
+			set_current_state(TASK_RUNNING);
+			nvme_disable_ctrl(dev, lo_hi_readq(&dev->bar->cap));
+			nvme_clear_queue(dev->queues[0]);
+			flush_kthread_worker(dq->worker);
+			nvme_disable_queue(dev, 0);
+			return;
+		}
+	}
+	set_current_state(TASK_RUNNING);
+}
+
+static void nvme_put_dq(struct nvme_delq_ctx *dq)
+{
+	atomic_dec(&dq->refcount);
+	if (dq->waiter)
+		wake_up_process(dq->waiter);
+}
+
+static struct nvme_delq_ctx *nvme_get_dq(struct nvme_delq_ctx *dq)
+{
+	atomic_inc(&dq->refcount);
+	return dq;
+}
+
+static void nvme_del_queue_end(struct nvme_queue *nvmeq)
+{
+	struct nvme_delq_ctx *dq = nvmeq->cmdinfo.ctx;
+	nvme_put_dq(dq);
+
+	spin_lock_irq(&nvmeq->q_lock);
+	nvme_process_cq(nvmeq);
+	spin_unlock_irq(&nvmeq->q_lock);
+>>>>>>> upstream/rpi-4.4.y
 }
 
 static void nvme_pci_disable(struct nvme_dev *dev)
@@ -1680,6 +1768,28 @@ static void nvme_dev_disable(struct nvme_dev *dev, bool shutdown)
 	for (i = dev->queue_count - 1; i > 0; i--)
 		nvme_suspend_queue(dev->queues[i]);
 
+<<<<<<< HEAD
+=======
+	list_for_each_entry(ns, &dev->namespaces, list) {
+		queue_flag_clear_unlocked(QUEUE_FLAG_STOPPED, ns->queue);
+		blk_mq_unfreeze_queue(ns->queue);
+		blk_mq_start_stopped_hw_queues(ns->queue, true);
+		blk_mq_kick_requeue_list(ns->queue);
+	}
+}
+
+static void nvme_dev_shutdown(struct nvme_dev *dev)
+{
+	int i;
+	u32 csts = -1;
+
+	nvme_dev_list_remove(dev);
+
+	if (pci_is_enabled(to_pci_dev(dev->dev))) {
+		nvme_freeze_queues(dev);
+		csts = readl(&dev->bar->csts);
+	}
+>>>>>>> upstream/rpi-4.4.y
 	if (csts & NVME_CSTS_CFS || !(csts & NVME_CSTS_RDY)) {
 		/* A device might become IO incapable very soon during
 		 * probe, before the admin queue is configured. Thus,
@@ -1692,6 +1802,13 @@ static void nvme_dev_disable(struct nvme_dev *dev, bool shutdown)
 		nvme_disable_admin_queue(dev, shutdown);
 	}
 	nvme_pci_disable(dev);
+<<<<<<< HEAD
+=======
+
+	for (i = dev->queue_count - 1; i >= 0; i--)
+		nvme_clear_queue(dev->queues[i]);
+}
+>>>>>>> upstream/rpi-4.4.y
 
 	blk_mq_tagset_busy_iter(&dev->tagset, nvme_cancel_request, &dev->ctrl);
 	blk_mq_tagset_busy_iter(&dev->admin_tagset, nvme_cancel_request, &dev->ctrl);
@@ -1898,6 +2015,27 @@ static int nvme_dev_map(struct nvme_dev *dev)
        return -ENODEV;
 }
 
+static int nvme_dev_map(struct nvme_dev *dev)
+{
+	int bars;
+	struct pci_dev *pdev = to_pci_dev(dev->dev);
+
+	bars = pci_select_bars(pdev, IORESOURCE_MEM);
+	if (!bars)
+		return -ENODEV;
+	if (pci_request_selected_regions(pdev, bars, "nvme"))
+		return -ENODEV;
+
+	dev->bar = ioremap(pci_resource_start(pdev, 0), 8192);
+	if (!dev->bar)
+		goto release;
+
+	return 0;
+release:
+	pci_release_regions(pdev);
+	return -ENODEV;
+}
+
 static int nvme_probe(struct pci_dev *pdev, const struct pci_device_id *id)
 {
 	int node, result = -ENOMEM;
@@ -1919,6 +2057,13 @@ static int nvme_probe(struct pci_dev *pdev, const struct pci_device_id *id)
 	pci_set_drvdata(pdev, dev);
 
 	result = nvme_dev_map(dev);
+<<<<<<< HEAD
+=======
+	if (result)
+		goto free;
+
+	result = nvme_set_instance(dev);
+>>>>>>> upstream/rpi-4.4.y
 	if (result)
 		goto free;
 
@@ -1996,7 +2141,11 @@ static void nvme_remove(struct pci_dev *pdev)
 	nvme_release_cmb(dev);
 	nvme_release_prp_pools(dev);
 	nvme_dev_unmap(dev);
+<<<<<<< HEAD
 	nvme_put_ctrl(&dev->ctrl);
+=======
+	kref_put(&dev->kref, nvme_free_dev);
+>>>>>>> upstream/rpi-4.4.y
 }
 
 static int nvme_pci_sriov_configure(struct pci_dev *pdev, int numvfs)

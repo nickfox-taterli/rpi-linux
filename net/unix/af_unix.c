@@ -1531,6 +1531,9 @@ static int unix_attach_fds(struct scm_cookie *scm, struct sk_buff *skb)
 	if (too_many_unix_fds(current))
 		return -ETOOMANYREFS;
 
+	if (too_many_unix_fds(current))
+		return -ETOOMANYREFS;
+
 	for (i = scm->fp->count - 1; i >= 0; i--) {
 		struct sock *sk = unix_get_socket(scm->fp->fp[i]);
 
@@ -2112,7 +2115,18 @@ static int unix_dgram_recvmsg(struct socket *sock, struct msghdr *msg,
 	if (flags&MSG_OOB)
 		goto out;
 
+<<<<<<< HEAD
 	timeo = sock_rcvtimeo(sk, flags & MSG_DONTWAIT);
+=======
+	err = mutex_lock_interruptible(&u->iolock);
+	if (unlikely(err)) {
+		/* recvmsg() in non blocking mode is supposed to return -EAGAIN
+		 * sk_rcvtimeo is not honored by mutex_lock_interruptible()
+		 */
+		err = noblock ? -EAGAIN : -ERESTARTSYS;
+		goto out;
+	}
+>>>>>>> upstream/rpi-4.4.y
 
 	do {
 		mutex_lock(&u->iolock);
@@ -2195,6 +2209,10 @@ static int unix_dgram_recvmsg(struct socket *sock, struct msghdr *msg,
 
 out_free:
 	skb_free_datagram(sk, skb);
+<<<<<<< HEAD
+=======
+out_unlock:
+>>>>>>> upstream/rpi-4.4.y
 	mutex_unlock(&u->iolock);
 out:
 	return err;
@@ -2349,7 +2367,11 @@ again:
 			}
 
 			mutex_lock(&u->iolock);
+<<<<<<< HEAD
 			goto redo;
+=======
+			continue;
+>>>>>>> upstream/rpi-4.4.y
 unlock:
 			unix_state_unlock(sk);
 			break;
@@ -2483,6 +2505,23 @@ static int unix_stream_recvmsg(struct socket *sock, struct msghdr *msg,
 	};
 
 	return unix_stream_read_generic(&state, true);
+<<<<<<< HEAD
+=======
+}
+
+static ssize_t skb_unix_socket_splice(struct sock *sk,
+				      struct pipe_inode_info *pipe,
+				      struct splice_pipe_desc *spd)
+{
+	int ret;
+	struct unix_sock *u = unix_sk(sk);
+
+	mutex_unlock(&u->iolock);
+	ret = splice_to_pipe(pipe, spd);
+	mutex_lock(&u->iolock);
+
+	return ret;
+>>>>>>> upstream/rpi-4.4.y
 }
 
 static int unix_stream_splice_actor(struct sk_buff *skb,

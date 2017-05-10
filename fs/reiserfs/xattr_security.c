@@ -12,10 +12,18 @@ static int
 security_get(const struct xattr_handler *handler, struct dentry *unused,
 	     struct inode *inode, const char *name, void *buffer, size_t size)
 {
+<<<<<<< HEAD
 	if (IS_PRIVATE(inode))
 		return -EPERM;
 
 	return reiserfs_xattr_get(inode, xattr_full_name(handler, name),
+=======
+	if (IS_PRIVATE(d_inode(dentry)))
+		return -EPERM;
+
+	return reiserfs_xattr_get(d_inode(dentry),
+				  xattr_full_name(handler, name),
+>>>>>>> upstream/rpi-4.4.y
 				  buffer, size);
 }
 
@@ -24,10 +32,17 @@ security_set(const struct xattr_handler *handler, struct dentry *unused,
 	     struct inode *inode, const char *name, const void *buffer,
 	     size_t size, int flags)
 {
+<<<<<<< HEAD
 	if (IS_PRIVATE(inode))
 		return -EPERM;
 
 	return reiserfs_xattr_set(inode,
+=======
+	if (IS_PRIVATE(d_inode(dentry)))
+		return -EPERM;
+
+	return reiserfs_xattr_set(d_inode(dentry),
+>>>>>>> upstream/rpi-4.4.y
 				  xattr_full_name(handler, name),
 				  buffer, size, flags);
 }

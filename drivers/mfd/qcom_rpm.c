@@ -388,6 +388,7 @@ static const struct qcom_rpm_data ipq806x_template = {
 	.ack_sel_off = 23,
 	.req_sel_size = 4,
 	.ack_sel_size = 7,
+<<<<<<< HEAD
 };
 
 static const struct qcom_rpm_resource mdm9615_rpm_resource_table[] = {
@@ -438,6 +439,8 @@ static const struct qcom_rpm_data mdm9615_template = {
 	.ack_sel_off = 23,
 	.req_sel_size = 4,
 	.ack_sel_size = 7,
+=======
+>>>>>>> upstream/rpi-4.4.y
 };
 
 static const struct of_device_id qcom_rpm_of_match[] = {

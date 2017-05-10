@@ -4805,7 +4805,11 @@ static void sd_set_streamparm(struct gspca_dev *gspca_dev,
 	int fr, i;
 
 	if (tpf->numerator == 0 || tpf->denominator == 0)
+<<<<<<< HEAD
 		sd->framerate = DEFAULT_FRAME_RATE;
+=======
+		sd->framerate = 30;
+>>>>>>> upstream/rpi-4.4.y
 	else
 		sd->framerate = tpf->denominator / tpf->numerator;
 

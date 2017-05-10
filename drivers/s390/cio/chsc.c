@@ -1022,7 +1022,11 @@ int chsc_get_channel_measurement_chars(struct channel_path *chp)
 	chp->cmg = -1;
 
 	if (!css_chsc_characteristics.scmc || !css_chsc_characteristics.secm)
+<<<<<<< HEAD
 		return -EINVAL;
+=======
+		return 0;
+>>>>>>> upstream/rpi-4.4.y
 
 	spin_lock_irqsave(&chsc_page_lock, flags);
 	memset(chsc_page, 0, PAGE_SIZE);

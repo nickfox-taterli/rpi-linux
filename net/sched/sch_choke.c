@@ -130,7 +130,11 @@ static void choke_drop_by_idx(struct Qdisc *sch, unsigned int idx,
 
 	qdisc_qstats_backlog_dec(sch, skb);
 	qdisc_tree_reduce_backlog(sch, 1, qdisc_pkt_len(skb));
+<<<<<<< HEAD
 	qdisc_drop(skb, sch, to_free);
+=======
+	qdisc_drop(skb, sch);
+>>>>>>> upstream/rpi-4.4.y
 	--sch->q.qlen;
 }
 

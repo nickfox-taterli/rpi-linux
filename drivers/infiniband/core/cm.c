@@ -1704,6 +1704,7 @@ static int cm_req_handler(struct cm_work *work)
 	cm_format_paths_from_req(req_msg, &work->path[0], &work->path[1]);
 
 	memcpy(work->path[0].dmac, cm_id_priv->av.ah_attr.dmac, ETH_ALEN);
+<<<<<<< HEAD
 	work->path[0].hop_limit = cm_id_priv->av.ah_attr.grh.hop_limit;
 	ret = ib_get_cached_gid(work->port->cm_dev->ib_device,
 				work->port->port_num,
@@ -1719,6 +1720,10 @@ static int cm_req_handler(struct cm_work *work)
 		ret = cm_init_av_by_path(&work->path[0], &cm_id_priv->av,
 					 cm_id_priv);
 	}
+=======
+	ret = cm_init_av_by_path(&work->path[0], &cm_id_priv->av,
+				 cm_id_priv);
+>>>>>>> upstream/rpi-4.4.y
 	if (ret) {
 		int err = ib_get_cached_gid(work->port->cm_dev->ib_device,
 					    work->port->port_num, 0,

@@ -448,6 +448,7 @@ error:
 
 static int nic_init_hw(struct nicpf *nic)
 {
+<<<<<<< HEAD
 	int i, err;
 	u64 cqm_cfg;
 
@@ -455,6 +456,10 @@ static int nic_init_hw(struct nicpf *nic)
 	err = nic_get_hw_info(nic);
 	if (err)
 		return err;
+=======
+	int i;
+	u64 cqm_cfg;
+>>>>>>> upstream/rpi-4.4.y
 
 	/* Enable NIC HW block */
 	nic_reg_write(nic, NIC_PF_CFG, 0x3);
@@ -500,8 +505,11 @@ static int nic_init_hw(struct nicpf *nic)
 	cqm_cfg = nic_reg_read(nic, NIC_PF_CQM_CFG);
 	if (cqm_cfg < NICPF_CQM_MIN_DROP_LEVEL)
 		nic_reg_write(nic, NIC_PF_CQM_CFG, NICPF_CQM_MIN_DROP_LEVEL);
+<<<<<<< HEAD
 
 	return 0;
+=======
+>>>>>>> upstream/rpi-4.4.y
 }
 
 /* Channel parse index configuration */

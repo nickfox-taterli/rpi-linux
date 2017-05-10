@@ -908,6 +908,10 @@ static struct sk_buff *htb_dequeue(struct Qdisc *sch)
 	if (skb != NULL) {
 ok:
 		qdisc_bstats_update(sch, skb);
+<<<<<<< HEAD
+=======
+		qdisc_unthrottled(sch);
+>>>>>>> upstream/rpi-4.4.y
 		qdisc_qstats_backlog_dec(sch, skb);
 		sch->q.qlen--;
 		return skb;
@@ -954,6 +958,34 @@ fin:
 	return skb;
 }
 
+<<<<<<< HEAD
+=======
+/* try to drop from each class (by prio) until one succeed */
+static unsigned int htb_drop(struct Qdisc *sch)
+{
+	struct htb_sched *q = qdisc_priv(sch);
+	int prio;
+
+	for (prio = TC_HTB_NUMPRIO - 1; prio >= 0; prio--) {
+		struct list_head *p;
+		list_for_each(p, q->drops + prio) {
+			struct htb_class *cl = list_entry(p, struct htb_class,
+							  un.leaf.drop_list);
+			unsigned int len;
+			if (cl->un.leaf.q->ops->drop &&
+			    (len = cl->un.leaf.q->ops->drop(cl->un.leaf.q))) {
+				sch->qstats.backlog -= len;
+				sch->q.qlen--;
+				if (!cl->un.leaf.q->q.qlen)
+					htb_deactivate(q, cl);
+				return len;
+			}
+		}
+	}
+	return 0;
+}
+
+>>>>>>> upstream/rpi-4.4.y
 /* reset all classes */
 /* always caled under BH & queue lock */
 static void htb_reset(struct Qdisc *sch)

@@ -2591,9 +2591,13 @@ static noinline int __btrfs_run_delayed_refs(struct btrfs_trans_handle *trans,
 					locked_ref->processing = 0;
 					delayed_refs->num_heads_ready++;
 					spin_unlock(&delayed_refs->lock);
+<<<<<<< HEAD
 					btrfs_debug(fs_info,
 						    "run_delayed_extent_op returned %d",
 						    ret);
+=======
+					btrfs_debug(fs_info, "run_delayed_extent_op returned %d", ret);
+>>>>>>> upstream/rpi-4.4.y
 					btrfs_delayed_ref_unlock(locked_ref);
 					return ret;
 				}
@@ -4221,7 +4225,11 @@ commit_trans:
 
 			if (need_commit > 0) {
 				btrfs_start_delalloc_roots(fs_info, 0, -1);
+<<<<<<< HEAD
 				btrfs_wait_ordered_roots(fs_info, -1, 0, (u64)-1);
+=======
+				btrfs_wait_ordered_roots(fs_info, -1);
+>>>>>>> upstream/rpi-4.4.y
 			}
 
 			trans = btrfs_join_transaction(root);

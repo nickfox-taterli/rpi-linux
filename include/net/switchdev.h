@@ -91,6 +91,24 @@ struct switchdev_obj_port_vlan {
 #define SWITCHDEV_OBJ_PORT_VLAN(obj) \
 	container_of(obj, struct switchdev_obj_port_vlan, obj)
 
+<<<<<<< HEAD
+=======
+/* SWITCHDEV_OBJ_ID_IPV4_FIB */
+struct switchdev_obj_ipv4_fib {
+	struct switchdev_obj obj;
+	u32 dst;
+	int dst_len;
+	struct fib_info *fi;
+	u8 tos;
+	u8 type;
+	u32 nlflags;
+	u32 tb_id;
+};
+
+#define SWITCHDEV_OBJ_IPV4_FIB(obj) \
+	container_of(obj, struct switchdev_obj_ipv4_fib, obj)
+
+>>>>>>> upstream/rpi-4.4.y
 /* SWITCHDEV_OBJ_ID_PORT_FDB */
 struct switchdev_obj_port_fdb {
 	struct switchdev_obj obj;

@@ -359,6 +359,15 @@ struct kvm_vcpu *kvm_arch_vcpu_create(struct kvm *kvm, unsigned int id)
 	dump_handler("kvm_gen_exc", gebase + 0x180, gebase + 0x200);
 	dump_handler("kvm_exit", gebase + 0x2000, vcpu->arch.vcpu_run);
 
+#ifdef MODULE
+	offset += mips32_GuestExceptionEnd - mips32_GuestException;
+	memcpy(gebase + offset, (char *)__kvm_mips_vcpu_run,
+	       __kvm_mips_vcpu_run_end - (char *)__kvm_mips_vcpu_run);
+	vcpu->arch.vcpu_run = gebase + offset;
+#else
+	vcpu->arch.vcpu_run = __kvm_mips_vcpu_run;
+#endif
+
 	/* Invalidate the icache for these ranges */
 	flush_icache_range((unsigned long)gebase,
 			   (unsigned long)gebase + ALIGN(size, PAGE_SIZE));
@@ -476,12 +485,16 @@ int kvm_arch_vcpu_ioctl_run(struct kvm_vcpu *vcpu, struct kvm_run *run)
 	/* Disable hardware page table walking while in guest */
 	htw_stop();
 
+<<<<<<< HEAD
 	trace_kvm_enter(vcpu);
 
 	kvm_mips_check_asids(vcpu);
 
 	r = vcpu->arch.vcpu_run(run, vcpu);
 	trace_kvm_out(vcpu);
+=======
+	r = vcpu->arch.vcpu_run(run, vcpu);
+>>>>>>> upstream/rpi-4.4.y
 
 	/* Re-enable HTW before enabling interrupts */
 	htw_start();

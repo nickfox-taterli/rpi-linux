@@ -57,6 +57,7 @@ struct kasan_global {
 #if KASAN_ABI_VERSION >= 5
 	char *odr_indicator;
 #endif
+<<<<<<< HEAD
 };
 
 /**
@@ -83,6 +84,8 @@ struct kasan_free_meta {
 	 * Otherwise it might be used for the allocator freelist.
 	 */
 	struct qlist_node quarantine_link;
+=======
+>>>>>>> upstream/rpi-4.4.y
 };
 
 struct kasan_alloc_meta *get_alloc_info(struct kmem_cache *cache,

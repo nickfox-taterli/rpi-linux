@@ -2171,6 +2171,13 @@ static ssize_t n_tty_read(struct tty_struct *tty, struct file *file,
 			break;
 		}
 
+<<<<<<< HEAD
+=======
+		if (((minimum - (b - buf)) < ldata->minimum_to_wake) &&
+		    ((minimum - (b - buf)) >= 1))
+			ldata->minimum_to_wake = (minimum - (b - buf));
+
+>>>>>>> upstream/rpi-4.4.y
 		if (!input_available_p(tty, 0)) {
 			up_read(&tty->termios_rwsem);
 			tty_buffer_flush_work(tty->port);

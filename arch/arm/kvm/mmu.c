@@ -964,6 +964,7 @@ static int stage2_set_pte(struct kvm *kvm, struct kvm_mmu_memory_cache *cache,
 	} else {
 		get_page(virt_to_page(pte));
 	}
+<<<<<<< HEAD
 
 	kvm_set_pte(pte, *new_pte);
 	return 0;
@@ -976,6 +977,10 @@ static int stage2_ptep_test_and_clear_young(pte_t *pte)
 		*pte = pte_mkold(*pte);
 		return 1;
 	}
+=======
+
+	kvm_set_pte(pte, *new_pte);
+>>>>>>> upstream/rpi-4.4.y
 	return 0;
 }
 #else

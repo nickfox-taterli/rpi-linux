@@ -1252,7 +1252,11 @@ static void intel_uncore_fw_domains_init(struct drm_i915_private *dev_priv)
 	} else if (IS_HASWELL(dev_priv) || IS_BROADWELL(dev_priv)) {
 		dev_priv->uncore.funcs.force_wake_get =
 			fw_domains_get_with_thread_status;
+<<<<<<< HEAD
 		if (IS_HASWELL(dev_priv))
+=======
+		if (IS_HASWELL(dev))
+>>>>>>> upstream/rpi-4.4.y
 			dev_priv->uncore.funcs.force_wake_put =
 				fw_domains_put_with_fifo;
 		else

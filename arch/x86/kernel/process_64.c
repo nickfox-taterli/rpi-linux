@@ -49,7 +49,12 @@
 #include <asm/debugreg.h>
 #include <asm/switch_to.h>
 #include <asm/xen/hypervisor.h>
+<<<<<<< HEAD
 #include <asm/vdso.h>
+=======
+
+asmlinkage extern void ret_from_fork(void);
+>>>>>>> upstream/rpi-4.4.y
 
 __visible DEFINE_PER_CPU(unsigned long, rsp_scratch);
 

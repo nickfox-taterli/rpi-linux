@@ -630,6 +630,7 @@ bool sysfs_streq(const char *s1, const char *s2)
 }
 EXPORT_SYMBOL(sysfs_streq);
 
+<<<<<<< HEAD
 /**
  * match_string - matches given string in an array
  * @array:	array of strings
@@ -656,6 +657,8 @@ int match_string(const char * const *array, size_t n, const char *string)
 }
 EXPORT_SYMBOL(match_string);
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 #ifndef __HAVE_ARCH_MEMSET
 /**
  * memset - Fill a region of memory with the given value

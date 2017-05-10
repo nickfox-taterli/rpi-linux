@@ -578,7 +578,11 @@ int ip_options_rcv_srr(struct sk_buff *skb);
 
 void ipv4_pktinfo_prepare(const struct sock *sk, struct sk_buff *skb);
 void ip_cmsg_recv_offset(struct msghdr *msg, struct sk_buff *skb, int tlen, int offset);
+<<<<<<< HEAD
 int ip_cmsg_send(struct sock *sk, struct msghdr *msg,
+=======
+int ip_cmsg_send(struct net *net, struct msghdr *msg,
+>>>>>>> upstream/rpi-4.4.y
 		 struct ipcm_cookie *ipc, bool allow_ipv6);
 int ip_setsockopt(struct sock *sk, int level, int optname, char __user *optval,
 		  unsigned int optlen);

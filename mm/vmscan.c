@@ -2670,7 +2670,21 @@ static void shrink_zones(struct zonelist *zonelist, struct scan_control *sc)
 	}
 
 	for_each_zone_zonelist_nodemask(zone, z, zonelist,
+<<<<<<< HEAD
 					sc->reclaim_idx, sc->nodemask) {
+=======
+					gfp_zone(sc->gfp_mask), sc->nodemask) {
+		enum zone_type classzone_idx;
+
+		if (!populated_zone(zone))
+			continue;
+
+		classzone_idx = requested_highidx;
+		while (!populated_zone(zone->zone_pgdat->node_zones +
+							classzone_idx))
+			classzone_idx--;
+
+>>>>>>> upstream/rpi-4.4.y
 		/*
 		 * Take care memory controller reclaiming has small influence
 		 * to global LRU.

@@ -202,7 +202,10 @@ static struct snd_soc_dai_link snd_rpi_hifiberry_digi_dai[] = {
 /* audio machine driver */
 static struct snd_soc_card snd_rpi_hifiberry_digi = {
 	.name         = "snd_rpi_hifiberry_digi",
+<<<<<<< HEAD
 	.driver_name  = "HifiberryDigi",
+=======
+>>>>>>> upstream/rpi-4.4.y
 	.owner        = THIS_MODULE,
 	.dai_link     = snd_rpi_hifiberry_digi_dai,
 	.num_links    = ARRAY_SIZE(snd_rpi_hifiberry_digi_dai),
@@ -242,7 +245,11 @@ static int snd_rpi_hifiberry_digi_probe(struct platform_device *pdev)
 	}
 
 	ret = snd_soc_register_card(&snd_rpi_hifiberry_digi);
+<<<<<<< HEAD
 	if (ret && ret != -EPROBE_DEFER)
+=======
+	if (ret)
+>>>>>>> upstream/rpi-4.4.y
 		dev_err(&pdev->dev, "snd_soc_register_card() failed: %d\n", ret);
 
 	return ret;

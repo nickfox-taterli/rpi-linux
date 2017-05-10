@@ -674,10 +674,15 @@ static int skl_probe(struct pci_dev *pci,
 
 	if (skl->nhlt == NULL) {
 		err = -ENODEV;
+<<<<<<< HEAD
 		goto out_display_power_off;
 	}
 
 	skl_nhlt_update_topology_bin(skl);
+=======
+		goto out_free;
+	}
+>>>>>>> upstream/rpi-4.4.y
 
 	pci_set_drvdata(skl->pci, ebus);
 

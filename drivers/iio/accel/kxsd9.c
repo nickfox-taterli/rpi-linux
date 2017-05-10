@@ -110,10 +110,15 @@ static int kxsd9_write_scale(struct iio_dev *indio_dev, int micro)
 	if (!foundit)
 		return -EINVAL;
 
+<<<<<<< HEAD
 	ret = regmap_update_bits(st->map,
 				 KXSD9_REG_CTRL_C,
 				 KXSD9_CTRL_C_FS_MASK,
 				 i);
+=======
+	mutex_lock(&st->buf_lock);
+	ret = spi_w8r8(st->us, KXSD9_READ(KXSD9_REG_CTRL_C));
+>>>>>>> upstream/rpi-4.4.y
 	if (ret < 0)
 		goto error_ret;
 
@@ -177,6 +182,7 @@ static int kxsd9_read_raw(struct iio_dev *indio_dev,
 				       sizeof(raw_val));
 		if (ret)
 			goto error_ret;
+<<<<<<< HEAD
 		nval = be16_to_cpu(raw_val);
 		/* Only 12 bits are valid */
 		nval >>= 4;
@@ -196,6 +202,17 @@ static int kxsd9_read_raw(struct iio_dev *indio_dev,
 			goto error_ret;
 		*val = 0;
 		*val2 = kxsd9_micro_scales[regval & KXSD9_CTRL_C_FS_MASK];
+=======
+		*val = ret;
+		ret = IIO_VAL_INT;
+		break;
+	case IIO_CHAN_INFO_SCALE:
+		ret = spi_w8r8(st->us, KXSD9_READ(KXSD9_REG_CTRL_C));
+		if (ret < 0)
+			goto error_ret;
+		*val = 0;
+		*val2 = kxsd9_micro_scales[ret & KXSD9_FS_MASK];
+>>>>>>> upstream/rpi-4.4.y
 		ret = IIO_VAL_INT_PLUS_MICRO;
 		break;
 	}

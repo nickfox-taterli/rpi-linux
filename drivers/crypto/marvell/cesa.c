@@ -373,10 +373,13 @@ static int mv_cesa_dev_dma_init(struct mv_cesa_dev *cesa)
 
 	dma->padding_pool = dmam_pool_create("cesa_padding", dev, 72, 1, 0);
 	if (!dma->padding_pool)
+<<<<<<< HEAD
 		return -ENOMEM;
 
 	dma->iv_pool = dmam_pool_create("cesa_iv", dev, 16, 1, 0);
 	if (!dma->iv_pool)
+=======
+>>>>>>> upstream/rpi-4.4.y
 		return -ENOMEM;
 
 	cesa->dma = dma;

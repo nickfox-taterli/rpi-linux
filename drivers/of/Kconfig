@@ -109,9 +109,12 @@ config OF_OVERLAY
 	  While this option is selected automatically when needed, you can
 	  enable it manually to improve device tree unit test coverage.
 
+<<<<<<< HEAD
 config OF_NUMA
 	bool
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 config OF_CONFIGFS
 	bool "Device Tree Overlay ConfigFS interface"
 	select CONFIGFS_FS

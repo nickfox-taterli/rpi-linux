@@ -4,6 +4,7 @@
  * Copyright (C) Nokia Corporation
  *
  * Author: Peter Ujfalusi <peter.ujfalusi@ti.com>
+ * Modified: Jan Grulich <jan@grulich.eu>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -50,7 +51,88 @@ struct tpa6130a2_data {
 	enum tpa_model id;
 };
 
+<<<<<<< HEAD
 static int tpa6130a2_power(struct tpa6130a2_data *data, bool enable)
+=======
+static void tpa6130a2_channel_enable(u8 channel, int enable);
+
+static int tpa6130a2_i2c_read(int reg)
+{
+	struct tpa6130a2_data *data;
+	int val;
+
+	if (WARN_ON(!tpa6130a2_client))
+		return -EINVAL;
+	data = i2c_get_clientdata(tpa6130a2_client);
+
+	/* If powered off, return the cached value */
+	if (data->power_state) {
+		val = i2c_smbus_read_byte_data(tpa6130a2_client, reg);
+		if (val < 0)
+			dev_err(&tpa6130a2_client->dev, "Read failed\n");
+		else
+			data->regs[reg] = val;
+	} else {
+		val = data->regs[reg];
+	}
+
+	return val;
+}
+
+static int tpa6130a2_i2c_write(int reg, u8 value)
+{
+	struct tpa6130a2_data *data;
+	int val = 0;
+
+	if (WARN_ON(!tpa6130a2_client))
+		return -EINVAL;
+	data = i2c_get_clientdata(tpa6130a2_client);
+
+	if (data->power_state) {
+		val = i2c_smbus_write_byte_data(tpa6130a2_client, reg, value);
+		if (val < 0) {
+			dev_err(&tpa6130a2_client->dev, "Write failed\n");
+			return val;
+		}
+	}
+
+	/* Either powered on or off, we save the context */
+	data->regs[reg] = value;
+
+	return val;
+}
+
+static u8 tpa6130a2_read(int reg)
+{
+	struct tpa6130a2_data *data;
+
+	if (WARN_ON(!tpa6130a2_client))
+		return 0;
+	data = i2c_get_clientdata(tpa6130a2_client);
+
+	return data->regs[reg];
+}
+
+static int tpa6130a2_initialize(void)
+{
+	struct tpa6130a2_data *data;
+	int i, ret = 0;
+
+	if (WARN_ON(!tpa6130a2_client))
+		return -EINVAL;
+	data = i2c_get_clientdata(tpa6130a2_client);
+
+	for (i = 1; i < TPA6130A2_REG_VERSION; i++) {
+		ret = tpa6130a2_i2c_write(i, data->regs[i]);
+		if (ret < 0)
+			break;
+	}
+
+	return ret;
+}
+
+static int tpa6130a2_power(u8 power)
+>>>>>>> upstream/rpi-4.4.y
 {
 	int ret = 0, ret2;
 
@@ -103,23 +185,76 @@ static int tpa6130a2_power(struct tpa6130a2_data *data, bool enable)
 	return ret;
 }
 
+<<<<<<< HEAD
 static int tpa6130a2_power_event(struct snd_soc_dapm_widget *w,
 				 struct snd_kcontrol *kctrl, int event)
+=======
+static int tpa6130a2_get_volsw(struct snd_kcontrol *kcontrol,
+			       struct snd_ctl_elem_value *ucontrol)
+>>>>>>> upstream/rpi-4.4.y
 {
 	struct snd_soc_component *c = snd_soc_dapm_to_component(w->dapm);
 	struct tpa6130a2_data *data = snd_soc_component_get_drvdata(c);
 
+<<<<<<< HEAD
 	if (SND_SOC_DAPM_EVENT_ON(event)) {
 		/* Before widget power up: turn chip on, sync registers */
 		return tpa6130a2_power(data, true);
 	} else {
 		/* After widget power down: turn chip off */
 		return tpa6130a2_power(data, false);
+=======
+	mutex_unlock(&data->mutex);
+	return 0;
+}
+
+static int tpa6130a2_put_volsw(struct snd_kcontrol *kcontrol,
+			       struct snd_ctl_elem_value *ucontrol)
+{
+	struct soc_mixer_control *mc =
+		(struct soc_mixer_control *)kcontrol->private_value;
+	struct tpa6130a2_data *data;
+	unsigned int reg = mc->reg;
+	unsigned int shift = mc->shift;
+	int max = mc->max;
+	unsigned int mask = (1 << fls(max)) - 1;
+	unsigned int invert = mc->invert;
+	unsigned int val = (ucontrol->value.integer.value[0] & mask);
+	unsigned int val_reg;
+
+	if (WARN_ON(!tpa6130a2_client))
+		return -EINVAL;
+	data = i2c_get_clientdata(tpa6130a2_client);
+
+	if (invert)
+		val = max - val;
+
+	mutex_lock(&data->mutex);
+
+	val_reg = tpa6130a2_read(reg);
+	if (((val_reg >> shift) & mask) == val) {
+		mutex_unlock(&data->mutex);
+		return 0;
+>>>>>>> upstream/rpi-4.4.y
 	}
 }
 
+static int tpa6130a2_put_hp_sw(struct snd_kcontrol *kcontrol,
+			       struct snd_ctl_elem_value *ucontrol)
+{
+	int enable = ucontrol->value.integer.value[0];
+	unsigned int state;
+
+	state = (tpa6130a2_read(TPA6130A2_REG_VOL_MUTE) & 0x80) == 0;
+	if (state == enable)
+		return 0; /* No change */
+
+	tpa6130a2_channel_enable(TPA6130A2_HP_EN_R | TPA6130A2_HP_EN_L, enable);
+	return 1; /* Changed */
+}
+
 /*
- * TPA6130 volume. From -59.5 to 4 dB with increasing step size when going
+ * TPA6130 volume. From -59.5 to +4.0 dB with increasing step size when going
  * down in gain.
  */
 static const DECLARE_TLV_DB_RANGE(tpa6130_tlv,
@@ -139,6 +274,9 @@ static const struct snd_kcontrol_new tpa6130a2_controls[] = {
 	SOC_SINGLE_TLV("Headphone Playback Volume",
 		       TPA6130A2_REG_VOL_MUTE, 0, 0x3f, 0,
 		       tpa6130_tlv),
+	SOC_SINGLE_EXT("TPA6130A2 Headphone Playback Switch",
+		       TPA6130A2_REG_VOL_MUTE, 7, 1, 1,
+		       tpa6130a2_get_volsw, tpa6130a2_put_hp_sw),
 };
 
 static const DECLARE_TLV_DB_RANGE(tpa6140_tlv,
@@ -151,6 +289,9 @@ static const struct snd_kcontrol_new tpa6140a2_controls[] = {
 	SOC_SINGLE_TLV("Headphone Playback Volume",
 		       TPA6130A2_REG_VOL_MUTE, 1, 0x1f, 0,
 		       tpa6140_tlv),
+	SOC_SINGLE_EXT("TPA6140A2 Headphone Playback Switch",
+		       TPA6130A2_REG_VOL_MUTE, 7, 1, 1,
+		       tpa6130a2_get_volsw, tpa6130a2_put_hp_sw),
 };
 
 static int tpa6130a2_component_probe(struct snd_soc_component *component)

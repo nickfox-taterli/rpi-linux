@@ -21,13 +21,21 @@
 static void input_trig_activate(struct led_classdev *led_cdev)
 {
 	led_cdev->flags |= SET_GPIO_INPUT;
+<<<<<<< HEAD
 	led_set_brightness(led_cdev, 0);
+=======
+	led_set_brightness_async(led_cdev, 0);
+>>>>>>> upstream/rpi-4.4.y
 }
 
 static void input_trig_deactivate(struct led_classdev *led_cdev)
 {
 	led_cdev->flags |= SET_GPIO_OUTPUT;
+<<<<<<< HEAD
 	led_set_brightness(led_cdev, 0);
+=======
+	led_set_brightness_async(led_cdev, 0);
+>>>>>>> upstream/rpi-4.4.y
 }
 
 static struct led_trigger input_led_trigger = {

@@ -168,11 +168,14 @@ int ptep_set_access_flags(struct vm_area_struct *vma,
 }
 #endif
 
+<<<<<<< HEAD
 static bool is_el1_instruction_abort(unsigned int esr)
 {
 	return ESR_ELx_EC(esr) == ESR_ELx_EC_IABT_CUR;
 }
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 /*
  * The kernel tried to access some page that wasn't present.
  */

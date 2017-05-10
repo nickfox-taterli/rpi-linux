@@ -1,9 +1,15 @@
 /dts-v1/;
 
 #include "bcm2708.dtsi"
+<<<<<<< HEAD
 #include "bcm283x-rpi-smsc9512.dtsi"
 
 / {
+=======
+
+/ {
+	compatible = "brcm,bcm2708";
+>>>>>>> upstream/rpi-4.4.y
 	model = "Raspberry Pi Model B";
 };
 
@@ -98,10 +104,21 @@
 };
 
 &i2s {
+<<<<<<< HEAD
+=======
+	#sound-dai-cells = <0>;
+>>>>>>> upstream/rpi-4.4.y
 	pinctrl-names = "default";
 	pinctrl-0 = <&i2s_pins>;
 };
 
+<<<<<<< HEAD
+=======
+&random {
+	status = "okay";
+};
+
+>>>>>>> upstream/rpi-4.4.y
 &leds {
 	act_led: act {
 		label = "led0";
@@ -122,6 +139,10 @@
 / {
 	__overrides__ {
 		uart0 = <&uart0>,"status";
+<<<<<<< HEAD
+=======
+		uart0_clkrate = <&clk_uart0>,"clock-frequency:0";
+>>>>>>> upstream/rpi-4.4.y
 		uart1 = <&uart1>,"status";
 		i2s = <&i2s>,"status";
 		spi = <&spi0>,"status";
@@ -131,6 +152,10 @@
 		i2c0_baudrate = <&i2c0>,"clock-frequency:0";
 		i2c1_baudrate = <&i2c1>,"clock-frequency:0";
 		i2c2_baudrate = <&i2c2>,"clock-frequency:0";
+<<<<<<< HEAD
+=======
+		core_freq = <&clk_core>,"clock-frequency:0";
+>>>>>>> upstream/rpi-4.4.y
 
 		act_led_gpio = <&act_led>,"gpios:4";
 		act_led_activelow = <&act_led>,"gpios:8";
@@ -145,8 +170,11 @@
 		sd_debug     = <&sdhost>,"brcm,debug";
 	};
 };
+<<<<<<< HEAD
 
 &i2c_dsi {
 	gpios = <&gpio 2 0
 		 &gpio 3 0>;
 };
+=======
+>>>>>>> upstream/rpi-4.4.y

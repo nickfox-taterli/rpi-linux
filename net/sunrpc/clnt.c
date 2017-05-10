@@ -524,7 +524,11 @@ struct rpc_clnt *rpc_create(struct rpc_create_args *args)
 	char servername[48];
 
 	if (args->bc_xprt) {
+<<<<<<< HEAD
 		WARN_ON_ONCE(!(args->protocol & XPRT_TRANSPORT_BC));
+=======
+		WARN_ON(args->protocol != XPRT_TRANSPORT_BC_TCP);
+>>>>>>> upstream/rpi-4.4.y
 		xprt = args->bc_xprt->xpt_bc_xprt;
 		if (xprt) {
 			xprt_get(xprt);

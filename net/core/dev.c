@@ -1697,6 +1697,7 @@ EXPORT_SYMBOL_GPL(net_dec_egress_queue);
 static struct static_key netstamp_needed __read_mostly;
 #ifdef HAVE_JUMP_LABEL
 static atomic_t netstamp_needed_deferred;
+<<<<<<< HEAD
 static atomic_t netstamp_wanted;
 static void netstamp_clear(struct work_struct *work)
 {
@@ -1727,6 +1728,20 @@ void net_enable_timestamp(void)
 	atomic_inc(&netstamp_needed_deferred);
 	schedule_work(&netstamp_work);
 #else
+=======
+static void netstamp_clear(struct work_struct *work)
+{
+	int deferred = atomic_xchg(&netstamp_needed_deferred, 0);
+
+	while (deferred--)
+		static_key_slow_dec(&netstamp_needed);
+}
+static DECLARE_WORK(netstamp_work, netstamp_clear);
+#endif
+
+void net_enable_timestamp(void)
+{
+>>>>>>> upstream/rpi-4.4.y
 	static_key_slow_inc(&netstamp_needed);
 #endif
 }
@@ -1735,6 +1750,7 @@ EXPORT_SYMBOL(net_enable_timestamp);
 void net_disable_timestamp(void)
 {
 #ifdef HAVE_JUMP_LABEL
+<<<<<<< HEAD
 	int wanted;
 
 	while (1) {
@@ -1745,6 +1761,10 @@ void net_disable_timestamp(void)
 			return;
 	}
 	atomic_dec(&netstamp_needed_deferred);
+=======
+	/* net_disable_timestamp() can be called from non process context */
+	atomic_inc(&netstamp_needed_deferred);
+>>>>>>> upstream/rpi-4.4.y
 	schedule_work(&netstamp_work);
 #else
 	static_key_slow_dec(&netstamp_needed);
@@ -2732,6 +2752,7 @@ struct sk_buff *__skb_gso_segment(struct sk_buff *skb,
 			return ERR_PTR(err);
 	}
 
+<<<<<<< HEAD
 	/* Only report GSO partial support if it will enable us to
 	 * support segmentation on this frame without needing additional
 	 * work.
@@ -2745,6 +2766,8 @@ struct sk_buff *__skb_gso_segment(struct sk_buff *skb,
 			features &= ~NETIF_F_GSO_PARTIAL;
 	}
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 	BUILD_BUG_ON(SKB_SGO_CB_OFFSET +
 		     sizeof(*SKB_GSO_CB(skb)) > sizeof(skb->cb));
 
@@ -2836,7 +2859,11 @@ static netdev_features_t harmonize_features(struct sk_buff *skb,
 
 	if (skb->ip_summed != CHECKSUM_NONE &&
 	    !can_checksum_protocol(features, type)) {
+<<<<<<< HEAD
 		features &= ~(NETIF_F_CSUM_MASK | NETIF_F_GSO_MASK);
+=======
+		features &= ~NETIF_F_ALL_CSUM;
+>>>>>>> upstream/rpi-4.4.y
 	}
 	if (illegal_highdma(skb->dev, skb))
 		features &= ~NETIF_F_SG;
@@ -4532,8 +4559,11 @@ static enum gro_result dev_gro_receive(struct napi_struct *napi, struct sk_buff 
 		NAPI_GRO_CB(skb)->free = 0;
 		NAPI_GRO_CB(skb)->encap_mark = 0;
 		NAPI_GRO_CB(skb)->recursion_counter = 0;
+<<<<<<< HEAD
 		NAPI_GRO_CB(skb)->is_fou = 0;
 		NAPI_GRO_CB(skb)->is_atomic = 1;
+=======
+>>>>>>> upstream/rpi-4.4.y
 		NAPI_GRO_CB(skb)->gro_remcsum_start = 0;
 
 		/* Setup for GRO checksum validation */

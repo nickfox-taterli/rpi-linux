@@ -364,14 +364,23 @@ try_again:
 	 * coverage checksum (UDP-Lite), do it before the copy.
 	 */
 
+<<<<<<< HEAD
 	if (copied < ulen || UDP_SKB_CB(skb)->partial_cov || peeking) {
+=======
+	if (copied < ulen || UDP_SKB_CB(skb)->partial_cov) {
+>>>>>>> upstream/rpi-4.4.y
 		checksum_valid = !udp_lib_checksum_complete(skb);
 		if (!checksum_valid)
 			goto csum_copy_err;
 	}
 
 	if (checksum_valid || skb_csum_unnecessary(skb))
+<<<<<<< HEAD
 		err = skb_copy_datagram_msg(skb, off, msg, copied);
+=======
+		err = skb_copy_datagram_msg(skb, sizeof(struct udphdr),
+					    msg, copied);
+>>>>>>> upstream/rpi-4.4.y
 	else {
 		err = skb_copy_and_csum_datagram_msg(skb, off, msg);
 		if (err == -EINVAL)
@@ -750,9 +759,16 @@ start_lookup:
 		if (udpv6_queue_rcv_skb(first, skb) > 0)
 			consume_skb(skb);
 	} else {
+<<<<<<< HEAD
 		kfree_skb(skb);
 		__UDP6_INC_STATS(net, UDP_MIB_IGNOREDMULTI,
 				 proto == IPPROTO_UDPLITE);
+=======
+		if (!inner_flushed)
+			UDP6_INC_STATS_BH(net, UDP_MIB_IGNOREDMULTI,
+					  proto == IPPROTO_UDPLITE);
+		consume_skb(skb);
+>>>>>>> upstream/rpi-4.4.y
 	}
 	return 0;
 }

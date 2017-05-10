@@ -232,10 +232,15 @@ static int tas5713_probe(struct snd_soc_codec *codec)
 static struct snd_soc_codec_driver soc_codec_dev_tas5713 = {
 	.probe = tas5713_probe,
 	.remove = tas5713_remove,
+<<<<<<< HEAD
 	.component_driver = {
 		.controls = tas5713_snd_controls,
 		.num_controls = ARRAY_SIZE(tas5713_snd_controls),
 	},
+=======
+	.controls = tas5713_snd_controls,
+	.num_controls = ARRAY_SIZE(tas5713_snd_controls),
+>>>>>>> upstream/rpi-4.4.y
 };
 
 

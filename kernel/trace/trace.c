@@ -2114,6 +2114,7 @@ void trace_buffer_unlock_commit_regs(struct trace_array *tr,
 {
 	__buffer_unlock_commit(buffer, event);
 
+<<<<<<< HEAD
 	/*
 	 * If regs is not set, then skip the following callers:
 	 *   trace_buffer_unlock_commit_regs
@@ -2125,6 +2126,9 @@ void trace_buffer_unlock_commit_regs(struct trace_array *tr,
 	 * two. They are that meaningful.
 	 */
 	ftrace_trace_stack(tr, buffer, flags, regs ? 0 : 4, pc, regs);
+=======
+	ftrace_trace_stack(tr, buffer, flags, 0, pc, regs);
+>>>>>>> upstream/rpi-4.4.y
 	ftrace_trace_userstack(buffer, flags, pc);
 }
 

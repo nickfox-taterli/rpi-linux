@@ -218,7 +218,17 @@ static void vlv_exec_gpio(struct drm_i915_private *dev_priv,
 		return;
 	}
 
+<<<<<<< HEAD
 	map = &vlv_gpio_table[gpio_index];
+=======
+	/* pull up/down */
+	action = *data++ & 1;
+
+	if (gpio >= ARRAY_SIZE(gtable)) {
+		DRM_DEBUG_KMS("unknown gpio %u\n", gpio);
+		goto out;
+	}
+>>>>>>> upstream/rpi-4.4.y
 
 	if (dev_priv->vbt.dsi.seq_version >= 3) {
 		/* XXX: this assumes vlv_gpio_table only has NC GPIOs. */
@@ -329,6 +339,7 @@ static const u8 *mipi_exec_gpio(struct intel_dsi *intel_dsi, const u8 *data)
 	else
 		DRM_DEBUG_KMS("GPIO element not supported on this platform\n");
 
+out:
 	return data;
 }
 

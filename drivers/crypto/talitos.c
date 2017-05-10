@@ -1175,6 +1175,7 @@ static int ipsec_esp(struct talitos_edesc *edesc, struct aead_request *areq,
 	map_single_talitos_ptr(dev, &desc->ptr[0], ctx->authkeylen, &ctx->key,
 			       DMA_TO_DEVICE);
 
+<<<<<<< HEAD
 	sg_count = edesc->src_nents ?: 1;
 	if (is_sec1 && sg_count > 1)
 		sg_copy_to_buffer(areq->src, sg_count, edesc->buf,
@@ -1191,6 +1192,28 @@ static int ipsec_esp(struct talitos_edesc *edesc, struct aead_request *areq,
 	if (ret > 1) {
 		tbl_off += ret;
 		sync_needed = true;
+=======
+	sg_count = dma_map_sg(dev, areq->src, edesc->src_nents ?: 1,
+			      (areq->src == areq->dst) ? DMA_BIDIRECTIONAL
+							   : DMA_TO_DEVICE);
+	/* hmac data */
+	desc->ptr[1].len = cpu_to_be16(areq->assoclen);
+	if (sg_count > 1 &&
+	    (ret = sg_to_link_tbl_offset(areq->src, sg_count, 0,
+					 areq->assoclen,
+					 &edesc->link_tbl[tbl_off])) > 1) {
+		to_talitos_ptr(&desc->ptr[1], edesc->dma_link_tbl + tbl_off *
+			       sizeof(struct talitos_ptr), 0);
+		desc->ptr[1].j_extent = DESC_PTR_LNKTBL_JUMP;
+
+		dma_sync_single_for_device(dev, edesc->dma_link_tbl,
+					   edesc->dma_len, DMA_BIDIRECTIONAL);
+
+		tbl_off += ret;
+	} else {
+		to_talitos_ptr(&desc->ptr[1], sg_dma_address(areq->src), 0);
+		desc->ptr[1].j_extent = 0;
+>>>>>>> upstream/rpi-4.4.y
 	}
 
 	/* cipher iv */
@@ -1225,6 +1248,7 @@ static int ipsec_esp(struct talitos_edesc *edesc, struct aead_request *areq,
 
 	sg_link_tbl_len = cryptlen;
 
+<<<<<<< HEAD
 	if (desc->hdr & DESC_HDR_TYPE_IPSEC_ESP) {
 		to_talitos_ptr_ext_set(&desc->ptr[4], authsize, is_sec1);
 
@@ -1251,12 +1275,71 @@ static int ipsec_esp(struct talitos_edesc *edesc, struct aead_request *areq,
 	sg_count = talitos_sg_map(dev, areq->dst, cryptlen, edesc,
 				  &desc->ptr[5], sg_count, areq->assoclen,
 				  tbl_off);
+=======
+	if (sg_count == 1) {
+		to_talitos_ptr(&desc->ptr[4], sg_dma_address(areq->src) +
+			       areq->assoclen, 0);
+	} else if ((ret = sg_to_link_tbl_offset(areq->src, sg_count,
+						areq->assoclen, sg_link_tbl_len,
+						&edesc->link_tbl[tbl_off])) >
+		   1) {
+		desc->ptr[4].j_extent |= DESC_PTR_LNKTBL_JUMP;
+		to_talitos_ptr(&desc->ptr[4], edesc->dma_link_tbl +
+					      tbl_off *
+					      sizeof(struct talitos_ptr), 0);
+		dma_sync_single_for_device(dev, edesc->dma_link_tbl,
+					   edesc->dma_len,
+					   DMA_BIDIRECTIONAL);
+		tbl_off += ret;
+	} else {
+		copy_talitos_ptr(&desc->ptr[4], &edesc->link_tbl[tbl_off], 0);
+	}
+
+	/* cipher out */
+	desc->ptr[5].len = cpu_to_be16(cryptlen);
+	desc->ptr[5].j_extent = authsize;
+
+	if (areq->src != areq->dst)
+		sg_count = dma_map_sg(dev, areq->dst, edesc->dst_nents ? : 1,
+				      DMA_FROM_DEVICE);
+
+	edesc->icv_ool = false;
+
+	if (sg_count == 1) {
+		to_talitos_ptr(&desc->ptr[5], sg_dma_address(areq->dst) +
+			       areq->assoclen, 0);
+	} else if ((sg_count =
+			sg_to_link_tbl_offset(areq->dst, sg_count,
+					      areq->assoclen, cryptlen,
+					      &edesc->link_tbl[tbl_off])) > 1) {
+		struct talitos_ptr *tbl_ptr = &edesc->link_tbl[tbl_off];
+
+		to_talitos_ptr(&desc->ptr[5], edesc->dma_link_tbl +
+			       tbl_off * sizeof(struct talitos_ptr), 0);
+
+		/* Add an entry to the link table for ICV data */
+		tbl_ptr += sg_count - 1;
+		tbl_ptr->j_extent = 0;
+		tbl_ptr++;
+		tbl_ptr->j_extent = DESC_PTR_LNKTBL_RETURN;
+		tbl_ptr->len = cpu_to_be16(authsize);
+
+		/* icv data follows link tables */
+		to_talitos_ptr(tbl_ptr, edesc->dma_link_tbl +
+					(edesc->src_nents + edesc->dst_nents +
+					 2) * sizeof(struct talitos_ptr) +
+					authsize, 0);
+		desc->ptr[5].j_extent |= DESC_PTR_LNKTBL_JUMP;
+		dma_sync_single_for_device(ctx->dev, edesc->dma_link_tbl,
+					   edesc->dma_len, DMA_BIDIRECTIONAL);
+>>>>>>> upstream/rpi-4.4.y
 
 	if (desc->hdr & DESC_HDR_TYPE_IPSEC_ESP)
 		to_talitos_ptr_ext_or(&desc->ptr[5], authsize, is_sec1);
 
 	if (sg_count > 1) {
 		edesc->icv_ool = true;
+<<<<<<< HEAD
 		sync_needed = true;
 
 		if (desc->hdr & DESC_HDR_TYPE_IPSEC_ESP) {
@@ -1285,6 +1368,10 @@ static int ipsec_esp(struct talitos_edesc *edesc, struct aead_request *areq,
 		to_talitos_ptr_len(&desc->ptr[6], authsize, is_sec1);
 		to_talitos_ptr(&desc->ptr[6], edesc->dma_link_tbl +
 			       areq->assoclen + cryptlen, is_sec1);
+=======
+	} else {
+		copy_talitos_ptr(&desc->ptr[5], &edesc->link_tbl[tbl_off], 0);
+>>>>>>> upstream/rpi-4.4.y
 	}
 
 	/* iv out */

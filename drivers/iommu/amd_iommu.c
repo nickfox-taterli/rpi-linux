@@ -232,10 +232,18 @@ static struct protection_domain *to_pdomain(struct iommu_domain *dom)
 	return container_of(dom, struct protection_domain, domain);
 }
 
+<<<<<<< HEAD
 static struct dma_ops_domain* to_dma_ops_domain(struct protection_domain *domain)
 {
 	BUG_ON(domain->flags != PD_DMA_OPS_MASK);
 	return container_of(domain, struct dma_ops_domain, domain);
+=======
+static inline u16 get_device_id(struct device *dev)
+{
+	struct pci_dev *pdev = to_pci_dev(dev);
+
+	return PCI_DEVID(pdev->bus->number, pdev->devfn);
+>>>>>>> upstream/rpi-4.4.y
 }
 
 static struct iommu_dev_data *alloc_dev_data(u16 devid)
@@ -286,7 +294,10 @@ static u16 get_alias(struct device *dev)
 	struct pci_dev *pdev = to_pci_dev(dev);
 	u16 devid, ivrs_alias, pci_alias;
 
+<<<<<<< HEAD
 	/* The callers make sure that get_device_id() does not fail here */
+=======
+>>>>>>> upstream/rpi-4.4.y
 	devid = get_device_id(dev);
 	ivrs_alias = amd_iommu_alias_table[devid];
 	pci_for_each_dma_alias(pdev, __last_alias, &pci_alias);
@@ -328,7 +339,12 @@ static u16 get_alias(struct device *dev)
 	 */
 	if (pci_alias == devid &&
 	    PCI_BUS_NUM(ivrs_alias) == pdev->bus->number) {
+<<<<<<< HEAD
 		pci_add_dma_alias(pdev, ivrs_alias & 0xff);
+=======
+		pdev->dev_flags |= PCI_DEV_FLAGS_DMA_ALIAS_DEVFN;
+		pdev->dma_alias_devfn = ivrs_alias & 0xff;
+>>>>>>> upstream/rpi-4.4.y
 		pr_info("AMD-Vi: Added PCI DMA alias %02x.%d for %s\n",
 			PCI_SLOT(ivrs_alias), PCI_FUNC(ivrs_alias),
 			dev_name(dev));
@@ -350,6 +366,7 @@ static struct iommu_dev_data *find_dev_data(u16 devid)
 }
 
 static struct iommu_dev_data *get_dev_data(struct device *dev)
+<<<<<<< HEAD
 {
 	return dev->archdata.iommu;
 }
@@ -358,6 +375,8 @@ static struct iommu_dev_data *get_dev_data(struct device *dev)
 * Find or create an IOMMU group for a acpihid device.
 */
 static struct iommu_group *acpihid_device_group(struct device *dev)
+=======
+>>>>>>> upstream/rpi-4.4.y
 {
 	struct acpihid_map_entry *p, *entry = NULL;
 	int devid;
@@ -437,6 +456,19 @@ static void init_iommu_group(struct device *dev)
 	if (IS_ERR(group))
 		return;
 
+<<<<<<< HEAD
+=======
+	domain = iommu_group_default_domain(group);
+	if (!domain)
+		goto out;
+
+	if (to_pdomain(domain)->flags == PD_DMA_OPS_MASK) {
+		dma_domain = to_pdomain(domain)->priv;
+		init_unity_mappings_for_device(dev, dma_domain);
+	}
+
+out:
+>>>>>>> upstream/rpi-4.4.y
 	iommu_group_put(group);
 }
 
@@ -458,7 +490,11 @@ static int iommu_init_device(struct device *dev)
 
 	dev_data->alias = get_alias(dev);
 
+<<<<<<< HEAD
 	if (dev_is_pci(dev) && pci_iommuv2_capable(to_pci_dev(dev))) {
+=======
+	if (pci_iommuv2_capable(pdev)) {
+>>>>>>> upstream/rpi-4.4.y
 		struct amd_iommu *iommu;
 
 		iommu = amd_iommu_rlookup_table[dev_data->devid];
@@ -479,9 +515,12 @@ static void iommu_ignore_device(struct device *dev)
 	int devid;
 
 	devid = get_device_id(dev);
+<<<<<<< HEAD
 	if (devid < 0)
 		return;
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 	alias = get_alias(dev);
 
 	memset(&amd_iommu_dev_table[devid], 0, sizeof(struct dev_table_entry));
@@ -1745,6 +1784,9 @@ static void dma_ops_domain_free(struct dma_ops_domain *dom)
 	if (dom->domain.id)
 		domain_id_free(dom->domain.id);
 
+	if (dom->domain.id)
+		domain_id_free(dom->domain.id);
+
 	kfree(dom);
 }
 
@@ -2993,6 +3035,7 @@ static void amd_iommu_domain_free(struct iommu_domain *dom)
 
 	if (!dom)
 		return;
+<<<<<<< HEAD
 
 	switch (dom->type) {
 	case IOMMU_DOMAIN_DMA:
@@ -3013,6 +3056,21 @@ static void amd_iommu_domain_free(struct iommu_domain *dom)
 		if (domain->flags & PD_IOMMUV2_MASK)
 			free_gcr3_table(domain);
 
+=======
+
+	switch (dom->type) {
+	case IOMMU_DOMAIN_DMA:
+		dma_dom = domain->priv;
+		dma_ops_domain_free(dma_dom);
+		break;
+	default:
+		if (domain->mode != PAGE_MODE_NONE)
+			free_pagetable(domain);
+
+		if (domain->flags & PD_IOMMUV2_MASK)
+			free_gcr3_table(domain);
+
+>>>>>>> upstream/rpi-4.4.y
 		protection_domain_free(domain);
 		break;
 	}

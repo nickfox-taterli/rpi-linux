@@ -268,6 +268,7 @@ static __always_inline u32  __pv_wait_head_or_lock(struct qspinlock *lock,
 #endif
 
 /*
+<<<<<<< HEAD
  * Various notes on spin_is_locked() and spin_unlock_wait(), which are
  * 'interesting' functions:
  *
@@ -325,6 +326,8 @@ static __always_inline u32  __pv_wait_head_or_lock(struct qspinlock *lock,
  */
 
 /*
+=======
+>>>>>>> upstream/rpi-4.4.y
  * queued_spin_lock_slowpath() can (load-)ACQUIRE the lock before
  * issuing an _unordered_ store to set _Q_LOCKED_VAL.
  *
@@ -379,7 +382,11 @@ void queued_spin_unlock_wait(struct qspinlock *lock)
 		cpu_relax();
 
 done:
+<<<<<<< HEAD
 	smp_acquire__after_ctrl_dep();
+=======
+	smp_rmb(); /* CTRL + RMB -> ACQUIRE */
+>>>>>>> upstream/rpi-4.4.y
 }
 EXPORT_SYMBOL(queued_spin_unlock_wait);
 #endif

@@ -1227,6 +1227,7 @@ int scsi_sysfs_add_sdev(struct scsi_device *sdev)
 		sdev_printk(KERN_INFO, sdev,
 				"failed to add device handler: %d\n", error);
 
+<<<<<<< HEAD
 	error = device_add(&sdev->sdev_gendev);
 	if (error) {
 		sdev_printk(KERN_INFO, sdev,
@@ -1234,6 +1235,15 @@ int scsi_sysfs_add_sdev(struct scsi_device *sdev)
 		scsi_dh_remove_device(sdev);
 		return error;
 	}
+=======
+	error = scsi_dh_add_device(sdev);
+	if (error)
+		/*
+		 * device_handler is optional, so any error can be ignored
+		 */
+		sdev_printk(KERN_INFO, sdev,
+				"failed to add device handler: %d\n", error);
+>>>>>>> upstream/rpi-4.4.y
 
 	device_enable_async_suspend(&sdev->sdev_dev);
 	error = device_add(&sdev->sdev_dev);

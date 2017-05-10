@@ -436,7 +436,12 @@ static void edac_device_workq_teardown(struct edac_device_ctl_info *edac_dev)
 
 	edac_dev->op_state = OP_OFFLINE;
 
+<<<<<<< HEAD
 	edac_stop_work(&edac_dev->work);
+=======
+	cancel_delayed_work_sync(&edac_dev->work);
+	flush_workqueue(edac_workqueue);
+>>>>>>> upstream/rpi-4.4.y
 }
 
 /*

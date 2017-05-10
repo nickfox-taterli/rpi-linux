@@ -1441,6 +1441,11 @@ void nicvf_update_sq_stats(struct nicvf *nic, int sq_idx)
 /* Check for errors in the receive cmp.queue entry */
 int nicvf_check_cqe_rx_errs(struct nicvf *nic, struct cqe_rx_t *cqe_rx)
 {
+<<<<<<< HEAD
+=======
+	struct nicvf_hw_stats *stats = &nic->hw_stats;
+
+>>>>>>> upstream/rpi-4.4.y
 	if (!cqe_rx->err_level && !cqe_rx->err_opcode)
 		return 0;
 

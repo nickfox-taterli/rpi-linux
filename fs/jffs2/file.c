@@ -135,8 +135,13 @@ static int jffs2_write_begin(struct file *filp, struct address_space *mapping,
 	struct page *pg;
 	struct inode *inode = mapping->host;
 	struct jffs2_inode_info *f = JFFS2_INODE_INFO(inode);
+<<<<<<< HEAD
 	pgoff_t index = pos >> PAGE_SHIFT;
 	uint32_t pageofs = index << PAGE_SHIFT;
+=======
+	pgoff_t index = pos >> PAGE_CACHE_SHIFT;
+	uint32_t pageofs = index << PAGE_CACHE_SHIFT;
+>>>>>>> upstream/rpi-4.4.y
 	int ret = 0;
 
 	pg = grab_cache_page_write_begin(mapping, index, flags);
@@ -228,7 +233,11 @@ static int jffs2_write_begin(struct file *filp, struct address_space *mapping,
 
 out_page:
 	unlock_page(pg);
+<<<<<<< HEAD
 	put_page(pg);
+=======
+	page_cache_release(pg);
+>>>>>>> upstream/rpi-4.4.y
 	return ret;
 }
 

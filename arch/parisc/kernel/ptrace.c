@@ -311,6 +311,7 @@ long compat_arch_ptrace(struct task_struct *child, compat_long_t request,
 
 long do_syscall_trace_enter(struct pt_regs *regs)
 {
+<<<<<<< HEAD
 	if (test_thread_flag(TIF_SYSCALL_TRACE) &&
 	    tracehook_report_syscall_entry(regs)) {
 		/*
@@ -330,6 +331,21 @@ long do_syscall_trace_enter(struct pt_regs *regs)
 	if (unlikely(test_thread_flag(TIF_SYSCALL_TRACEPOINT)))
 		trace_sys_enter(regs, regs->gr[20]);
 #endif
+=======
+	/* Do the secure computing check first. */
+	secure_computing_strict(regs->gr[20]);
+
+	if (test_thread_flag(TIF_SYSCALL_TRACE) &&
+	    tracehook_report_syscall_entry(regs)) {
+		/*
+		 * Tracing decided this syscall should not happen or the
+		 * debugger stored an invalid system call number. Skip
+		 * the system call and the system call restart handling.
+		 */
+		regs->gr[20] = -1UL;
+		goto out;
+	}
+>>>>>>> upstream/rpi-4.4.y
 
 #ifdef CONFIG_64BIT
 	if (!is_compat_task())
@@ -344,11 +360,15 @@ long do_syscall_trace_enter(struct pt_regs *regs)
 			regs->gr[23] & 0xffffffff);
 
 out:
+<<<<<<< HEAD
 	/*
 	 * Sign extend the syscall number to 64bit since it may have been
 	 * modified by a compat ptrace call
 	 */
 	return (int) ((u32) regs->gr[20]);
+=======
+	return regs->gr[20];
+>>>>>>> upstream/rpi-4.4.y
 }
 
 void do_syscall_trace_exit(struct pt_regs *regs)

@@ -82,6 +82,26 @@ static inline int access_ok(int type, const void __user * addr, unsigned long si
 	return 1;
 }
 
+<<<<<<< HEAD
+=======
+/*
+ * The exception table consists of pairs of addresses: the first is the
+ * address of an instruction that is allowed to fault, and the second is
+ * the address at which the program should continue.  No registers are
+ * modified, so it is entirely up to the continuation code to figure out
+ * what to do.
+ *
+ * All the routines below use bits of fixup code that are out of line
+ * with the main instruction path.  This means when everything is well,
+ * we don't even have to jump over them.  Further, they do not intrude
+ * on our cache or tlb entries.
+ */
+
+struct exception_table_entry {
+        unsigned int insn, fixup;
+};
+
+>>>>>>> upstream/rpi-4.4.y
 void __retl_efault(void);
 
 /* Uh, these should become the main single-value transfer routines..
@@ -191,8 +211,11 @@ unsigned long __must_check ___copy_from_user(void *to,
 static inline unsigned long __must_check
 copy_from_user(void *to, const void __user *from, unsigned long size)
 {
+<<<<<<< HEAD
 	check_object_size(to, size, false);
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 	return ___copy_from_user(to, from, size);
 }
 #define __copy_from_user copy_from_user
@@ -203,8 +226,11 @@ unsigned long __must_check ___copy_to_user(void __user *to,
 static inline unsigned long __must_check
 copy_to_user(void __user *to, const void *from, unsigned long size)
 {
+<<<<<<< HEAD
 	check_object_size(from, size, true);
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 	return ___copy_to_user(to, from, size);
 }
 #define __copy_to_user copy_to_user

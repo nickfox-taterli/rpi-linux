@@ -37,9 +37,15 @@ obj-$(CONFIG_PINCTRL_TB10X)	+= pinctrl-tb10x.o
 obj-$(CONFIG_PINCTRL_ST) 	+= pinctrl-st.o
 obj-$(CONFIG_PINCTRL_ZYNQ)	+= pinctrl-zynq.o
 
+<<<<<<< HEAD
 obj-$(CONFIG_ARCH_ASPEED)	+= aspeed/
 obj-y				+= bcm/
 obj-$(CONFIG_PINCTRL_BERLIN)	+= berlin/
+=======
+obj-$(CONFIG_ARCH_BCM2708)$(CONFIG_ARCH_BCM2709) += bcm/
+obj-$(CONFIG_ARCH_BCM)		+= bcm/
+obj-$(CONFIG_ARCH_BERLIN)	+= berlin/
+>>>>>>> upstream/rpi-4.4.y
 obj-y				+= freescale/
 obj-$(CONFIG_X86)		+= intel/
 obj-$(CONFIG_PINCTRL_MVEBU)	+= mvebu/

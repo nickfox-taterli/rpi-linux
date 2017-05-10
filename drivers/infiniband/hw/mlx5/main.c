@@ -2319,15 +2319,23 @@ static void mlx5_ib_event(struct mlx5_core_dev *dev, void *context,
 	switch (event) {
 	case MLX5_DEV_EVENT_SYS_ERROR:
 		ibev.event = IB_EVENT_DEVICE_FATAL;
+<<<<<<< HEAD
 		mlx5_ib_handle_internal_error(ibdev);
+=======
+>>>>>>> upstream/rpi-4.4.y
 		fatal = true;
 		break;
 
 	case MLX5_DEV_EVENT_PORT_UP:
 	case MLX5_DEV_EVENT_PORT_DOWN:
 	case MLX5_DEV_EVENT_PORT_INITIALIZED:
+<<<<<<< HEAD
+=======
+		ibev.event = IB_EVENT_PORT_ERR;
+>>>>>>> upstream/rpi-4.4.y
 		port = (u8)param;
 
+<<<<<<< HEAD
 		/* In RoCE, port up/down events are handled in
 		 * mlx5_netdev_event().
 		 */
@@ -2339,6 +2347,8 @@ static void mlx5_ib_event(struct mlx5_core_dev *dev, void *context,
 			     IB_EVENT_PORT_ACTIVE : IB_EVENT_PORT_ERR;
 		break;
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 	case MLX5_DEV_EVENT_LID_CHANGE:
 		ibev.event = IB_EVENT_LID_CHANGE;
 		port = (u8)param;

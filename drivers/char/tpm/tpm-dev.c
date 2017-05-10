@@ -146,8 +146,11 @@ static ssize_t tpm_write(struct file *file, const char __user *buf,
 	}
 	out_size = tpm_transmit(priv->chip, priv->data_buffer,
 				sizeof(priv->data_buffer), 0);
+<<<<<<< HEAD
 
 	tpm_put_ops(priv->chip);
+=======
+>>>>>>> upstream/rpi-4.4.y
 	if (out_size < 0) {
 		mutex_unlock(&priv->buffer_mutex);
 		return out_size;

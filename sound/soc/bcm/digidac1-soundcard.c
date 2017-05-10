@@ -387,9 +387,15 @@ static int digidac1_soundcard_probe(struct platform_device *pdev)
 	}
 
 	ret = snd_soc_register_card(&digidac1_soundcard);
+<<<<<<< HEAD
 	if (ret && ret != -EPROBE_DEFER)
 		dev_err(&pdev->dev, "snd_soc_register_card() failed: %d\n",
 			ret);
+=======
+	if (ret)
+		dev_err(&pdev->dev, "snd_soc_register_card() failed: %d\n",
+		 ret);
+>>>>>>> upstream/rpi-4.4.y
 
 	return ret;
 }

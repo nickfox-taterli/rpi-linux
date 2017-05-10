@@ -116,8 +116,25 @@ enum jump_label_type {
 
 struct module;
 
+<<<<<<< HEAD
 #ifdef HAVE_JUMP_LABEL
 
+=======
+#include <linux/atomic.h>
+
+#ifdef HAVE_JUMP_LABEL
+
+static inline int static_key_count(struct static_key *key)
+{
+	/*
+	 * -1 means the first static_key_slow_inc() is in progress.
+	 *  static_key_enabled() must return true, so return 1 here.
+	 */
+	int n = atomic_read(&key->enabled);
+	return n >= 0 ? n : 1;
+}
+
+>>>>>>> upstream/rpi-4.4.y
 #define JUMP_TYPE_FALSE	0UL
 #define JUMP_TYPE_TRUE	1UL
 #define JUMP_TYPE_MASK	1UL
@@ -166,9 +183,12 @@ extern void static_key_disable(struct static_key *key);
 
 #else  /* !HAVE_JUMP_LABEL */
 
+<<<<<<< HEAD
 #include <linux/atomic.h>
 #include <linux/bug.h>
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 static inline int static_key_count(struct static_key *key)
 {
 	return atomic_read(&key->enabled);

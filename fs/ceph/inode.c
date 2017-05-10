@@ -1450,7 +1450,11 @@ static int fill_readdir_cache(struct inode *dir, struct dentry *dn,
 		unlock_page(ctl->page);
 		ctl->dentries = kmap(ctl->page);
 		if (idx == 0)
+<<<<<<< HEAD
 			memset(ctl->dentries, 0, PAGE_SIZE);
+=======
+			memset(ctl->dentries, 0, PAGE_CACHE_SIZE);
+>>>>>>> upstream/rpi-4.4.y
 	}
 
 	if (req->r_dir_release_cnt == atomic64_read(&ci->i_release_count) &&

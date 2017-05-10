@@ -95,6 +95,7 @@ vmlinux_link()
 		${LD} ${LDFLAGS} ${LDFLAGS_vmlinux} -o ${2}		\
 			-T ${lds} ${objects}
 	else
+<<<<<<< HEAD
 		if [ -n "${CONFIG_THIN_ARCHIVES}" ]; then
 			objects="-Wl,--whole-archive built-in.o ${1}"
 		else
@@ -109,6 +110,14 @@ vmlinux_link()
 			-Wl,-T,${lds}					\
 			${objects}					\
 			-lutil -lrt -lpthread
+=======
+		${CC} ${CFLAGS_vmlinux} -o ${2}                              \
+			-Wl,-T,${lds} ${KBUILD_VMLINUX_INIT}                 \
+			-Wl,--start-group                                    \
+				 ${KBUILD_VMLINUX_MAIN}                      \
+			-Wl,--end-group                                      \
+			-lutil -lrt -lpthread ${1}
+>>>>>>> upstream/rpi-4.4.y
 		rm -f linux
 	fi
 }

@@ -423,6 +423,7 @@ cifs_create_set_dentry:
 		cifs_dbg(FYI, "Create worked, get_inode_info failed rc = %d\n",
 			 rc);
 		goto out_err;
+<<<<<<< HEAD
 	}
 
 	if (S_ISDIR(newinode->i_mode)) {
@@ -430,6 +431,15 @@ cifs_create_set_dentry:
 		goto out_err;
 	}
 
+=======
+	}
+
+	if (S_ISDIR(newinode->i_mode)) {
+		rc = -EISDIR;
+		goto out_err;
+	}
+
+>>>>>>> upstream/rpi-4.4.y
 	d_drop(direntry);
 	d_add(direntry, newinode);
 

@@ -412,6 +412,7 @@ int nd_pfn_validate(struct nd_pfn *nd_pfn, const char *sig)
 		 */
 		if (memcmp(nd_pfn->uuid, pfn_sb->uuid, 16) != 0)
 			return -ENODEV;
+<<<<<<< HEAD
 
 		/*
 		 * If the uuid validates, but other settings mismatch
@@ -433,6 +434,8 @@ int nd_pfn_validate(struct nd_pfn *nd_pfn, const char *sig)
 		dev_err(&nd_pfn->dev, "alignment: %lx exceeds capacity %llx\n",
 				align, nvdimm_namespace_capacity(ndns));
 		return -EINVAL;
+=======
+>>>>>>> upstream/rpi-4.4.y
 	}
 
 	/*

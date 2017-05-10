@@ -127,12 +127,15 @@ enum fiq_debug_level {
 	FIQDBG_PORTHUB = (1 << 3),
 };
 
+<<<<<<< HEAD
 #ifdef CONFIG_ARM64
 
 typedef spinlock_t fiq_lock_t;
 
 #else
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 typedef struct {
 	union {
 		uint32_t slock;
@@ -143,8 +146,11 @@ typedef struct {
 	};
 } fiq_lock_t;
 
+<<<<<<< HEAD
 #endif
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 struct fiq_state;
 
 extern void _fiq_print (enum fiq_debug_level dbg_lvl, volatile struct fiq_state *state, char *fmt, ...);
@@ -363,6 +369,7 @@ struct fiq_state {
 	struct fiq_channel_state channel[0];
 };
 
+<<<<<<< HEAD
 #ifdef CONFIG_ARM64
 
 #ifdef local_fiq_enable
@@ -379,6 +386,8 @@ extern void local_fiq_disable(void);
 
 #endif
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 extern void fiq_fsm_spin_lock(fiq_lock_t *lock);
 
 extern void fiq_fsm_spin_unlock(fiq_lock_t *lock);

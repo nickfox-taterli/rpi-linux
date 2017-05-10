@@ -30,6 +30,7 @@
 #include "dma.h"
 #include "s3c24xx-i2s.h"
 
+<<<<<<< HEAD
 #include <linux/platform_data/asoc-s3c.h>
 
 static struct snd_dmaengine_dai_dma_data s3c24xx_i2s_pcm_stereo_out = {
@@ -40,6 +41,18 @@ static struct snd_dmaengine_dai_dma_data s3c24xx_i2s_pcm_stereo_out = {
 static struct snd_dmaengine_dai_dma_data s3c24xx_i2s_pcm_stereo_in = {
 	.chan_name	= "rx",
 	.addr_width	= 2,
+=======
+static struct s3c_dma_params s3c24xx_i2s_pcm_stereo_out = {
+	.slave		= (void *)(uintptr_t)DMACH_I2S_OUT,
+	.ch_name	= "tx",
+	.dma_size	= 2,
+};
+
+static struct s3c_dma_params s3c24xx_i2s_pcm_stereo_in = {
+	.slave		= (void *)(uintptr_t)DMACH_I2S_IN,
+	.ch_name	= "rx",
+	.dma_size	= 2,
+>>>>>>> upstream/rpi-4.4.y
 };
 
 struct s3c24xx_i2s_info {

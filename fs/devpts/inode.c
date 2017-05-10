@@ -398,7 +398,10 @@ devpts_fill_super(struct super_block *s, void *data, int silent)
 	s->s_op = &devpts_sops;
 	s->s_time_gran = 1;
 
+<<<<<<< HEAD
 	error = -ENOMEM;
+=======
+>>>>>>> upstream/rpi-4.4.y
 	s->s_fs_info = new_pts_fs_info(s);
 	if (!s->s_fs_info)
 		goto fail;
@@ -475,6 +478,12 @@ int devpts_new_index(struct pts_fs_info *fsi)
 	int index;
 	int ida_ret;
 
+<<<<<<< HEAD
+=======
+	if (!fsi)
+		return -ENODEV;
+
+>>>>>>> upstream/rpi-4.4.y
 retry:
 	if (!ida_pre_get(&fsi->allocated_ptys, GFP_KERNEL))
 		return -ENOMEM;
@@ -512,6 +521,30 @@ void devpts_kill_index(struct pts_fs_info *fsi, int idx)
 	mutex_unlock(&allocated_ptys_lock);
 }
 
+/*
+ * pty code needs to hold extra references in case of last /dev/tty close
+ */
+struct pts_fs_info *devpts_get_ref(struct inode *ptmx_inode, struct file *file)
+{
+	struct super_block *sb;
+	struct pts_fs_info *fsi;
+
+	sb = pts_sb_from_inode(ptmx_inode);
+	if (!sb)
+		return NULL;
+	fsi = DEVPTS_SB(sb);
+	if (!fsi)
+		return NULL;
+
+	atomic_inc(&sb->s_active);
+	return fsi;
+}
+
+void devpts_put_ref(struct pts_fs_info *fsi)
+{
+	deactivate_super(fsi->sb);
+}
+
 /**
  * devpts_pty_new -- create a new inode in /dev/pts/
  * @ptmx_inode: inode of the master
@@ -521,15 +554,30 @@ void devpts_kill_index(struct pts_fs_info *fsi, int idx)
  *
  * The created inode is returned. Remove it from /dev/pts/ by devpts_pty_kill.
  */
+<<<<<<< HEAD
 struct dentry *devpts_pty_new(struct pts_fs_info *fsi, int index, void *priv)
 {
 	struct dentry *dentry;
 	struct super_block *sb = fsi->sb;
+=======
+struct inode *devpts_pty_new(struct pts_fs_info *fsi, dev_t device, int index,
+		void *priv)
+{
+	struct dentry *dentry;
+	struct super_block *sb;
+>>>>>>> upstream/rpi-4.4.y
 	struct inode *inode;
 	struct dentry *root;
 	struct pts_mount_opts *opts;
 	char s[12];
 
+<<<<<<< HEAD
+=======
+	if (!fsi)
+		return ERR_PTR(-ENODEV);
+
+	sb = fsi->sb;
+>>>>>>> upstream/rpi-4.4.y
 	root = sb->s_root;
 	opts = &fsi->mount_opts;
 

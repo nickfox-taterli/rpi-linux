@@ -1,9 +1,13 @@
 #ifndef NVM_H
 #define NVM_H
 
+<<<<<<< HEAD
 #include <linux/blkdev.h>
 #include <linux/types.h>
 #include <uapi/linux/lightnvm.h>
+=======
+#include <linux/types.h>
+>>>>>>> upstream/rpi-4.4.y
 
 enum {
 	NVM_IO_OK = 0,
@@ -20,7 +24,11 @@ enum {
 #define NVM_SEC_BITS (8)
 #define NVM_PL_BITS  (8)
 #define NVM_LUN_BITS (8)
+<<<<<<< HEAD
 #define NVM_CH_BITS  (7)
+=======
+#define NVM_CH_BITS  (8)
+>>>>>>> upstream/rpi-4.4.y
 
 struct ppa_addr {
 	/* Generic structure for all addresses */
@@ -32,6 +40,7 @@ struct ppa_addr {
 			u64 pl		: NVM_PL_BITS;
 			u64 lun		: NVM_LUN_BITS;
 			u64 ch		: NVM_CH_BITS;
+<<<<<<< HEAD
 			u64 reserved	: 1;
 		} g;
 
@@ -40,6 +49,10 @@ struct ppa_addr {
 			u64 is_cached	: 1;
 		} c;
 
+=======
+		} g;
+
+>>>>>>> upstream/rpi-4.4.y
 		u64 ppa;
 	};
 };
@@ -49,11 +62,21 @@ struct nvm_id;
 struct nvm_dev;
 
 typedef int (nvm_l2p_update_fn)(u64, u32, __le64 *, void *);
+<<<<<<< HEAD
 typedef int (nvm_id_fn)(struct nvm_dev *, struct nvm_id *);
 typedef int (nvm_get_l2p_tbl_fn)(struct nvm_dev *, u64, u32,
 				nvm_l2p_update_fn *, void *);
 typedef int (nvm_op_bb_tbl_fn)(struct nvm_dev *, struct ppa_addr, u8 *);
 typedef int (nvm_op_set_bb_fn)(struct nvm_dev *, struct ppa_addr *, int, int);
+=======
+typedef int (nvm_bb_update_fn)(struct ppa_addr, int, u8 *, void *);
+typedef int (nvm_id_fn)(struct nvm_dev *, struct nvm_id *);
+typedef int (nvm_get_l2p_tbl_fn)(struct nvm_dev *, u64, u32,
+				nvm_l2p_update_fn *, void *);
+typedef int (nvm_op_bb_tbl_fn)(struct nvm_dev *, struct ppa_addr, int,
+				nvm_bb_update_fn *, void *);
+typedef int (nvm_op_set_bb_fn)(struct nvm_dev *, struct nvm_rq *, int);
+>>>>>>> upstream/rpi-4.4.y
 typedef int (nvm_submit_io_fn)(struct nvm_dev *, struct nvm_rq *);
 typedef int (nvm_erase_blk_fn)(struct nvm_dev *, struct nvm_rq *);
 typedef void *(nvm_create_dma_pool_fn)(struct nvm_dev *, char *);
@@ -131,6 +154,7 @@ enum {
 	NVM_BLK_T_GRWN_BAD	= 0x2,
 	NVM_BLK_T_DEV		= 0x4,
 	NVM_BLK_T_HOST		= 0x8,
+<<<<<<< HEAD
 
 	/* Memory capabilities */
 	NVM_ID_CAP_SLC		= 0x1,
@@ -155,6 +179,8 @@ struct nvm_id_lp_mlc {
 struct nvm_id_lp_tbl {
 	__u8	id[8];
 	struct nvm_id_lp_mlc mlc;
+=======
+>>>>>>> upstream/rpi-4.4.y
 };
 
 struct nvm_id_group {
@@ -223,9 +249,12 @@ struct nvm_tgt_instance {
 #define NVM_VERSION_MINOR 0
 #define NVM_VERSION_PATCH 0
 
+<<<<<<< HEAD
 struct nvm_rq;
 typedef void (nvm_end_io_fn)(struct nvm_rq *);
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 struct nvm_rq {
 	struct nvm_tgt_instance *ins;
 	struct nvm_dev *dev;

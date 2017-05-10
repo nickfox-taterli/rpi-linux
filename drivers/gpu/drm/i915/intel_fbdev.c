@@ -369,6 +369,7 @@ static bool intel_fb_initial_config(struct drm_fb_helper *fb_helper,
 	int num_connectors_detected = 0;
 	int pass = 0;
 
+<<<<<<< HEAD
 	save_enabled = kcalloc(count, sizeof(bool), GFP_KERNEL);
 	if (!save_enabled)
 		return false;
@@ -376,6 +377,15 @@ static bool intel_fb_initial_config(struct drm_fb_helper *fb_helper,
 	memcpy(save_enabled, enabled, count);
 	mask = BIT(count) - 1;
 	conn_configured = 0;
+=======
+	save_enabled = kcalloc(fb_helper->connector_count, sizeof(bool),
+			       GFP_KERNEL);
+	if (!save_enabled)
+		return false;
+
+	memcpy(save_enabled, enabled, fb_helper->connector_count);
+	mask = (1 << fb_helper->connector_count) - 1;
+>>>>>>> upstream/rpi-4.4.y
 retry:
 	for (i = 0; i < count; i++) {
 		struct drm_fb_helper_connector *fb_conn;
@@ -522,7 +532,11 @@ retry:
 	if (fallback) {
 bail:
 		DRM_DEBUG_KMS("Not using firmware configuration\n");
+<<<<<<< HEAD
 		memcpy(enabled, save_enabled, count);
+=======
+		memcpy(enabled, save_enabled, fb_helper->connector_count);
+>>>>>>> upstream/rpi-4.4.y
 		kfree(save_enabled);
 		return false;
 	}

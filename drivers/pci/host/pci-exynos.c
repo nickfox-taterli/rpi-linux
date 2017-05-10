@@ -504,7 +504,11 @@ static int __init exynos_add_pcie_port(struct exynos_pcie *exynos_pcie,
 		ret = devm_request_irq(dev, pp->msi_irq,
 					exynos_pcie_msi_irq_handler,
 					IRQF_SHARED | IRQF_NO_THREAD,
+<<<<<<< HEAD
 					"exynos-pcie", exynos_pcie);
+=======
+					"exynos-pcie", pp);
+>>>>>>> upstream/rpi-4.4.y
 		if (ret) {
 			dev_err(dev, "failed to request msi irq\n");
 			return ret;

@@ -139,6 +139,7 @@ static inline void arc_softirq_clear(int irq)
 	write_aux_reg(AUX_IRQ_HINT, 0);
 }
 
+<<<<<<< HEAD
 #else
 
 #ifdef CONFIG_TRACE_IRQFLAGS
@@ -151,6 +152,8 @@ static inline void arc_softirq_clear(int irq)
 	bl	trace_hardirqs_on
 .endm
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 #else
 
 .macro TRACE_ASM_IRQ_DISABLE

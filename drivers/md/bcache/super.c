@@ -1847,7 +1847,11 @@ static int register_cache(struct cache_sb *sb, struct page *sb_page,
 				struct block_device *bdev, struct cache *ca)
 {
 	char name[BDEVNAME_SIZE];
+<<<<<<< HEAD
 	const char *err = NULL; /* must be set for any error case */
+=======
+	const char *err = NULL;
+>>>>>>> upstream/rpi-4.4.y
 	int ret = 0;
 
 	memcpy(&ca->sb, sb, sizeof(struct cache_sb));
@@ -1863,12 +1867,17 @@ static int register_cache(struct cache_sb *sb, struct page *sb_page,
 	if (blk_queue_discard(bdev_get_queue(ca->bdev)))
 		ca->discard = CACHE_DISCARD(&ca->sb);
 
+<<<<<<< HEAD
 	ret = cache_alloc(ca);
 	if (ret != 0) {
 		if (ret == -ENOMEM)
 			err = "cache_alloc(): -ENOMEM";
 		else
 			err = "cache_alloc(): unknown error";
+=======
+	ret = cache_alloc(sb, ca);
+	if (ret != 0)
+>>>>>>> upstream/rpi-4.4.y
 		goto err;
 	}
 

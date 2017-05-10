@@ -9,6 +9,8 @@
 #include "drmP.h"
 #include "drm_gem_cma_helper.h"
 
+struct debugfs_reg32;
+
 struct vc4_dev {
 	struct drm_device *dev;
 
@@ -20,8 +22,13 @@ struct vc4_dev {
 	struct vc4_crtc *crtc[3];
 	struct vc4_v3d *v3d;
 	struct vc4_dpi *dpi;
+<<<<<<< HEAD
 	struct vc4_dsi *dsi1;
 	struct vc4_vec *vec;
+=======
+	struct vc4_dsi *dsi0;
+	struct vc4_dsi *dsi1;
+>>>>>>> upstream/rpi-4.4.y
 
 	struct drm_fbdev_cma *fbdev;
 
@@ -97,6 +104,7 @@ struct vc4_dev {
 	 */
 	struct list_head seqno_cb_list;
 
+<<<<<<< HEAD
 	/* The memory used for storing binner tile alloc, tile state,
 	 * and overflow memory allocations.  This is freed when V3D
 	 * powers down.
@@ -114,6 +122,14 @@ struct vc4_dev {
 	/* Bitmask of the current bin_alloc used for overflow memory. */
 	uint32_t bin_alloc_overflow;
 
+=======
+	/* The binner overflow memory that's currently set up in
+	 * BPOA/BPOS registers.  When overflow occurs and a new one is
+	 * allocated, the previous one will be moved to
+	 * vc4->current_exec's free list.
+	 */
+	struct vc4_bo *overflow_mem;
+>>>>>>> upstream/rpi-4.4.y
 	struct work_struct overflow_mem_work;
 
 	int power_refcount;
@@ -219,6 +235,8 @@ enum vc4_encoder_type {
 	VC4_ENCODER_TYPE_DPI,
 };
 
+#define VC4_DSI_USE_FIRMWARE_SETUP true
+
 struct vc4_encoder {
 	struct drm_encoder base;
 	enum vc4_encoder_type type;
@@ -236,6 +254,11 @@ to_vc4_encoder(struct drm_encoder *encoder)
 #define HVS_READ(offset) readl(vc4->hvs->regs + offset)
 #define HVS_WRITE(offset, val) writel(val, vc4->hvs->regs + offset)
 
+<<<<<<< HEAD
+=======
+#define VC4_DEBUG_REG(reg) { .name = #reg, .offset = reg }
+
+>>>>>>> upstream/rpi-4.4.y
 struct vc4_exec_info {
 	/* Sequence number for this bin/render job. */
 	uint64_t seqno;
@@ -306,12 +329,17 @@ struct vc4_exec_info {
 	bool found_increment_semaphore_packet;
 	bool found_flush;
 	uint8_t bin_tiles_x, bin_tiles_y;
+<<<<<<< HEAD
 	/* Physical address of the start of the tile alloc array
 	 * (where each tile's binned CL will start)
 	 */
 	uint32_t tile_alloc_offset;
 	/* Bitmask of which binner slots are freed when this job completes. */
 	uint32_t bin_slots;
+=======
+	struct drm_gem_cma_object *tile_bo;
+	uint32_t tile_alloc_offset;
+>>>>>>> upstream/rpi-4.4.y
 
 	/**
 	 * Computed addresses pointing into exec_bo where we start the
@@ -345,15 +373,28 @@ struct vc4_exec_info {
 static inline struct vc4_exec_info *
 vc4_first_bin_job(struct vc4_dev *vc4)
 {
+<<<<<<< HEAD
 	return list_first_entry_or_null(&vc4->bin_job_list,
 					struct vc4_exec_info, head);
+=======
+	if (list_empty(&vc4->bin_job_list))
+		return NULL;
+	return list_first_entry(&vc4->bin_job_list, struct vc4_exec_info, head);
+>>>>>>> upstream/rpi-4.4.y
 }
 
 static inline struct vc4_exec_info *
 vc4_first_render_job(struct vc4_dev *vc4)
 {
+<<<<<<< HEAD
 	return list_first_entry_or_null(&vc4->render_job_list,
 					struct vc4_exec_info, head);
+=======
+	if (list_empty(&vc4->render_job_list))
+		return NULL;
+	return list_first_entry(&vc4->render_job_list,
+				struct vc4_exec_info, head);
+>>>>>>> upstream/rpi-4.4.y
 }
 
 static inline struct vc4_exec_info *
@@ -479,6 +520,40 @@ void vc4_debugfs_cleanup(struct drm_minor *minor);
 
 /* vc4_drv.c */
 void __iomem *vc4_ioremap_regs(struct platform_device *dev, int index);
+void vc4_dump_regs32(const struct debugfs_reg32 *reg, unsigned int num_regs,
+		     void __iomem *base, const char *prefix);
+
+/* vc4_dpi.c */
+extern struct platform_driver vc4_dpi_driver;
+int vc4_dpi_debugfs_regs(struct seq_file *m, void *unused);
+
+/* vc4_dsi.c */
+extern struct platform_driver vc4_dsi_driver;
+int vc4_dsi_debugfs_regs(struct seq_file *m, void *unused);
+
+/* vc4_firmware_kms.c */
+extern struct platform_driver vc4_firmware_kms_driver;
+void vc4_fkms_cancel_page_flip(struct drm_crtc *crtc, struct drm_file *file);
+
+/* vc4_gem.c */
+void vc4_gem_init(struct drm_device *dev);
+void vc4_gem_destroy(struct drm_device *dev);
+int vc4_submit_cl_ioctl(struct drm_device *dev, void *data,
+			struct drm_file *file_priv);
+int vc4_wait_seqno_ioctl(struct drm_device *dev, void *data,
+			 struct drm_file *file_priv);
+int vc4_wait_bo_ioctl(struct drm_device *dev, void *data,
+		      struct drm_file *file_priv);
+void vc4_submit_next_bin_job(struct drm_device *dev);
+void vc4_submit_next_render_job(struct drm_device *dev);
+void vc4_move_job_to_render(struct drm_device *dev, struct vc4_exec_info *exec);
+int vc4_wait_for_seqno(struct drm_device *dev, uint64_t seqno,
+		       uint64_t timeout_ns, bool interruptible);
+void vc4_job_handle_completed(struct vc4_dev *vc4);
+int vc4_queue_seqno_cb(struct drm_device *dev,
+		       struct vc4_seqno_cb *cb, uint64_t seqno,
+		       void (*func)(struct vc4_seqno_cb *cb));
+int vc4_gem_exec_debugfs(struct seq_file *m, void *arg);
 
 /* vc4_dpi.c */
 extern struct platform_driver vc4_dpi_driver;
@@ -515,10 +590,13 @@ int vc4_queue_seqno_cb(struct drm_device *dev,
 extern struct platform_driver vc4_hdmi_driver;
 int vc4_hdmi_debugfs_regs(struct seq_file *m, void *unused);
 
+<<<<<<< HEAD
 /* vc4_hdmi.c */
 extern struct platform_driver vc4_vec_driver;
 int vc4_vec_debugfs_regs(struct seq_file *m, void *unused);
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 /* vc4_irq.c */
 irqreturn_t vc4_irq(int irq, void *arg);
 void vc4_irq_preinstall(struct drm_device *dev);
@@ -538,7 +616,11 @@ int vc4_kms_load(struct drm_device *dev);
 struct drm_plane *vc4_plane_init(struct drm_device *dev,
 				 enum drm_plane_type type);
 u32 vc4_plane_write_dlist(struct drm_plane *plane, u32 __iomem *dlist);
+<<<<<<< HEAD
 u32 vc4_plane_dlist_size(const struct drm_plane_state *state);
+=======
+u32 vc4_plane_dlist_size(struct drm_plane_state *state);
+>>>>>>> upstream/rpi-4.4.y
 void vc4_plane_async_set_fb(struct drm_plane *plane,
 			    struct drm_framebuffer *fb);
 
@@ -546,7 +628,10 @@ void vc4_plane_async_set_fb(struct drm_plane *plane,
 extern struct platform_driver vc4_v3d_driver;
 int vc4_v3d_debugfs_ident(struct seq_file *m, void *unused);
 int vc4_v3d_debugfs_regs(struct seq_file *m, void *unused);
+<<<<<<< HEAD
 int vc4_v3d_get_bin_slot(struct vc4_dev *vc4);
+=======
+>>>>>>> upstream/rpi-4.4.y
 
 /* vc4_validate.c */
 int

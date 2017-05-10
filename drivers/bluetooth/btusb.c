@@ -209,7 +209,10 @@ static const struct usb_device_id blacklist_table[] = {
 	{ USB_DEVICE(0x04ca, 0x300f), .driver_info = BTUSB_ATH3012 },
 	{ USB_DEVICE(0x04ca, 0x3010), .driver_info = BTUSB_ATH3012 },
 	{ USB_DEVICE(0x04ca, 0x3014), .driver_info = BTUSB_ATH3012 },
+<<<<<<< HEAD
 	{ USB_DEVICE(0x04ca, 0x3018), .driver_info = BTUSB_ATH3012 },
+=======
+>>>>>>> upstream/rpi-4.4.y
 	{ USB_DEVICE(0x0930, 0x0219), .driver_info = BTUSB_ATH3012 },
 	{ USB_DEVICE(0x0930, 0x021c), .driver_info = BTUSB_ATH3012 },
 	{ USB_DEVICE(0x0930, 0x0220), .driver_info = BTUSB_ATH3012 },
@@ -2017,7 +2020,11 @@ static int btusb_setup_intel_new(struct hci_dev *hdev)
 	 * This check has been put in place to ensure correct forward
 	 * compatibility options when newer hardware variants come along.
 	 */
+<<<<<<< HEAD
 	if (ver.hw_variant != 0x0b && ver.hw_variant != 0x0c) {
+=======
+	if (ver->hw_variant != 0x0b && ver->hw_variant != 0x0c) {
+>>>>>>> upstream/rpi-4.4.y
 		BT_ERR("%s: Unsupported Intel hardware variant (%u)",
 		       hdev->name, ver.hw_variant);
 		return -EINVAL;

@@ -5491,7 +5491,11 @@ int ext4_collapse_range(struct inode *inode, loff_t offset, loff_t len)
 			return ret;
 	}
 
+<<<<<<< HEAD
 	inode_lock(inode);
+=======
+	mutex_lock(&inode->i_mutex);
+>>>>>>> upstream/rpi-4.4.y
 	/*
 	 * There is no need to overlap collapse range with EOF, in which case
 	 * it is effectively a truncate operation
@@ -5637,7 +5641,11 @@ int ext4_insert_range(struct inode *inode, loff_t offset, loff_t len)
 			return ret;
 	}
 
+<<<<<<< HEAD
 	inode_lock(inode);
+=======
+	mutex_lock(&inode->i_mutex);
+>>>>>>> upstream/rpi-4.4.y
 	/* Currently just for extent based files */
 	if (!ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS)) {
 		ret = -EOPNOTSUPP;

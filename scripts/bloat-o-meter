@@ -69,6 +69,9 @@ print("add/remove: %s/%s grow/shrink: %s/%s up/down: %s/%s (%s)" % \
 print("%-40s %7s %7s %+7s" % ("function", "old", "new", "delta"))
 for d, n in delta:
     if d: print("%-40s %7s %7s %+7d" % (n, old.get(n,"-"), new.get(n,"-"), d))
+<<<<<<< HEAD
 
 print("Total: Before=%d, After=%d, chg %+.2f%%" % \
     (otot, ntot, (ntot - otot)*100.0/otot))
+=======
+>>>>>>> upstream/rpi-4.4.y

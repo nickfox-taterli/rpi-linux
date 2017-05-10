@@ -281,6 +281,7 @@ nvkm_device_tegra_new(const struct nvkm_device_tegra_func *func,
 		ret = PTR_ERR(tdev->clk);
 		goto free;
 	}
+<<<<<<< HEAD
 
 	if (func->require_ref_clk)
 		tdev->clk_ref = devm_clk_get(&pdev->dev, "ref");
@@ -288,12 +289,15 @@ nvkm_device_tegra_new(const struct nvkm_device_tegra_func *func,
 		ret = PTR_ERR(tdev->clk_ref);
 		goto free;
 	}
+=======
+>>>>>>> upstream/rpi-4.4.y
 
 	tdev->clk_pwr = devm_clk_get(&pdev->dev, "pwr");
 	if (IS_ERR(tdev->clk_pwr)) {
 		ret = PTR_ERR(tdev->clk_pwr);
 		goto free;
 	}
+<<<<<<< HEAD
 
 	/**
 	 * The IOMMU bit defines the upper limit of the GPU-addressable space.
@@ -303,6 +307,8 @@ nvkm_device_tegra_new(const struct nvkm_device_tegra_func *func,
 	ret = dma_set_mask(&pdev->dev, DMA_BIT_MASK(tdev->func->iommu_bit));
 	if (ret)
 		goto free;
+=======
+>>>>>>> upstream/rpi-4.4.y
 
 	nvkm_device_tegra_probe_iommu(tdev);
 

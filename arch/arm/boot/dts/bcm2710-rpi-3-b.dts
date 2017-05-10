@@ -1,9 +1,15 @@
 /dts-v1/;
 
 #include "bcm2710.dtsi"
+<<<<<<< HEAD
 #include "bcm283x-rpi-smsc9514.dtsi"
 
 / {
+=======
+
+/ {
+	compatible = "brcm,bcm2710","brcm,bcm2709";
+>>>>>>> upstream/rpi-4.4.y
 	model = "Raspberry Pi 3 Model B";
 };
 
@@ -92,6 +98,7 @@
 		firmware = <&firmware>;
 		status = "okay";
 	};
+<<<<<<< HEAD
 
 	expgpio: expgpio {
 		compatible = "brcm,bcm2835-expgpio";
@@ -100,6 +107,8 @@
 		firmware = <&firmware>;
 		status = "okay";
 	};
+=======
+>>>>>>> upstream/rpi-4.4.y
 };
 
 &fb {
@@ -157,16 +166,28 @@
 };
 
 &i2s {
+<<<<<<< HEAD
+=======
+	#sound-dai-cells = <0>;
+>>>>>>> upstream/rpi-4.4.y
 	pinctrl-names = "default";
 	pinctrl-0 = <&i2s_pins>;
 };
 
+<<<<<<< HEAD
+=======
+&random {
+	status = "okay";
+};
+
+>>>>>>> upstream/rpi-4.4.y
 &leds {
 	act_led: act {
 		label = "led0";
 		linux,default-trigger = "mmc0";
 		gpios = <&virtgpio 0 0>;
 	};
+<<<<<<< HEAD
 
 	pwr_led: pwr {
 		label = "led1";
@@ -177,6 +198,8 @@
 
 &hdmi {
 	hpd-gpios = <&expgpio 4 GPIO_ACTIVE_LOW>;
+=======
+>>>>>>> upstream/rpi-4.4.y
 };
 
 &audio {
@@ -193,6 +216,10 @@
 / {
 	__overrides__ {
 		uart0 = <&uart0>,"status";
+<<<<<<< HEAD
+=======
+		uart0_clkrate = <&clk_uart0>,"clock-frequency:0";
+>>>>>>> upstream/rpi-4.4.y
 		uart1 = <&uart1>,"status";
 		i2s = <&i2s>,"status";
 		spi = <&spi0>,"status";
@@ -202,15 +229,22 @@
 		i2c0_baudrate = <&i2c0>,"clock-frequency:0";
 		i2c1_baudrate = <&i2c1>,"clock-frequency:0";
 		i2c2_baudrate = <&i2c2>,"clock-frequency:0";
+<<<<<<< HEAD
+=======
+		core_freq = <&clk_core>,"clock-frequency:0";
+>>>>>>> upstream/rpi-4.4.y
 
 		act_led_gpio = <&act_led>,"gpios:4";
 		act_led_activelow = <&act_led>,"gpios:8";
 		act_led_trigger = <&act_led>,"linux,default-trigger";
 
+<<<<<<< HEAD
 		pwr_led_gpio = <&pwr_led>,"gpios:4";
 		pwr_led_activelow = <&pwr_led>,"gpios:8";
 		pwr_led_trigger = <&pwr_led>,"linux,default-trigger";
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 		audio = <&audio>,"status";
 		watchdog = <&watchdog>,"status";
 		random = <&random>,"status";
@@ -220,8 +254,11 @@
 		sd_debug     = <&sdhost>,"brcm,debug";
 	};
 };
+<<<<<<< HEAD
 
 &i2c_dsi {
 	gpios = <&gpio 44 0
 		 &gpio 45 0>;
 };
+=======
+>>>>>>> upstream/rpi-4.4.y

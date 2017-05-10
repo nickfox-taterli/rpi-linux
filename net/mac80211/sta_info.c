@@ -261,8 +261,13 @@ void sta_info_free(struct ieee80211_local *local, struct sta_info *sta)
 static int sta_info_hash_add(struct ieee80211_local *local,
 			     struct sta_info *sta)
 {
+<<<<<<< HEAD
 	return rhltable_insert(&local->sta_hash, &sta->hash_node,
 			       sta_rht_params);
+=======
+	return rhashtable_insert_fast(&local->sta_hash, &sta->hash_node,
+				      sta_rht_params);
+>>>>>>> upstream/rpi-4.4.y
 }
 
 static void sta_deliver_ps_frames(struct work_struct *wk)

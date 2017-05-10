@@ -285,7 +285,11 @@ static blk_qc_t md_make_request(struct request_queue *q, struct bio *bio)
 	 */
 	sectors = bio_sectors(bio);
 	/* bio could be mergeable after passing to underlayer */
+<<<<<<< HEAD
 	bio->bi_opf &= ~REQ_NOMERGE;
+=======
+	bio->bi_rw &= ~REQ_NOMERGE;
+>>>>>>> upstream/rpi-4.4.y
 	mddev->pers->make_request(mddev, bio);
 
 	cpu = part_stat_lock();

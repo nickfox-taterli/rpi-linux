@@ -150,6 +150,28 @@ static inline sector_t logical_to_sectors(struct scsi_device *sdev, sector_t blo
 {
 	return blocks << (ilog2(sdev->sector_size) - 9);
 }
+<<<<<<< HEAD
+=======
+
+static inline unsigned int logical_to_bytes(struct scsi_device *sdev, sector_t blocks)
+{
+	return blocks * sdev->sector_size;
+}
+
+/*
+ * A DIF-capable target device can be formatted with different
+ * protection schemes.  Currently 0 through 3 are defined:
+ *
+ * Type 0 is regular (unprotected) I/O
+ *
+ * Type 1 defines the contents of the guard and reference tags
+ *
+ * Type 2 defines the contents of the guard and reference tags and
+ * uses 32-byte commands to seed the latter
+ *
+ * Type 3 defines the contents of the guard tag only
+ */
+>>>>>>> upstream/rpi-4.4.y
 
 static inline unsigned int logical_to_bytes(struct scsi_device *sdev, sector_t blocks)
 {

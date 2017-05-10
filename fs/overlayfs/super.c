@@ -298,9 +298,13 @@ static void ovl_dentry_release(struct dentry *dentry)
 	}
 }
 
+<<<<<<< HEAD
 static struct dentry *ovl_d_real(struct dentry *dentry,
 				 const struct inode *inode,
 				 unsigned int open_flags)
+=======
+static struct dentry *ovl_d_real(struct dentry *dentry, struct inode *inode)
+>>>>>>> upstream/rpi-4.4.y
 {
 	struct dentry *real;
 
@@ -310,6 +314,7 @@ static struct dentry *ovl_d_real(struct dentry *dentry,
 		goto bug;
 	}
 
+<<<<<<< HEAD
 	if (d_is_negative(dentry))
 		return dentry;
 
@@ -320,6 +325,8 @@ static struct dentry *ovl_d_real(struct dentry *dentry,
 			return ERR_PTR(err);
 	}
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 	real = ovl_dentry_upper(dentry);
 	if (real && (!inode || inode == d_inode(real)))
 		return real;
@@ -328,6 +335,7 @@ static struct dentry *ovl_d_real(struct dentry *dentry,
 	if (!real)
 		goto bug;
 
+<<<<<<< HEAD
 	/* Handle recursion */
 	real = d_real(real, inode, open_flags);
 
@@ -335,6 +343,17 @@ static struct dentry *ovl_d_real(struct dentry *dentry,
 		return real;
 bug:
 	WARN(1, "ovl_d_real(%pd4, %s:%lu): real dentry not found\n", dentry,
+=======
+	if (!inode || inode == d_inode(real))
+		return real;
+
+	/* Handle recursion */
+	if (real->d_flags & DCACHE_OP_REAL)
+		return real->d_op->d_real(real, inode);
+
+bug:
+	WARN(1, "ovl_d_real(%pd4, %s:%lu\n): real dentry not found\n", dentry,
+>>>>>>> upstream/rpi-4.4.y
 	     inode ? inode->i_sb->s_id : "NULL", inode ? inode->i_ino : 0);
 	return dentry;
 }
@@ -382,11 +401,19 @@ static int ovl_dentry_weak_revalidate(struct dentry *dentry, unsigned int flags)
 
 static const struct dentry_operations ovl_dentry_operations = {
 	.d_release = ovl_dentry_release,
+<<<<<<< HEAD
+=======
+	.d_select_inode = ovl_d_select_inode,
+>>>>>>> upstream/rpi-4.4.y
 	.d_real = ovl_d_real,
 };
 
 static const struct dentry_operations ovl_reval_dentry_operations = {
 	.d_release = ovl_dentry_release,
+<<<<<<< HEAD
+=======
+	.d_select_inode = ovl_d_select_inode,
+>>>>>>> upstream/rpi-4.4.y
 	.d_real = ovl_d_real,
 	.d_revalidate = ovl_dentry_revalidate,
 	.d_weak_revalidate = ovl_dentry_weak_revalidate,
@@ -832,6 +859,7 @@ retry:
 		if (err)
 			goto out_dput;
 
+<<<<<<< HEAD
 		/*
 		 * Try to remove POSIX ACL xattrs from workdir.  We are good if:
 		 *
@@ -845,6 +873,8 @@ retry:
 		 * allowed as upper are limited to "normal" ones, where checking
 		 * for the above two errors is sufficient.
 		 */
+=======
+>>>>>>> upstream/rpi-4.4.y
 		err = vfs_removexattr(work, XATTR_NAME_POSIX_ACL_DEFAULT);
 		if (err && err != -ENODATA && err != -EOPNOTSUPP)
 			goto out_dput;
@@ -1343,10 +1373,18 @@ static int ovl_fill_super(struct super_block *sb, void *data, int silent)
 
 	root_dentry->d_fsdata = oe;
 
+<<<<<<< HEAD
 	realinode = d_inode(ovl_dentry_real(root_dentry));
 	ovl_inode_init(d_inode(root_dentry), realinode, !!upperpath.dentry);
 	ovl_copyattr(realinode, d_inode(root_dentry));
 
+=======
+	ovl_copyattr(ovl_dentry_real(root_dentry)->d_inode,
+		     root_dentry->d_inode);
+
+	sb->s_magic = OVERLAYFS_SUPER_MAGIC;
+	sb->s_op = &ovl_super_operations;
+>>>>>>> upstream/rpi-4.4.y
 	sb->s_root = root_dentry;
 
 	return 0;

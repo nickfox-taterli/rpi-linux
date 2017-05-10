@@ -37,7 +37,10 @@
 
 //#include "dwc_os.h"
 #include "dwc_otg_core_if.h"
+<<<<<<< HEAD
 #include "dwc_otg_driver.h"
+=======
+>>>>>>> upstream/rpi-4.4.y
 
 /** @file
  * This file defines DWC_OTG PCD Core API.
@@ -140,7 +143,11 @@ struct dwc_otg_pcd_function_ops {
  *
  * @param core_if The DWC_OTG Core
  */
+<<<<<<< HEAD
 extern dwc_otg_pcd_t *dwc_otg_pcd_init(dwc_otg_device_t *otg_dev);
+=======
+extern dwc_otg_pcd_t *dwc_otg_pcd_init(dwc_otg_core_if_t * core_if);
+>>>>>>> upstream/rpi-4.4.y
 
 /** Frees PCD allocated by dwc_otg_pcd_init
  *

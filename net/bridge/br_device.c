@@ -106,6 +106,7 @@ static int br_dev_init(struct net_device *dev)
 	err = br_vlan_init(br);
 	if (err) {
 		free_percpu(br->stats);
+<<<<<<< HEAD
 		return err;
 	}
 
@@ -114,6 +115,8 @@ static int br_dev_init(struct net_device *dev)
 		free_percpu(br->stats);
 		br_vlan_flush(br);
 	}
+=======
+>>>>>>> upstream/rpi-4.4.y
 	br_set_lockdep_class(dev);
 
 	return err;

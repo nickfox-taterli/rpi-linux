@@ -137,7 +137,10 @@ struct qxl_crtc {
 	int cur_y;
 	int hot_spot_x;
 	int hot_spot_y;
+<<<<<<< HEAD
 	struct qxl_bo *cursor_bo;
+=======
+>>>>>>> upstream/rpi-4.4.y
 };
 
 struct qxl_output {

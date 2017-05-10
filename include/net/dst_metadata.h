@@ -62,7 +62,10 @@ static inline int skb_metadata_dst_cmp(const struct sk_buff *skb_a,
 		      sizeof(a->u.tun_info) + a->u.tun_info.options_len);
 }
 
+<<<<<<< HEAD
 void metadata_dst_free(struct metadata_dst *);
+=======
+>>>>>>> upstream/rpi-4.4.y
 struct metadata_dst *metadata_dst_alloc(u8 optslen, gfp_t flags);
 struct metadata_dst __percpu *metadata_dst_alloc_percpu(u8 optslen, gfp_t flags);
 

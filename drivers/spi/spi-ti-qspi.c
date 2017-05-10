@@ -570,10 +570,17 @@ static int ti_qspi_start_transfer_one(struct spi_master *master,
 	list_for_each_entry(t, &m->transfers, transfer_list) {
 		qspi->cmd = ((qspi->cmd & ~QSPI_WLEN_MASK) |
 			     QSPI_WLEN(t->bits_per_word));
+<<<<<<< HEAD
 
 		wlen = t->bits_per_word >> 3;
 		transfer_len_words = min(t->len / wlen, frame_len_words);
 
+=======
+
+		wlen = t->bits_per_word >> 3;
+		transfer_len_words = min(t->len / wlen, frame_len_words);
+
+>>>>>>> upstream/rpi-4.4.y
 		ret = qspi_transfer_msg(qspi, t, transfer_len_words * wlen);
 		if (ret) {
 			dev_dbg(qspi->dev, "transfer message failed\n");

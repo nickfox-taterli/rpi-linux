@@ -42,6 +42,7 @@ struct led_classdev {
 #define LED_UNREGISTERING	(1 << 1)
 	/* Upper 16 bits reflect control information */
 #define LED_CORE_SUSPENDRESUME	(1 << 16)
+<<<<<<< HEAD
 #define LED_BLINK_SW		(1 << 17)
 #define LED_BLINK_ONESHOT	(1 << 18)
 #define LED_BLINK_ONESHOT_STOP	(1 << 19)
@@ -52,14 +53,28 @@ struct led_classdev {
 #define LED_DEV_CAP_FLASH	(1 << 24)
 #define LED_HW_PLUGGABLE	(1 << 25)
 #define LED_PANIC_INDICATOR	(1 << 26)
+=======
+#define LED_BLINK_ONESHOT	(1 << 17)
+#define LED_BLINK_ONESHOT_STOP	(1 << 18)
+#define LED_BLINK_INVERT	(1 << 19)
+#define LED_SYSFS_DISABLE	(1 << 20)
+#define SET_BRIGHTNESS_ASYNC	(1 << 21)
+#define SET_BRIGHTNESS_SYNC	(1 << 22)
+#define LED_DEV_CAP_FLASH	(1 << 23)
+>>>>>>> upstream/rpi-4.4.y
 	/* Additions for Raspberry Pi PWR LED */
 #define SET_GPIO_INPUT		(1 << 30)
 #define SET_GPIO_OUTPUT		(1 << 31)
 
+<<<<<<< HEAD
 	/* Set LED brightness level
 	 * Must not sleep. Use brightness_set_blocking for drivers
 	 * that can sleep while setting brightness.
 	 */
+=======
+	/* Set LED brightness level */
+	/* Must not sleep, use a workqueue if needed */
+>>>>>>> upstream/rpi-4.4.y
 	void		(*brightness_set)(struct led_classdev *led_cdev,
 					  enum led_brightness brightness);
 	/*

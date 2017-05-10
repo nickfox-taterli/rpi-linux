@@ -371,7 +371,11 @@ static int fanotify_release(struct inode *ignored, struct file *file)
 	 * Process all permission events on access_list and notification queue
 	 * and simulate reply from userspace.
 	 */
+<<<<<<< HEAD
 	spin_lock(&group->notification_lock);
+=======
+	spin_lock(&group->fanotify_data.access_lock);
+>>>>>>> upstream/rpi-4.4.y
 	list_for_each_entry_safe(event, next, &group->fanotify_data.access_list,
 				 fae.fse.list) {
 		pr_debug("%s: found group=%p event=%p\n", __func__, group,
@@ -386,6 +390,7 @@ static int fanotify_release(struct inode *ignored, struct file *file)
 	 * dequeue them and set the response. They will be freed once the
 	 * response is consumed and fanotify_get_response() returns.
 	 */
+<<<<<<< HEAD
 	while (!fsnotify_notify_queue_is_empty(group)) {
 		fsn_event = fsnotify_remove_first_event(group);
 		if (!(fsn_event->mask & FAN_ALL_PERM_EVENTS)) {
@@ -396,6 +401,17 @@ static int fanotify_release(struct inode *ignored, struct file *file)
 			FANOTIFY_PE(fsn_event)->response = FAN_ALLOW;
 	}
 	spin_unlock(&group->notification_lock);
+=======
+	mutex_lock(&group->notification_mutex);
+	while (!fsnotify_notify_queue_is_empty(group)) {
+		fsn_event = fsnotify_remove_first_event(group);
+		if (!(fsn_event->mask & FAN_ALL_PERM_EVENTS))
+			fsnotify_destroy_event(group, fsn_event);
+		else
+			FANOTIFY_PE(fsn_event)->response = FAN_ALLOW;
+	}
+	mutex_unlock(&group->notification_mutex);
+>>>>>>> upstream/rpi-4.4.y
 
 	/* Response for all permission events it set, wakeup waiters */
 	wake_up(&group->fanotify_data.access_waitq);

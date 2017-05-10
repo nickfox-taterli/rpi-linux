@@ -185,7 +185,10 @@ static void acpi_ec_event_processor(struct work_struct *work);
 
 struct acpi_ec *boot_ec, *first_ec;
 EXPORT_SYMBOL(first_ec);
+<<<<<<< HEAD
 static bool boot_ec_is_ecdt = false;
+=======
+>>>>>>> upstream/rpi-4.4.y
 static struct workqueue_struct *ec_query_wq;
 
 static int EC_FLAGS_CLEAR_ON_RESUME; /* Needs acpi_ec_clear() on boot/resume */

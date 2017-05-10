@@ -160,7 +160,20 @@ static int hdc100x_get_measurement(struct hdc100x_data *data,
 		dev_err(&client->dev, "cannot read sensor data\n");
 		return ret;
 	}
+<<<<<<< HEAD
 	return be16_to_cpu(val);
+=======
+	val = ret << 8;
+
+	ret = i2c_smbus_read_byte(client);
+	if (ret < 0) {
+		dev_err(&client->dev, "cannot read low byte measurement");
+		return ret;
+	}
+	val |= ret;
+
+	return val;
+>>>>>>> upstream/rpi-4.4.y
 }
 
 static int hdc100x_get_heater_status(struct hdc100x_data *data)

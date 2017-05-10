@@ -200,8 +200,57 @@ static void edac_pci_workq_function(struct work_struct *work_req)
 		return;
 	}
 
+<<<<<<< HEAD
 	if (edac_pci_get_check_errors())
 		pci->edac_check(pci);
+=======
+	mutex_unlock(&edac_pci_ctls_mutex);
+}
+
+/*
+ * edac_pci_workq_setup()
+ * 	initialize a workq item for this edac_pci instance
+ * 	passing in the new delay period in msec
+ *
+ *	locking model:
+ *		called when 'edac_pci_ctls_mutex' is locked
+ */
+static void edac_pci_workq_setup(struct edac_pci_ctl_info *pci,
+				 unsigned int msec)
+{
+	edac_dbg(0, "\n");
+
+	INIT_DELAYED_WORK(&pci->work, edac_pci_workq_function);
+	queue_delayed_work(edac_workqueue, &pci->work,
+			msecs_to_jiffies(edac_pci_get_poll_msec()));
+}
+
+/*
+ * edac_pci_workq_teardown()
+ * 	stop the workq processing on this edac_pci instance
+ */
+static void edac_pci_workq_teardown(struct edac_pci_ctl_info *pci)
+{
+	edac_dbg(0, "\n");
+
+	pci->op_state = OP_OFFLINE;
+
+	cancel_delayed_work_sync(&pci->work);
+	flush_workqueue(edac_workqueue);
+}
+
+/*
+ * edac_pci_reset_delay_period
+ *
+ *	called with a new period value for the workq period
+ *	a) stop current workq timer
+ *	b) restart workq timer with new value
+ */
+void edac_pci_reset_delay_period(struct edac_pci_ctl_info *pci,
+				 unsigned long value)
+{
+	edac_dbg(0, "\n");
+>>>>>>> upstream/rpi-4.4.y
 
 	/* if we are on a one second period, then use round */
 	msec = edac_pci_get_poll_msec();

@@ -206,6 +206,7 @@ static void fl_destroy_filter(struct rcu_head *head)
 	kfree(f);
 }
 
+<<<<<<< HEAD
 static void fl_hw_destroy_filter(struct tcf_proto *tp, unsigned long cookie)
 {
 	struct net_device *dev = tp->q->dev_queue->dev;
@@ -277,6 +278,8 @@ static void fl_hw_update_stats(struct tcf_proto *tp, struct cls_fl_filter *f)
 	dev->netdev_ops->ndo_setup_tc(dev, tp->q->handle, tp->protocol, &tc);
 }
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 static void fl_destroy_sleepable(struct work_struct *work)
 {
 	struct cls_fl_head *head = container_of(work, struct cls_fl_head,
@@ -419,6 +422,7 @@ static int fl_set_key(struct net *net, struct nlattr **tb,
 		       mask->eth.src, TCA_FLOWER_KEY_ETH_SRC_MASK,
 		       sizeof(key->eth.src));
 
+<<<<<<< HEAD
 	if (tb[TCA_FLOWER_KEY_ETH_TYPE]) {
 		ethertype = nla_get_be16(tb[TCA_FLOWER_KEY_ETH_TYPE]);
 
@@ -433,6 +437,11 @@ static int fl_set_key(struct net *net, struct nlattr **tb,
 			mask->basic.n_proto = cpu_to_be16(~0);
 		}
 	}
+=======
+	fl_set_key_val(tb, &key->basic.n_proto, TCA_FLOWER_KEY_ETH_TYPE,
+		       &mask->basic.n_proto, TCA_FLOWER_UNSPEC,
+		       sizeof(key->basic.n_proto));
+>>>>>>> upstream/rpi-4.4.y
 
 	if (key->basic.n_proto == htons(ETH_P_IP) ||
 	    key->basic.n_proto == htons(ETH_P_IPV6)) {

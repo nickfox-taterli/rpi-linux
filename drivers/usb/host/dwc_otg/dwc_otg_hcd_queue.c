@@ -59,7 +59,10 @@ void dwc_otg_hcd_qh_free(dwc_otg_hcd_t * hcd, dwc_otg_qh_t * qh)
 	uint32_t buf_size = 0;
 	uint8_t *align_buf_virt = NULL;
 	dwc_dma_t align_buf_dma;
+<<<<<<< HEAD
 	struct device *dev = dwc_otg_hcd_to_dev(hcd);
+=======
+>>>>>>> upstream/rpi-4.4.y
 
 	/* Free each QTD in the QTD list */
 	DWC_SPINLOCK_IRQSAVE(hcd->lock, &flags);
@@ -83,7 +86,11 @@ void dwc_otg_hcd_qh_free(dwc_otg_hcd_t * hcd, dwc_otg_qh_t * qh)
 	DWC_FREE(qh);
 	DWC_SPINUNLOCK_IRQRESTORE(hcd->lock, flags);
 	if (align_buf_virt)
+<<<<<<< HEAD
 		DWC_DMA_FREE(dev, buf_size, align_buf_virt, align_buf_dma);
+=======
+		DWC_DMA_FREE(buf_size, align_buf_virt, align_buf_dma);
+>>>>>>> upstream/rpi-4.4.y
 	return;
 }
 
@@ -793,10 +800,13 @@ void dwc_otg_hcd_qh_deactivate(dwc_otg_hcd_t * hcd, dwc_otg_qh_t * qh,
 			/* Add back to inactive non-periodic schedule. */
 			dwc_otg_hcd_qh_add(hcd, qh);
 			//hcd->fiq_state->kick_np_queues = 1;
+<<<<<<< HEAD
 		} else {
 			if(nak_holdoff && qh->do_split) {
 				qh->nak_frame = 0xFFFF;
 			}
+=======
+>>>>>>> upstream/rpi-4.4.y
 		}
 	} else {
 		uint16_t frame_number = dwc_otg_hcd_get_frame_number(hcd);

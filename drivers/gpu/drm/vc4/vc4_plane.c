@@ -770,6 +770,15 @@ vc4_update_plane(struct drm_plane *plane,
 	if (!plane_state)
 		goto out;
 
+<<<<<<< HEAD
+=======
+	/* If we're changing the cursor contents, do that in the
+	 * normal vblank-synced atomic path.
+	 */
+	if (fb != plane_state->fb)
+		goto out;
+
+>>>>>>> upstream/rpi-4.4.y
 	/* No configuring new scaling in the fast path. */
 	if (crtc_w != plane_state->crtc_w ||
 	    crtc_h != plane_state->crtc_h ||
@@ -778,11 +787,14 @@ vc4_update_plane(struct drm_plane *plane,
 		goto out;
 	}
 
+<<<<<<< HEAD
 	if (fb != plane_state->fb) {
 		drm_atomic_set_fb_for_plane(plane->state, fb);
 		vc4_plane_async_set_fb(plane, fb);
 	}
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 	/* Set the cursor's position on the screen.  This is the
 	 * expected change from the drm_mode_cursor_universal()
 	 * helper.
@@ -861,7 +873,11 @@ struct drm_plane *vc4_plane_init(struct drm_device *dev,
 	ret = drm_universal_plane_init(dev, plane, 0xff,
 				       &vc4_plane_funcs,
 				       formats, num_formats,
+<<<<<<< HEAD
 				       type, NULL);
+=======
+				       type);
+>>>>>>> upstream/rpi-4.4.y
 
 	drm_plane_helper_add(plane, &vc4_plane_helper_funcs);
 

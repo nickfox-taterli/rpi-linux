@@ -138,6 +138,7 @@ ssize_t iio_buffer_read_first_n_outer(struct file *filp, char __user *buf,
 			ret = -ENODEV;
 			break;
 		}
+<<<<<<< HEAD
 
 		if (!iio_buffer_ready(indio_dev, rb, to_wait, n / datum_size)) {
 			if (signal_pending(current)) {
@@ -145,6 +146,15 @@ ssize_t iio_buffer_read_first_n_outer(struct file *filp, char __user *buf,
 				break;
 			}
 
+=======
+
+		if (!iio_buffer_ready(indio_dev, rb, to_wait, n / datum_size)) {
+			if (signal_pending(current)) {
+				ret = -ERESTARTSYS;
+				break;
+			}
+
+>>>>>>> upstream/rpi-4.4.y
 			wait_woken(&wait, TASK_INTERRUPTIBLE,
 				   MAX_SCHEDULE_TIMEOUT);
 			continue;

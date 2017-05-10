@@ -118,6 +118,7 @@ static unsigned long i915_stolen_to_physical(struct drm_device *dev)
 		u32 tseg_size = 0;
 		u16 toud = 0;
 		u8 tmp;
+<<<<<<< HEAD
 
 		pci_bus_read_config_byte(pdev->bus, PCI_DEVFN(0, 0),
 					 I845_ESMRAMC, &tmp);
@@ -134,6 +135,24 @@ static unsigned long i915_stolen_to_physical(struct drm_device *dev)
 		}
 
 		pci_bus_read_config_word(pdev->bus, PCI_DEVFN(0, 0),
+=======
+
+		pci_bus_read_config_byte(dev->pdev->bus, PCI_DEVFN(0, 0),
+					 I845_ESMRAMC, &tmp);
+
+		if (tmp & TSEG_ENABLE) {
+			switch (tmp & I845_TSEG_SIZE_MASK) {
+			case I845_TSEG_SIZE_512K:
+				tseg_size = KB(512);
+				break;
+			case I845_TSEG_SIZE_1M:
+				tseg_size = MB(1);
+				break;
+			}
+		}
+
+		pci_bus_read_config_word(dev->pdev->bus, PCI_DEVFN(0, 0),
+>>>>>>> upstream/rpi-4.4.y
 					 I865_TOUD, &toud);
 
 		base = (toud << 16) + tseg_size;

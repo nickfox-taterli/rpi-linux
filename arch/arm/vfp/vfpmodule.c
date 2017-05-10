@@ -182,7 +182,11 @@ static int vfp_notifier(struct notifier_block *self, unsigned long cmd, void *v)
 		if ((fpexc & FPEXC_EN) && vfp_current_hw_state[cpu]) {
 			/* vfp_save_state oopses on VFP11 if EX bit set */
 			fmxr(FPEXC, fpexc & ~FPEXC_EX);
+<<<<<<< HEAD
 			vfp_save_state(vfp_current_hw_state[cpu], fpexc);
+=======
+ 			vfp_save_state(vfp_current_hw_state[cpu], fpexc);
+>>>>>>> upstream/rpi-4.4.y
 		}
 #endif
 
@@ -711,7 +715,11 @@ void kernel_neon_begin(void)
 
 	fpexc = fmrx(FPEXC) | FPEXC_EN;
 	/* vfp_save_state oopses on VFP11 if EX bit set */
+<<<<<<< HEAD
 	fmxr(FPEXC, fpexc & ~FPEXC_EX);
+=======
+	fmxr(FPEXC, fpexc & ~FPEXC_EX);	
+>>>>>>> upstream/rpi-4.4.y
 
 	/*
 	 * Save the userland NEON/VFP state. Under UP,

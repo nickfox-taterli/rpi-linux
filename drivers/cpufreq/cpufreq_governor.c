@@ -436,6 +436,7 @@ int cpufreq_dbs_governor_init(struct cpufreq_policy *policy)
 	if (!have_governor_per_policy())
 		gov->gdbs_data = dbs_data;
 
+<<<<<<< HEAD
 	policy_dbs->dbs_data = dbs_data;
 	policy->governor_data = policy_dbs;
 
@@ -451,6 +452,20 @@ int cpufreq_dbs_governor_init(struct cpufreq_policy *policy)
 
 	policy->governor_data = NULL;
 
+=======
+	policy->governor_data = dbs_data;
+
+	ret = sysfs_create_group(get_governor_parent_kobj(policy),
+				 get_sysfs_attr(dbs_data));
+	if (ret)
+		goto reset_gdbs_data;
+
+	return 0;
+
+reset_gdbs_data:
+	policy->governor_data = NULL;
+
+>>>>>>> upstream/rpi-4.4.y
 	if (!have_governor_per_policy())
 		gov->gdbs_data = NULL;
 	gov->exit(dbs_data);
@@ -477,14 +492,25 @@ void cpufreq_dbs_governor_exit(struct cpufreq_policy *policy)
 
 	count = gov_attr_set_put(&dbs_data->attr_set, &policy_dbs->list);
 
+<<<<<<< HEAD
 	policy->governor_data = NULL;
 
 	if (!count) {
+=======
+	if (!--dbs_data->usage_count) {
+		sysfs_remove_group(get_governor_parent_kobj(policy),
+				   get_sysfs_attr(dbs_data));
+
+		policy->governor_data = NULL;
+
+>>>>>>> upstream/rpi-4.4.y
 		if (!have_governor_per_policy())
 			gov->gdbs_data = NULL;
 
 		gov->exit(dbs_data);
 		kfree(dbs_data);
+	} else {
+		policy->governor_data = NULL;
 	}
 
 	free_policy_dbs_info(policy_dbs, gov);

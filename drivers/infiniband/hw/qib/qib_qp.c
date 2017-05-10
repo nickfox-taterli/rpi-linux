@@ -98,6 +98,7 @@ static u32 credit_table[31] = {
 	32768                   /* 1E */
 };
 
+<<<<<<< HEAD
 const struct rvt_operation_params qib_post_parms[RVT_OPERATION_MAX] = {
 [IB_WR_RDMA_WRITE] = {
 	.length = sizeof(struct ib_rdma_wr),
@@ -142,6 +143,9 @@ const struct rvt_operation_params qib_post_parms[RVT_OPERATION_MAX] = {
 };
 
 static void get_map_page(struct rvt_qpn_table *qpt, struct rvt_qpn_map *map,
+=======
+static void get_map_page(struct qib_qpn_table *qpt, struct qpn_map *map,
+>>>>>>> upstream/rpi-4.4.y
 			 gfp_t gfp)
 {
 	unsigned long page = get_zeroed_page(gfp);
@@ -162,8 +166,13 @@ static void get_map_page(struct rvt_qpn_table *qpt, struct rvt_qpn_map *map,
  * Allocate the next available QPN or
  * zero/one for QP type IB_QPT_SMI/IB_QPT_GSI.
  */
+<<<<<<< HEAD
 int qib_alloc_qpn(struct rvt_dev_info *rdi, struct rvt_qpn_table *qpt,
 		  enum ib_qp_type type, u8 port, gfp_t gfp)
+=======
+static int alloc_qpn(struct qib_devdata *dd, struct qib_qpn_table *qpt,
+		     enum ib_qp_type type, u8 port, gfp_t gfp)
+>>>>>>> upstream/rpi-4.4.y
 {
 	u32 i, offset, max_scan, qpn;
 	struct rvt_qpn_map *map;
@@ -416,17 +425,153 @@ __be32 qib_compute_aeth(struct rvt_qp *qp)
 
 void *qib_qp_priv_alloc(struct rvt_dev_info *rdi, struct rvt_qp *qp, gfp_t gfp)
 {
+<<<<<<< HEAD
 	struct qib_qp_priv *priv;
+=======
+	struct qib_qp *qp;
+	int err;
+	struct qib_swqe *swq = NULL;
+	struct qib_ibdev *dev;
+	struct qib_devdata *dd;
+	size_t sz;
+	size_t sg_list_sz;
+	struct ib_qp *ret;
+	gfp_t gfp;
+
+
+	if (init_attr->cap.max_send_sge > ib_qib_max_sges ||
+	    init_attr->cap.max_send_wr > ib_qib_max_qp_wrs ||
+	    init_attr->create_flags & ~(IB_QP_CREATE_USE_GFP_NOIO))
+		return ERR_PTR(-EINVAL);
+
+	/* GFP_NOIO is applicable in RC QPs only */
+	if (init_attr->create_flags & IB_QP_CREATE_USE_GFP_NOIO &&
+	    init_attr->qp_type != IB_QPT_RC)
+		return ERR_PTR(-EINVAL);
+
+	gfp = init_attr->create_flags & IB_QP_CREATE_USE_GFP_NOIO ?
+			GFP_NOIO : GFP_KERNEL;
+>>>>>>> upstream/rpi-4.4.y
 
 	priv = kzalloc(sizeof(*priv), gfp);
 	if (!priv)
 		return ERR_PTR(-ENOMEM);
 	priv->owner = qp;
 
+<<<<<<< HEAD
 	priv->s_hdr = kzalloc(sizeof(*priv->s_hdr), gfp);
 	if (!priv->s_hdr) {
 		kfree(priv);
 		return ERR_PTR(-ENOMEM);
+=======
+	switch (init_attr->qp_type) {
+	case IB_QPT_SMI:
+	case IB_QPT_GSI:
+		if (init_attr->port_num == 0 ||
+		    init_attr->port_num > ibpd->device->phys_port_cnt) {
+			ret = ERR_PTR(-EINVAL);
+			goto bail;
+		}
+	case IB_QPT_UC:
+	case IB_QPT_RC:
+	case IB_QPT_UD:
+		sz = sizeof(struct qib_sge) *
+			init_attr->cap.max_send_sge +
+			sizeof(struct qib_swqe);
+		swq = __vmalloc((init_attr->cap.max_send_wr + 1) * sz,
+				gfp, PAGE_KERNEL);
+		if (swq == NULL) {
+			ret = ERR_PTR(-ENOMEM);
+			goto bail;
+		}
+		sz = sizeof(*qp);
+		sg_list_sz = 0;
+		if (init_attr->srq) {
+			struct qib_srq *srq = to_isrq(init_attr->srq);
+
+			if (srq->rq.max_sge > 1)
+				sg_list_sz = sizeof(*qp->r_sg_list) *
+					(srq->rq.max_sge - 1);
+		} else if (init_attr->cap.max_recv_sge > 1)
+			sg_list_sz = sizeof(*qp->r_sg_list) *
+				(init_attr->cap.max_recv_sge - 1);
+		qp = kzalloc(sz + sg_list_sz, gfp);
+		if (!qp) {
+			ret = ERR_PTR(-ENOMEM);
+			goto bail_swq;
+		}
+		RCU_INIT_POINTER(qp->next, NULL);
+		qp->s_hdr = kzalloc(sizeof(*qp->s_hdr), gfp);
+		if (!qp->s_hdr) {
+			ret = ERR_PTR(-ENOMEM);
+			goto bail_qp;
+		}
+		qp->timeout_jiffies =
+			usecs_to_jiffies((4096UL * (1UL << qp->timeout)) /
+				1000UL);
+		if (init_attr->srq)
+			sz = 0;
+		else {
+			qp->r_rq.size = init_attr->cap.max_recv_wr + 1;
+			qp->r_rq.max_sge = init_attr->cap.max_recv_sge;
+			sz = (sizeof(struct ib_sge) * qp->r_rq.max_sge) +
+				sizeof(struct qib_rwqe);
+			if (gfp != GFP_NOIO)
+				qp->r_rq.wq = vmalloc_user(
+						sizeof(struct qib_rwq) +
+						qp->r_rq.size * sz);
+			else
+				qp->r_rq.wq = __vmalloc(
+						sizeof(struct qib_rwq) +
+						qp->r_rq.size * sz,
+						gfp, PAGE_KERNEL);
+
+			if (!qp->r_rq.wq) {
+				ret = ERR_PTR(-ENOMEM);
+				goto bail_qp;
+			}
+		}
+
+		/*
+		 * ib_create_qp() will initialize qp->ibqp
+		 * except for qp->ibqp.qp_num.
+		 */
+		spin_lock_init(&qp->r_lock);
+		spin_lock_init(&qp->s_lock);
+		spin_lock_init(&qp->r_rq.lock);
+		atomic_set(&qp->refcount, 0);
+		init_waitqueue_head(&qp->wait);
+		init_waitqueue_head(&qp->wait_dma);
+		init_timer(&qp->s_timer);
+		qp->s_timer.data = (unsigned long)qp;
+		INIT_WORK(&qp->s_work, qib_do_send);
+		INIT_LIST_HEAD(&qp->iowait);
+		INIT_LIST_HEAD(&qp->rspwait);
+		qp->state = IB_QPS_RESET;
+		qp->s_wq = swq;
+		qp->s_size = init_attr->cap.max_send_wr + 1;
+		qp->s_max_sge = init_attr->cap.max_send_sge;
+		if (init_attr->sq_sig_type == IB_SIGNAL_REQ_WR)
+			qp->s_flags = QIB_S_SIGNAL_REQ_WR;
+		dev = to_idev(ibpd->device);
+		dd = dd_from_dev(dev);
+		err = alloc_qpn(dd, &dev->qpn_table, init_attr->qp_type,
+				init_attr->port_num, gfp);
+		if (err < 0) {
+			ret = ERR_PTR(err);
+			vfree(qp->r_rq.wq);
+			goto bail_qp;
+		}
+		qp->ibqp.qp_num = err;
+		qp->port_num = init_attr->port_num;
+		qib_reset_qp(qp, init_attr->qp_type);
+		break;
+
+	default:
+		/* Don't support raw QPs */
+		ret = ERR_PTR(-ENOSYS);
+		goto bail;
+>>>>>>> upstream/rpi-4.4.y
 	}
 	init_waitqueue_head(&priv->wait_dma);
 	INIT_WORK(&priv->s_work, _qib_do_send);

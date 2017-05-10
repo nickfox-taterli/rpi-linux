@@ -1799,6 +1799,7 @@ static int alg_test_drbg(const struct alg_test_desc *desc, const char *driver,
 static int do_test_kpp(struct crypto_kpp *tfm, struct kpp_testvec *vec,
 		       const char *alg)
 {
+<<<<<<< HEAD
 	struct kpp_request *req;
 	void *input_buf = NULL;
 	void *output_buf = NULL;
@@ -1926,6 +1927,8 @@ static int alg_test_kpp(const struct alg_test_desc *desc, const char *driver,
 static int test_akcipher_one(struct crypto_akcipher *tfm,
 			     struct akcipher_testvec *vecs)
 {
+=======
+>>>>>>> upstream/rpi-4.4.y
 	char *xbuf[XBUFSIZE];
 	struct akcipher_request *req;
 	void *outbuf_enc = NULL;
@@ -1986,8 +1989,12 @@ static int test_akcipher_one(struct crypto_akcipher *tfm,
 	}
 	/* verify that encrypted message is equal to expected */
 	if (memcmp(vecs->c, outbuf_enc, vecs->c_size)) {
+<<<<<<< HEAD
 		pr_err("alg: akcipher: encrypt test failed. Invalid output\n");
 		hexdump(outbuf_enc, vecs->c_size);
+=======
+		pr_err("alg: rsa: encrypt test failed. Invalid output\n");
+>>>>>>> upstream/rpi-4.4.y
 		err = -EINVAL;
 		goto free_all;
 	}

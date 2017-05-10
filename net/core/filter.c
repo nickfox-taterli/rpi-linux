@@ -1164,7 +1164,8 @@ void bpf_prog_destroy(struct bpf_prog *fp)
 }
 EXPORT_SYMBOL_GPL(bpf_prog_destroy);
 
-static int __sk_attach_prog(struct bpf_prog *prog, struct sock *sk)
+static int __sk_attach_prog(struct bpf_prog *prog, struct sock *sk,
+			    bool locked)
 {
 	struct sk_filter *fp, *old_fp;
 
@@ -1180,16 +1181,20 @@ static int __sk_attach_prog(struct bpf_prog *prog, struct sock *sk)
 		return -ENOMEM;
 	}
 
+<<<<<<< HEAD
 	old_fp = rcu_dereference_protected(sk->sk_filter,
 					   lockdep_sock_is_held(sk));
+=======
+	old_fp = rcu_dereference_protected(sk->sk_filter, locked);
+>>>>>>> upstream/rpi-4.4.y
 	rcu_assign_pointer(sk->sk_filter, fp);
-
 	if (old_fp)
 		sk_filter_uncharge(sk, old_fp);
 
 	return 0;
 }
 
+<<<<<<< HEAD
 static int __reuseport_attach_prog(struct bpf_prog *prog, struct sock *sk)
 {
 	struct bpf_prog *old_prog;
@@ -1216,6 +1221,20 @@ static int __reuseport_attach_prog(struct bpf_prog *prog, struct sock *sk)
 
 static
 struct bpf_prog *__get_filter(struct sock_fprog *fprog, struct sock *sk)
+=======
+/**
+ *	sk_attach_filter - attach a socket filter
+ *	@fprog: the filter program
+ *	@sk: the socket to use
+ *
+ * Attach the user's filter code. We first run some sanity checks on
+ * it to make sure it does not explode on us later. If an error
+ * occurs or there is insufficient memory for the filter a negative
+ * errno code is returned. On success the return is zero.
+ */
+int __sk_attach_filter(struct sock_fprog *fprog, struct sock *sk,
+		       bool locked)
+>>>>>>> upstream/rpi-4.4.y
 {
 	unsigned int fsize = bpf_classic_proglen(fprog);
 	struct bpf_prog *prog;
@@ -1269,7 +1288,7 @@ int sk_attach_filter(struct sock_fprog *fprog, struct sock *sk)
 	if (IS_ERR(prog))
 		return PTR_ERR(prog);
 
-	err = __sk_attach_prog(prog, sk);
+	err = __sk_attach_prog(prog, sk, locked);
 	if (err < 0) {
 		__bpf_prog_release(prog);
 		return err;
@@ -1277,7 +1296,12 @@ int sk_attach_filter(struct sock_fprog *fprog, struct sock *sk)
 
 	return 0;
 }
-EXPORT_SYMBOL_GPL(sk_attach_filter);
+EXPORT_SYMBOL_GPL(__sk_attach_filter);
+
+int sk_attach_filter(struct sock_fprog *fprog, struct sock *sk)
+{
+	return __sk_attach_filter(fprog, sk, sock_owned_by_user(sk));
+}
 
 int sk_reuseport_attach_filter(struct sock_fprog *fprog, struct sock *sk)
 {
@@ -1318,6 +1342,7 @@ int sk_attach_bpf(u32 ufd, struct sock *sk)
 		return err;
 	}
 
+<<<<<<< HEAD
 	return 0;
 }
 
@@ -1330,6 +1355,9 @@ int sk_reuseport_attach_bpf(u32 ufd, struct sock *sk)
 		return PTR_ERR(prog);
 
 	err = __reuseport_attach_prog(prog, sk);
+=======
+	err = __sk_attach_prog(prog, sk, sock_owned_by_user(sk));
+>>>>>>> upstream/rpi-4.4.y
 	if (err < 0) {
 		bpf_prog_put(prog);
 		return err;
@@ -1353,6 +1381,7 @@ static inline int __bpf_try_make_writable(struct sk_buff *skb,
 	return skb_ensure_writable(skb, write_len);
 }
 
+<<<<<<< HEAD
 static inline int bpf_try_make_writable(struct sk_buff *skb,
 					unsigned int write_len)
 {
@@ -1361,6 +1390,20 @@ static inline int bpf_try_make_writable(struct sk_buff *skb,
 	bpf_compute_data_end(skb);
 	return err;
 }
+=======
+	/* bpf verifier guarantees that:
+	 * 'from' pointer points to bpf program stack
+	 * 'len' bytes of it were initialized
+	 * 'len' > 0
+	 * 'skb' is a valid pointer to 'struct sk_buff'
+	 *
+	 * so check for invalid 'offset' and too large 'len'
+	 */
+	if (unlikely((u32) offset > 0xffff || len > sizeof(buf)))
+		return -EFAULT;
+	if (unlikely(skb_try_make_writable(skb, offset + len)))
+		return -EFAULT;
+>>>>>>> upstream/rpi-4.4.y
 
 static int bpf_try_make_head_writable(struct sk_buff *skb)
 {
@@ -1402,6 +1445,12 @@ BPF_CALL_5(bpf_skb_store_bytes, struct sk_buff *, skb, u32, offset,
 	if (flags & BPF_F_INVALIDATE_HASH)
 		skb_clear_hash(skb);
 
+<<<<<<< HEAD
+=======
+	if (BPF_RECOMPUTE_CSUM(flags))
+		skb_postpush_rcsum(skb, ptr, len);
+
+>>>>>>> upstream/rpi-4.4.y
 	return 0;
 }
 
@@ -1468,10 +1517,15 @@ static const struct bpf_func_proto bpf_skb_pull_data_proto = {
 	.arg2_type	= ARG_ANYTHING,
 };
 
+<<<<<<< HEAD
 BPF_CALL_5(bpf_l3_csum_replace, struct sk_buff *, skb, u32, offset,
 	   u64, from, u64, to, u64, flags)
 {
 	__sum16 *ptr;
+=======
+	if (unlikely(skb_try_make_writable(skb, offset + sizeof(sum))))
+		return -EFAULT;
+>>>>>>> upstream/rpi-4.4.y
 
 	if (unlikely(flags & ~(BPF_F_HDR_FIELD_MASK)))
 		return -EINVAL;
@@ -1524,7 +1578,11 @@ BPF_CALL_5(bpf_l4_csum_replace, struct sk_buff *, skb, u32, offset,
 		return -EINVAL;
 	if (unlikely(offset > 0xffff || offset & 1))
 		return -EFAULT;
+<<<<<<< HEAD
 	if (unlikely(bpf_try_make_writable(skb, offset + sizeof(*ptr))))
+=======
+	if (unlikely(skb_try_make_writable(skb, offset + sizeof(sum))))
+>>>>>>> upstream/rpi-4.4.y
 		return -EFAULT;
 
 	ptr = (__sum16 *)(skb->data + offset);
@@ -1722,6 +1780,7 @@ BPF_CALL_3(bpf_clone_redirect, struct sk_buff *, skb, u32, ifindex, u64, flags)
 	if (unlikely(!clone))
 		return -ENOMEM;
 
+<<<<<<< HEAD
 	/* For direct write, we need to keep the invariant that the skbs
 	 * we're dealing with need to be uncloned. Should uncloning fail
 	 * here, we need to free the just generated clone to unclone once
@@ -1731,6 +1790,13 @@ BPF_CALL_3(bpf_clone_redirect, struct sk_buff *, skb, u32, ifindex, u64, flags)
 	if (unlikely(ret)) {
 		kfree_skb(clone);
 		return -ENOMEM;
+=======
+	if (BPF_IS_REDIRECT_INGRESS(flags)) {
+		if (skb_at_tc_ingress(skb2))
+			skb_postpush_rcsum(skb2, skb_mac_header(skb2),
+					   skb2->mac_len);
+		return dev_forward_skb(dev, skb2);
+>>>>>>> upstream/rpi-4.4.y
 	}
 
 	return __bpf_redirect(clone, dev, flags);
@@ -1777,7 +1843,20 @@ int skb_do_redirect(struct sk_buff *skb)
 		return -EINVAL;
 	}
 
+<<<<<<< HEAD
 	return __bpf_redirect(skb, dev, ri->flags);
+=======
+	if (BPF_IS_REDIRECT_INGRESS(ri->flags)) {
+		if (skb_at_tc_ingress(skb))
+			skb_postpush_rcsum(skb, skb_mac_header(skb),
+					   skb->mac_len);
+		return dev_forward_skb(dev, skb);
+	}
+
+	skb->dev = dev;
+	skb_sender_cpu_clear(skb);
+	return dev_queue_xmit(skb);
+>>>>>>> upstream/rpi-4.4.y
 }
 
 static const struct bpf_func_proto bpf_redirect_proto = {
@@ -2201,6 +2280,15 @@ bool bpf_helper_changes_skb_data(void *func)
 	    func == bpf_l3_csum_replace ||
 	    func == bpf_l4_csum_replace)
 		return true;
+<<<<<<< HEAD
+=======
+	if (func == bpf_skb_store_bytes)
+		return true;
+	if (func == bpf_l3_csum_replace)
+		return true;
+	if (func == bpf_l4_csum_replace)
+		return true;
+>>>>>>> upstream/rpi-4.4.y
 
 	return false;
 }
@@ -3021,7 +3109,7 @@ static int __init register_sk_filter_ops(void)
 }
 late_initcall(register_sk_filter_ops);
 
-int sk_detach_filter(struct sock *sk)
+int __sk_detach_filter(struct sock *sk, bool locked)
 {
 	int ret = -ENOENT;
 	struct sk_filter *filter;
@@ -3029,8 +3117,12 @@ int sk_detach_filter(struct sock *sk)
 	if (sock_flag(sk, SOCK_FILTER_LOCKED))
 		return -EPERM;
 
+<<<<<<< HEAD
 	filter = rcu_dereference_protected(sk->sk_filter,
 					   lockdep_sock_is_held(sk));
+=======
+	filter = rcu_dereference_protected(sk->sk_filter, locked);
+>>>>>>> upstream/rpi-4.4.y
 	if (filter) {
 		RCU_INIT_POINTER(sk->sk_filter, NULL);
 		sk_filter_uncharge(sk, filter);
@@ -3039,7 +3131,12 @@ int sk_detach_filter(struct sock *sk)
 
 	return ret;
 }
-EXPORT_SYMBOL_GPL(sk_detach_filter);
+EXPORT_SYMBOL_GPL(__sk_detach_filter);
+
+int sk_detach_filter(struct sock *sk)
+{
+	return __sk_detach_filter(sk, sock_owned_by_user(sk));
+}
 
 int sk_get_filter(struct sock *sk, struct sock_filter __user *ubuf,
 		  unsigned int len)

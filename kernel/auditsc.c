@@ -1029,9 +1029,15 @@ static void audit_log_execve_info(struct audit_context *context,
 		return;
 	}
 	buf = buf_head;
+<<<<<<< HEAD
 
 	audit_log_format(*ab, "argc=%d", context->execve.argc);
 
+=======
+
+	audit_log_format(*ab, "argc=%d", context->execve.argc);
+
+>>>>>>> upstream/rpi-4.4.y
 	len_rem = len_max;
 	len_buf = 0;
 	len_full = 0;

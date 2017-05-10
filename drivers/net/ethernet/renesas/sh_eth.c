@@ -849,6 +849,83 @@ static struct sh_eth_cpu_data sh7763_data = {
 	.irq_flags	= IRQF_SHARED,
 };
 
+<<<<<<< HEAD
+=======
+static void sh_eth_chip_reset_r8a7740(struct net_device *ndev)
+{
+	struct sh_eth_private *mdp = netdev_priv(ndev);
+
+	/* reset device */
+	sh_eth_tsu_write(mdp, ARSTR_ARSTR, ARSTR);
+	mdelay(1);
+
+	sh_eth_select_mii(ndev);
+}
+
+/* R8A7740 */
+static struct sh_eth_cpu_data r8a7740_data = {
+	.chip_reset	= sh_eth_chip_reset_r8a7740,
+	.set_duplex	= sh_eth_set_duplex,
+	.set_rate	= sh_eth_set_rate_gether,
+
+	.register_type	= SH_ETH_REG_GIGABIT,
+
+	.ecsr_value	= ECSR_ICD | ECSR_MPD,
+	.ecsipr_value	= ECSIPR_LCHNGIP | ECSIPR_ICDIP | ECSIPR_MPDIP,
+	.eesipr_value	= DMAC_M_RFRMER | DMAC_M_ECI | 0x003fffff,
+
+	.tx_check	= EESR_TC1 | EESR_FTC,
+	.eesr_err_check	= EESR_TWB1 | EESR_TWB | EESR_TABT | EESR_RABT |
+			  EESR_RFE | EESR_RDE | EESR_RFRMER | EESR_TFE |
+			  EESR_TDE | EESR_ECI,
+	.fdr_value	= 0x0000070f,
+
+	.apr		= 1,
+	.mpr		= 1,
+	.tpauser	= 1,
+	.bculr		= 1,
+	.hw_swap	= 1,
+	.rpadir		= 1,
+	.rpadir_value   = 2 << 16,
+	.no_trimd	= 1,
+	.no_ade		= 1,
+	.tsu		= 1,
+	.select_mii	= 1,
+	.shift_rd0	= 1,
+};
+
+/* R7S72100 */
+static struct sh_eth_cpu_data r7s72100_data = {
+	.chip_reset	= sh_eth_chip_reset,
+	.set_duplex	= sh_eth_set_duplex,
+
+	.register_type	= SH_ETH_REG_FAST_RZ,
+
+	.ecsr_value	= ECSR_ICD,
+	.ecsipr_value	= ECSIPR_ICDIP,
+	.eesipr_value	= 0xe77f009f,
+
+	.tx_check	= EESR_TC1 | EESR_FTC,
+	.eesr_err_check	= EESR_TWB1 | EESR_TWB | EESR_TABT | EESR_RABT |
+			  EESR_RFE | EESR_RDE | EESR_RFRMER | EESR_TFE |
+			  EESR_TDE | EESR_ECI,
+	.fdr_value	= 0x0000070f,
+
+	.no_psr		= 1,
+	.apr		= 1,
+	.mpr		= 1,
+	.tpauser	= 1,
+	.hw_swap	= 1,
+	.rpadir		= 1,
+	.rpadir_value   = 2 << 16,
+	.no_trimd	= 1,
+	.no_ade		= 1,
+	.hw_crc		= 1,
+	.tsu		= 1,
+	.shift_rd0	= 1,
+};
+
+>>>>>>> upstream/rpi-4.4.y
 static struct sh_eth_cpu_data sh7619_data = {
 	.register_type	= SH_ETH_REG_FAST_SH3_SH2,
 
@@ -1187,9 +1264,15 @@ static void sh_eth_ring_format(struct net_device *ndev)
 
 		/* RX descriptor */
 		rxdesc = &mdp->rx_ring[i];
+<<<<<<< HEAD
 		rxdesc->len = cpu_to_le32(buf_len << 16);
 		rxdesc->addr = cpu_to_le32(dma_addr);
 		rxdesc->status = cpu_to_le32(RD_RACT | RD_RFP);
+=======
+		rxdesc->len = cpu_to_edmac(mdp, buf_len << 16);
+		rxdesc->addr = cpu_to_edmac(mdp, dma_addr);
+		rxdesc->status = cpu_to_edmac(mdp, RD_RACT | RD_RFP);
+>>>>>>> upstream/rpi-4.4.y
 
 		/* Rx descriptor address set */
 		if (i == 0) {
@@ -1204,7 +1287,11 @@ static void sh_eth_ring_format(struct net_device *ndev)
 
 	/* Mark the last entry as wrapping the ring. */
 	if (rxdesc)
+<<<<<<< HEAD
 		rxdesc->status |= cpu_to_le32(RD_RDLE);
+=======
+		rxdesc->status |= cpu_to_edmac(mdp, RD_RDLE);
+>>>>>>> upstream/rpi-4.4.y
 
 	memset(mdp->tx_ring, 0, tx_ringsize);
 

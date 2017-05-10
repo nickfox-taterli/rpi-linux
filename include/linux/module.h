@@ -289,6 +289,7 @@ struct mod_tree_node {
 	struct latch_tree_node node;
 };
 
+<<<<<<< HEAD
 struct module_layout {
 	/* The actual code + data. */
 	void *base;
@@ -313,12 +314,15 @@ struct module_layout {
 #define __module_layout_align
 #endif
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 struct mod_kallsyms {
 	Elf_Sym *symtab;
 	unsigned int num_symtab;
 	char *strtab;
 };
 
+<<<<<<< HEAD
 #ifdef CONFIG_LIVEPATCH
 struct klp_modinfo {
 	Elf_Ehdr hdr;
@@ -328,6 +332,8 @@ struct klp_modinfo {
 };
 #endif
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 struct module {
 	enum module_state state;
 
@@ -412,7 +418,11 @@ struct module {
 	/* Protected by RCU and/or module_mutex: use rcu_dereference() */
 	struct mod_kallsyms *kallsyms;
 	struct mod_kallsyms core_kallsyms;
+<<<<<<< HEAD
 	
+=======
+
+>>>>>>> upstream/rpi-4.4.y
 	/* Section attributes */
 	struct module_sect_attrs *sect_attrs;
 

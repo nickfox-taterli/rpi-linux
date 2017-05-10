@@ -696,6 +696,15 @@ static int i40e_alloc_vsi_res(struct i40e_vf *vf, enum i40e_vsi_type type)
 					 "Could not add MAC filter %pM for VF %d\n",
 					vf->default_lan_addr.addr, vf->vf_id);
 		}
+<<<<<<< HEAD
+=======
+		f = i40e_add_filter(vsi, brdcast,
+				    vf->port_vlan_id ? vf->port_vlan_id : -1,
+				    true, false);
+		if (!f)
+			dev_info(&pf->pdev->dev,
+				 "Could not allocate VF broadcast filter\n");
+>>>>>>> upstream/rpi-4.4.y
 		spin_unlock_bh(&vsi->mac_filter_list_lock);
 		i40e_write_rx_ctl(&pf->hw, I40E_VFQF_HENA1(0, vf->vf_id),
 				  (u32)hena);
@@ -2010,8 +2019,11 @@ static int i40e_vc_del_mac_addr_msg(struct i40e_vf *vf, u8 *msg, u16 msglen)
 			ret = I40E_ERR_INVALID_MAC_ADDR;
 			spin_unlock_bh(&vsi->mac_filter_list_lock);
 			goto error_param;
+<<<<<<< HEAD
 		} else {
 			vf->num_mac--;
+=======
+>>>>>>> upstream/rpi-4.4.y
 		}
 
 	spin_unlock_bh(&vsi->mac_filter_list_lock);

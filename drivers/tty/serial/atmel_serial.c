@@ -288,6 +288,7 @@ static bool atmel_use_fifo(struct uart_port *port)
 	return atmel_port->fifo_size;
 }
 
+<<<<<<< HEAD
 static void atmel_tasklet_schedule(struct atmel_uart_port *atmel_port,
 				   struct tasklet_struct *t)
 {
@@ -295,6 +296,8 @@ static void atmel_tasklet_schedule(struct atmel_uart_port *atmel_port,
 		tasklet_schedule(t);
 }
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 static unsigned int atmel_get_lines_status(struct uart_port *port)
 {
 	struct atmel_uart_port *atmel_port = to_atmel_uart_port(port);

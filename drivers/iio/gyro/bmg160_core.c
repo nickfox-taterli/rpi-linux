@@ -873,8 +873,21 @@ static irqreturn_t bmg160_trigger_handler(int irq, void *p)
 	int ret;
 
 	mutex_lock(&data->mutex);
+<<<<<<< HEAD
 	ret = regmap_bulk_read(data->regmap, BMG160_REG_XOUT_L,
 			       data->buffer, AXIS_MAX * 2);
+=======
+	for_each_set_bit(bit, indio_dev->active_scan_mask,
+			 indio_dev->masklength) {
+		ret = regmap_bulk_read(data->regmap, BMG160_AXIS_TO_REG(bit),
+				       &val, 2);
+		if (ret < 0) {
+			mutex_unlock(&data->mutex);
+			goto err;
+		}
+		data->buffer[i++] = val;
+	}
+>>>>>>> upstream/rpi-4.4.y
 	mutex_unlock(&data->mutex);
 	if (ret < 0)
 		goto err;

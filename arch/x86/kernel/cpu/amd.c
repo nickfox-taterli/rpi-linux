@@ -383,6 +383,18 @@ static void amd_detect_cmp(struct cpuinfo_x86 *c)
 	/* use socket ID also for last level cache */
 	per_cpu(cpu_llc_id, cpu) = c->phys_proc_id;
 	amd_get_topology(c);
+<<<<<<< HEAD
+=======
+
+	/*
+	 * Fix percpu cpu_llc_id here as LLC topology is different
+	 * for Fam17h systems.
+	 */
+	 if (c->x86 != 0x17 || !cpuid_edx(0x80000006))
+		return;
+
+	per_cpu(cpu_llc_id, cpu) = c->apicid >> 3;
+>>>>>>> upstream/rpi-4.4.y
 #endif
 }
 

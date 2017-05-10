@@ -1545,6 +1545,7 @@ static void mlxsw_sp_fdb_notify_work(struct work_struct *work)
 	mlxsw_sp = container_of(work, struct mlxsw_sp, fdb_notify.dw.work);
 
 	rtnl_lock();
+<<<<<<< HEAD
 	mlxsw_reg_sfn_pack(sfn_pl);
 	err = mlxsw_reg_query(mlxsw_sp->core, MLXSW_REG(sfn), sfn_pl);
 	if (err) {
@@ -1554,6 +1555,21 @@ static void mlxsw_sp_fdb_notify_work(struct work_struct *work)
 	num_rec = mlxsw_reg_sfn_num_rec_get(sfn_pl);
 	for (i = 0; i < num_rec; i++)
 		mlxsw_sp_fdb_notify_rec_process(mlxsw_sp, sfn_pl, i);
+=======
+	do {
+		mlxsw_reg_sfn_pack(sfn_pl);
+		err = mlxsw_reg_query(mlxsw_sp->core, MLXSW_REG(sfn), sfn_pl);
+		if (err) {
+			dev_err_ratelimited(mlxsw_sp->bus_info->dev, "Failed to get FDB notifications\n");
+			break;
+		}
+		num_rec = mlxsw_reg_sfn_num_rec_get(sfn_pl);
+		for (i = 0; i < num_rec; i++)
+			mlxsw_sp_fdb_notify_rec_process(mlxsw_sp, sfn_pl, i);
+
+	} while (num_rec);
+	rtnl_unlock();
+>>>>>>> upstream/rpi-4.4.y
 
 out:
 	rtnl_unlock();

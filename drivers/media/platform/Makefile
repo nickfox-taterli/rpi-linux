@@ -4,6 +4,10 @@
 
 obj-$(CONFIG_VIDEO_BCM2835)		+= bcm2835/
 
+<<<<<<< HEAD
+=======
+obj-$(CONFIG_VIDEO_TIMBERDALE)	+= timblogiw.o
+>>>>>>> upstream/rpi-4.4.y
 obj-$(CONFIG_VIDEO_M32R_AR_M64278) += arv.o
 
 obj-$(CONFIG_VIDEO_VIA_CAMERA) += via-camera.o

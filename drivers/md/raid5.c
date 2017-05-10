@@ -6409,6 +6409,17 @@ static int raid5_alloc_percpu(struct r5conf *conf)
 		conf->scribble_sectors = max(conf->chunk_sectors,
 			conf->prev_chunk_sectors);
 	}
+<<<<<<< HEAD
+=======
+	put_online_cpus();
+
+	if (!err) {
+		conf->scribble_disks = max(conf->raid_disks,
+			conf->previous_raid_disks);
+		conf->scribble_sectors = max(conf->chunk_sectors,
+			conf->prev_chunk_sectors);
+	}
+>>>>>>> upstream/rpi-4.4.y
 	return err;
 }
 

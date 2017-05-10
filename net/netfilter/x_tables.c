@@ -702,6 +702,7 @@ int xt_check_entry_offsets(const void *base,
 }
 EXPORT_SYMBOL(xt_check_entry_offsets);
 
+<<<<<<< HEAD
 /**
  * xt_alloc_entry_offsets - allocate array to store rule head offsets
  *
@@ -752,6 +753,8 @@ bool xt_find_jump_offset(const unsigned int *offsets,
 }
 EXPORT_SYMBOL(xt_find_jump_offset);
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 int xt_check_target(struct xt_tgchk_param *par,
 		    unsigned int size, u_int8_t proto, bool inv_proto)
 {
@@ -951,6 +954,12 @@ struct xt_table_info *xt_alloc_table_info(unsigned int size)
 	if (sz < sizeof(*info))
 		return NULL;
 
+<<<<<<< HEAD
+=======
+	if (sz < sizeof(*info))
+		return NULL;
+
+>>>>>>> upstream/rpi-4.4.y
 	/* Pedantry: prevent them from hitting BUG() in vmalloc.c --RR */
 	if ((SMP_ALIGN(size) >> PAGE_SHIFT) + 2 > totalram_pages)
 		return NULL;

@@ -295,7 +295,13 @@ unflush:
 
 	skb_gro_pull(skb, sizeof(struct udphdr)); /* pull encapsulating udp header */
 	skb_gro_postpull_rcsum(skb, uh, sizeof(struct udphdr));
+<<<<<<< HEAD
 	pp = call_gro_receive_sk(udp_sk(sk)->gro_receive, sk, head, skb);
+=======
+	NAPI_GRO_CB(skb)->proto = uo_priv->offload->ipproto;
+	pp = call_gro_receive_udp(uo_priv->offload->callbacks.gro_receive,
+				  head, skb, uo_priv->offload);
+>>>>>>> upstream/rpi-4.4.y
 
 out_unlock:
 	rcu_read_unlock();

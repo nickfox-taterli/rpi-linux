@@ -39,11 +39,18 @@ struct dk_cxlflash_hdr {
  * at this time, this provides future flexibility.
  */
 #define DK_CXLFLASH_ALL_PORTS_ACTIVE	0x0000000000000001ULL
+<<<<<<< HEAD
 #define DK_CXLFLASH_APP_CLOSE_ADAP_FD	0x0000000000000002ULL
 
 /*
  * General Notes:
  * -------------
+=======
+
+/*
+ * Notes:
+ * -----
+>>>>>>> upstream/rpi-4.4.y
  * The 'context_id' field of all ioctl structures contains the context
  * identifier for a context in the lower 32-bits (upper 32-bits are not
  * to be used when identifying a context to the AFU). That said, the value

@@ -748,7 +748,11 @@ static int ping_v4_sendmsg(struct sock *sk, struct msghdr *msg, size_t len)
 	ipc.tos = -1;
 
 	if (msg->msg_controllen) {
+<<<<<<< HEAD
 		err = ip_cmsg_send(sk, msg, &ipc, false);
+=======
+		err = ip_cmsg_send(sock_net(sk), msg, &ipc, false);
+>>>>>>> upstream/rpi-4.4.y
 		if (unlikely(err)) {
 			kfree(ipc.opt);
 			return err;

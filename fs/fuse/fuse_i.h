@@ -23,7 +23,10 @@
 #include <linux/poll.h>
 #include <linux/workqueue.h>
 #include <linux/kref.h>
+<<<<<<< HEAD
 #include <linux/xattr.h>
+=======
+>>>>>>> upstream/rpi-4.4.y
 
 /** Max number of pages that can be used in a single read request */
 #define FUSE_MAX_PAGES_PER_REQ 32

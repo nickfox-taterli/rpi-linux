@@ -764,7 +764,11 @@ config USB_HWA_HCD
 
 config USB_DWCOTG
 	tristate "Synopsis DWC host support"
+<<<<<<< HEAD
 	depends on USB && FIQ
+=======
+	depends on USB
+>>>>>>> upstream/rpi-4.4.y
 	help
 	  The Synopsis DWC controller is a dual-role
 	  host/peripheral/OTG ("On The Go") USB controllers.

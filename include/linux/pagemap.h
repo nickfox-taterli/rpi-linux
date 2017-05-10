@@ -541,6 +541,62 @@ extern void add_page_wait_queue(struct page *page, wait_queue_t *waiter);
  */
 static inline int fault_in_pages_writeable(char __user *uaddr, int size)
 {
+<<<<<<< HEAD
+=======
+	int ret;
+
+	if (unlikely(size == 0))
+		return 0;
+
+	/*
+	 * Writing zeroes into userspace here is OK, because we know that if
+	 * the zero gets there, we'll be overwriting it.
+	 */
+	ret = __put_user(0, uaddr);
+	if (ret == 0) {
+		char __user *end = uaddr + size - 1;
+
+		/*
+		 * If the page was already mapped, this will get a cache miss
+		 * for sure, so try to avoid doing it.
+		 */
+		if (((unsigned long)uaddr & PAGE_MASK) !=
+				((unsigned long)end & PAGE_MASK))
+			ret = __put_user(0, end);
+	}
+	return ret;
+}
+
+static inline int fault_in_pages_readable(const char __user *uaddr, int size)
+{
+	volatile char c;
+	int ret;
+
+	if (unlikely(size == 0))
+		return 0;
+
+	ret = __get_user(c, uaddr);
+	if (ret == 0) {
+		const char __user *end = uaddr + size - 1;
+
+		if (((unsigned long)uaddr & PAGE_MASK) !=
+				((unsigned long)end & PAGE_MASK)) {
+			ret = __get_user(c, end);
+			(void)c;
+		}
+	}
+	return ret;
+}
+
+/*
+ * Multipage variants of the above prefault helpers, useful if more than
+ * PAGE_SIZE of data needs to be prefaulted. These are separate from the above
+ * functions (which only handle up to PAGE_SIZE) to avoid clobbering the
+ * filemap.c hotpaths.
+ */
+static inline int fault_in_multipages_writeable(char __user *uaddr, int size)
+{
+>>>>>>> upstream/rpi-4.4.y
 	char __user *end = uaddr + size - 1;
 
 	if (unlikely(size == 0))
@@ -573,10 +629,17 @@ static inline int fault_in_pages_readable(const char __user *uaddr, int size)
 
 	if (unlikely(size == 0))
 		return 0;
+<<<<<<< HEAD
 
 	if (unlikely(uaddr > end))
 		return -EFAULT;
 
+=======
+
+	if (unlikely(uaddr > end))
+		return -EFAULT;
+
+>>>>>>> upstream/rpi-4.4.y
 	do {
 		if (unlikely(__get_user(c, uaddr) != 0))
 			return -EFAULT;
@@ -589,7 +652,10 @@ static inline int fault_in_pages_readable(const char __user *uaddr, int size)
 		return __get_user(c, end);
 	}
 
+<<<<<<< HEAD
 	(void)c;
+=======
+>>>>>>> upstream/rpi-4.4.y
 	return 0;
 }
 

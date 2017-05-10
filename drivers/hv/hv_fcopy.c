@@ -82,12 +82,15 @@ static void fcopy_timeout_func(struct work_struct *dummy)
 	 */
 	fcopy_respond_to_host(HV_E_FAIL);
 	hv_poll_channel(fcopy_transaction.recv_channel, fcopy_poll_wrapper);
+<<<<<<< HEAD
 }
 
 static void fcopy_register_done(void)
 {
 	pr_debug("FCP: userspace daemon registered\n");
 	hv_poll_channel(fcopy_transaction.recv_channel, fcopy_poll_wrapper);
+=======
+>>>>>>> upstream/rpi-4.4.y
 }
 
 static int fcopy_handle_handshake(u32 version)
@@ -115,7 +118,12 @@ static int fcopy_handle_handshake(u32 version)
 		 */
 		return -EINVAL;
 	}
+<<<<<<< HEAD
 	pr_debug("FCP: userspace daemon ver. %d connected\n", version);
+=======
+	pr_debug("FCP: userspace daemon ver. %d registered\n", version);
+	hv_poll_channel(fcopy_transaction.recv_channel, fcopy_poll_wrapper);
+>>>>>>> upstream/rpi-4.4.y
 	return 0;
 }
 

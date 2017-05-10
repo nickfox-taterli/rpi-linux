@@ -42,7 +42,10 @@ struct samsung_i2s {
  */
 struct s3c_audio_pdata {
 	int (*cfg_gpio)(struct platform_device *);
+<<<<<<< HEAD
 	dma_filter_fn dma_filter;
+=======
+>>>>>>> upstream/rpi-4.4.y
 	void *dma_playback;
 	void *dma_capture;
 	void *dma_play_sec;

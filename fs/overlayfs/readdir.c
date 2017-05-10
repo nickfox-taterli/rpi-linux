@@ -566,6 +566,7 @@ void ovl_cleanup_whiteouts(struct dentry *upper, struct list_head *list)
 		}
 		if (dentry->d_inode)
 			ovl_cleanup(upper->d_inode, dentry);
+<<<<<<< HEAD
 		dput(dentry);
 	}
 	inode_unlock(upper->d_inode);
@@ -640,6 +641,8 @@ static void ovl_workdir_cleanup_recurse(struct path *path, int level)
 			continue;
 		if (dentry->d_inode)
 			ovl_workdir_cleanup(dir, path->mnt, dentry, level);
+=======
+>>>>>>> upstream/rpi-4.4.y
 		dput(dentry);
 	}
 	inode_unlock(dir);

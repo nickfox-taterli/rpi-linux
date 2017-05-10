@@ -957,7 +957,12 @@ int udp_sendmsg(struct sock *sk, struct msghdr *msg, size_t len)
 	ipc.oif = sk->sk_bound_dev_if;
 
 	if (msg->msg_controllen) {
+<<<<<<< HEAD
 		err = ip_cmsg_send(sk, msg, &ipc, sk->sk_family == AF_INET6);
+=======
+		err = ip_cmsg_send(sock_net(sk), msg, &ipc,
+				   sk->sk_family == AF_INET6);
+>>>>>>> upstream/rpi-4.4.y
 		if (unlikely(err)) {
 			kfree(ipc.opt);
 			return err;
@@ -1281,14 +1286,23 @@ try_again:
 	 * coverage checksum (UDP-Lite), do it before the copy.
 	 */
 
+<<<<<<< HEAD
 	if (copied < ulen || UDP_SKB_CB(skb)->partial_cov || peeking) {
+=======
+	if (copied < ulen || UDP_SKB_CB(skb)->partial_cov) {
+>>>>>>> upstream/rpi-4.4.y
 		checksum_valid = !udp_lib_checksum_complete(skb);
 		if (!checksum_valid)
 			goto csum_copy_err;
 	}
 
 	if (checksum_valid || skb_csum_unnecessary(skb))
+<<<<<<< HEAD
 		err = skb_copy_datagram_msg(skb, off, msg, copied);
+=======
+		err = skb_copy_datagram_msg(skb, sizeof(struct udphdr),
+					    msg, copied);
+>>>>>>> upstream/rpi-4.4.y
 	else {
 		err = skb_copy_and_csum_datagram_msg(skb, off, msg);
 

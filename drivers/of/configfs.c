@@ -23,7 +23,10 @@
 #include <linux/file.h>
 #include <linux/vmalloc.h>
 #include <linux/firmware.h>
+<<<<<<< HEAD
 #include <linux/sizes.h>
+=======
+>>>>>>> upstream/rpi-4.4.y
 
 #include "of_private.h"
 
@@ -45,7 +48,11 @@ static int create_overlay(struct cfs_overlay_item *overlay, void *blob)
 	int err;
 
 	/* unflatten the tree */
+<<<<<<< HEAD
 	of_fdt_unflatten_tree(blob, NULL, &overlay->overlay);
+=======
+	of_fdt_unflatten_tree(blob, &overlay->overlay);
+>>>>>>> upstream/rpi-4.4.y
 	if (overlay->overlay == NULL) {
 		pr_err("%s: failed to unflatten tree\n", __func__);
 		err = -EINVAL;
@@ -154,7 +161,11 @@ ssize_t cfs_overlay_item_dtbo_read(struct config_item *item,
 {
 	struct cfs_overlay_item *overlay = to_cfs_overlay_item(item);
 
+<<<<<<< HEAD
 	pr_debug("%s: buf=%p max_count=%zu\n", __func__,
+=======
+	pr_debug("%s: buf=%p max_count=%u\n", __func__,
+>>>>>>> upstream/rpi-4.4.y
 			buf, max_count);
 
 	if (overlay->dtbo == NULL)
@@ -277,12 +288,24 @@ static struct config_item_type of_cfs_type = {
 
 struct config_group of_cfs_overlay_group;
 
+<<<<<<< HEAD
+=======
+struct config_group *of_cfs_def_groups[] = {
+	&of_cfs_overlay_group,
+	NULL
+};
+
+>>>>>>> upstream/rpi-4.4.y
 static struct configfs_subsystem of_cfs_subsys = {
 	.su_group = {
 		.cg_item = {
 			.ci_namebuf = "device-tree",
 			.ci_type = &of_cfs_type,
 		},
+<<<<<<< HEAD
+=======
+		.default_groups = of_cfs_def_groups,
+>>>>>>> upstream/rpi-4.4.y
 	},
 	.su_mutex = __MUTEX_INITIALIZER(of_cfs_subsys.su_mutex),
 };
@@ -296,8 +319,11 @@ static int __init of_cfs_init(void)
 	config_group_init(&of_cfs_subsys.su_group);
 	config_group_init_type_name(&of_cfs_overlay_group, "overlays",
 			&overlays_type);
+<<<<<<< HEAD
 	configfs_add_default_group(&of_cfs_overlay_group,
 			&of_cfs_subsys.su_group);
+=======
+>>>>>>> upstream/rpi-4.4.y
 
 	ret = configfs_register_subsystem(&of_cfs_subsys);
 	if (ret != 0) {

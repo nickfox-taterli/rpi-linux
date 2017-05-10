@@ -839,6 +839,7 @@ int cdc_ncm_bind_common(struct usbnet *dev, struct usb_interface *intf, u8 data_
 
 	iface_no = ctx->data->cur_altsetting->desc.bInterfaceNumber;
 
+<<<<<<< HEAD
 	/* Device-specific flags */
 	ctx->drvflags = drvflags;
 
@@ -851,6 +852,13 @@ int cdc_ncm_bind_common(struct usbnet *dev, struct usb_interface *intf, u8 data_
 	if (!(ctx->drvflags & CDC_MBIM_FLAG_AVOID_ALTSETTING_TOGGLE))
 		usb_set_interface(dev->udev, iface_no, data_altsetting);
 
+=======
+	/* Reset data interface. Some devices will not reset properly
+	 * unless they are configured first.  Toggle the altsetting to
+	 * force a reset
+	 */
+	usb_set_interface(dev->udev, iface_no, data_altsetting);
+>>>>>>> upstream/rpi-4.4.y
 	temp = usb_set_interface(dev->udev, iface_no, 0);
 	if (temp) {
 		dev_dbg(&intf->dev, "set interface failed\n");

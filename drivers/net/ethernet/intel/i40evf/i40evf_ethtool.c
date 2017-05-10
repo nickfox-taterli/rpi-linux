@@ -493,7 +493,91 @@ static int i40evf_set_per_queue_coalesce(struct net_device *netdev,
 					 u32 queue,
 					 struct ethtool_coalesce *ec)
 {
+<<<<<<< HEAD
 	return __i40evf_set_coalesce(netdev, ec, queue);
+=======
+	struct i40e_hw *hw = &adapter->hw;
+
+	u64 hena = (u64)rd32(hw, I40E_VFQF_HENA(0)) |
+		   ((u64)rd32(hw, I40E_VFQF_HENA(1)) << 32);
+
+	/* RSS does not support anything other than hashing
+	 * to queues on src and dst IPs and ports
+	 */
+	if (nfc->data & ~(RXH_IP_SRC | RXH_IP_DST |
+			  RXH_L4_B_0_1 | RXH_L4_B_2_3))
+		return -EINVAL;
+
+	/* We need at least the IP SRC and DEST fields for hashing */
+	if (!(nfc->data & RXH_IP_SRC) ||
+	    !(nfc->data & RXH_IP_DST))
+		return -EINVAL;
+
+	switch (nfc->flow_type) {
+	case TCP_V4_FLOW:
+		if (nfc->data & (RXH_L4_B_0_1 | RXH_L4_B_2_3))
+			hena |= BIT_ULL(I40E_FILTER_PCTYPE_NONF_IPV4_TCP);
+		else
+			return -EINVAL;
+		break;
+	case TCP_V6_FLOW:
+		if (nfc->data & (RXH_L4_B_0_1 | RXH_L4_B_2_3))
+			hena |= BIT_ULL(I40E_FILTER_PCTYPE_NONF_IPV6_TCP);
+		else
+			return -EINVAL;
+		break;
+	case UDP_V4_FLOW:
+		if (nfc->data & (RXH_L4_B_0_1 | RXH_L4_B_2_3)) {
+			hena |= (BIT_ULL(I40E_FILTER_PCTYPE_NONF_IPV4_UDP) |
+				 BIT_ULL(I40E_FILTER_PCTYPE_FRAG_IPV4));
+		} else {
+			return -EINVAL;
+		}
+		break;
+	case UDP_V6_FLOW:
+		if (nfc->data & (RXH_L4_B_0_1 | RXH_L4_B_2_3)) {
+			hena |= (BIT_ULL(I40E_FILTER_PCTYPE_NONF_IPV6_UDP) |
+				 BIT_ULL(I40E_FILTER_PCTYPE_FRAG_IPV6));
+		} else {
+			return -EINVAL;
+		}
+		break;
+	case AH_ESP_V4_FLOW:
+	case AH_V4_FLOW:
+	case ESP_V4_FLOW:
+	case SCTP_V4_FLOW:
+		if ((nfc->data & RXH_L4_B_0_1) ||
+		    (nfc->data & RXH_L4_B_2_3))
+			return -EINVAL;
+		hena |= BIT_ULL(I40E_FILTER_PCTYPE_NONF_IPV4_OTHER);
+		break;
+	case AH_ESP_V6_FLOW:
+	case AH_V6_FLOW:
+	case ESP_V6_FLOW:
+	case SCTP_V6_FLOW:
+		if ((nfc->data & RXH_L4_B_0_1) ||
+		    (nfc->data & RXH_L4_B_2_3))
+			return -EINVAL;
+		hena |= BIT_ULL(I40E_FILTER_PCTYPE_NONF_IPV6_OTHER);
+		break;
+	case IPV4_FLOW:
+		hena |= (BIT_ULL(I40E_FILTER_PCTYPE_NONF_IPV4_OTHER) |
+			 BIT_ULL(I40E_FILTER_PCTYPE_FRAG_IPV4));
+		break;
+	case IPV6_FLOW:
+		hena |= (BIT_ULL(I40E_FILTER_PCTYPE_NONF_IPV6_OTHER) |
+			 BIT_ULL(I40E_FILTER_PCTYPE_FRAG_IPV6));
+		break;
+	default:
+		return -EINVAL;
+	}
+
+	wr32(hw, I40E_VFQF_HENA(0), (u32)hena);
+	wr32(hw, I40E_VFQF_HENA(1), (u32)(hena >> 32));
+	i40e_flush(hw);
+
+	return 0;
+>>>>>>> upstream/rpi-4.4.y
 }
 
 /**

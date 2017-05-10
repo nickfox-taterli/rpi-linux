@@ -59,5 +59,8 @@ js-rtc-y = rtc.o
 
 obj-$(CONFIG_TILE_SROM)		+= tile-srom.o
 obj-$(CONFIG_XILLYBUS)		+= xillybus/
+<<<<<<< HEAD
 obj-$(CONFIG_POWERNV_OP_PANEL)	+= powernv-op-panel.o
+=======
+>>>>>>> upstream/rpi-4.4.y
 obj-$(CONFIG_BRCM_CHAR_DRIVERS) += broadcom/

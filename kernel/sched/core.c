@@ -5626,7 +5626,112 @@ static void set_rq_offline(struct rq *rq)
 	}
 }
 
+<<<<<<< HEAD
 static void set_cpu_rq_start_time(unsigned int cpu)
+=======
+/*
+ * migration_call - callback that gets triggered when a CPU is added.
+ * Here we can start up the necessary migration thread for the new CPU.
+ */
+static int
+migration_call(struct notifier_block *nfb, unsigned long action, void *hcpu)
+{
+	int cpu = (long)hcpu;
+	unsigned long flags;
+	struct rq *rq = cpu_rq(cpu);
+
+	switch (action & ~CPU_TASKS_FROZEN) {
+
+	case CPU_UP_PREPARE:
+		rq->calc_load_update = calc_load_update;
+		account_reset_rq(rq);
+		break;
+
+	case CPU_ONLINE:
+		/* Update our root-domain */
+		raw_spin_lock_irqsave(&rq->lock, flags);
+		if (rq->rd) {
+			BUG_ON(!cpumask_test_cpu(cpu, rq->rd->span));
+
+			set_rq_online(rq);
+		}
+		raw_spin_unlock_irqrestore(&rq->lock, flags);
+		break;
+
+#ifdef CONFIG_HOTPLUG_CPU
+	case CPU_DYING:
+		sched_ttwu_pending();
+		/* Update our root-domain */
+		raw_spin_lock_irqsave(&rq->lock, flags);
+		if (rq->rd) {
+			BUG_ON(!cpumask_test_cpu(cpu, rq->rd->span));
+			set_rq_offline(rq);
+		}
+		migrate_tasks(rq);
+		BUG_ON(rq->nr_running != 1); /* the migration thread */
+		raw_spin_unlock_irqrestore(&rq->lock, flags);
+		break;
+
+	case CPU_DEAD:
+		calc_load_migrate(rq);
+		break;
+#endif
+	}
+
+	update_max_interval();
+
+	return NOTIFY_OK;
+}
+
+/*
+ * Register at high priority so that task migration (migrate_all_tasks)
+ * happens before everything else.  This has to be lower priority than
+ * the notifier in the perf_event subsystem, though.
+ */
+static struct notifier_block migration_notifier = {
+	.notifier_call = migration_call,
+	.priority = CPU_PRI_MIGRATION,
+};
+
+static void set_cpu_rq_start_time(void)
+{
+	int cpu = smp_processor_id();
+	struct rq *rq = cpu_rq(cpu);
+	rq->age_stamp = sched_clock_cpu(cpu);
+}
+
+static int sched_cpu_active(struct notifier_block *nfb,
+				      unsigned long action, void *hcpu)
+{
+	int cpu = (long)hcpu;
+
+	switch (action & ~CPU_TASKS_FROZEN) {
+	case CPU_STARTING:
+		set_cpu_rq_start_time();
+		return NOTIFY_OK;
+
+	case CPU_ONLINE:
+		/*
+		 * At this point a starting CPU has marked itself as online via
+		 * set_cpu_online(). But it might not yet have marked itself
+		 * as active, which is essential from here on.
+		 */
+		set_cpu_active(cpu, true);
+		stop_machine_unpark(cpu);
+		return NOTIFY_OK;
+
+	case CPU_DOWN_FAILED:
+		set_cpu_active(cpu, true);
+		return NOTIFY_OK;
+
+	default:
+		return NOTIFY_DONE;
+	}
+}
+
+static int sched_cpu_inactive(struct notifier_block *nfb,
+					unsigned long action, void *hcpu)
+>>>>>>> upstream/rpi-4.4.y
 {
 	struct rq *rq = cpu_rq(cpu);
 
@@ -8400,6 +8505,7 @@ static void cpu_cgroup_css_free(struct cgroup_subsys_state *css)
 	 */
 	sched_free_group(tg);
 }
+<<<<<<< HEAD
 
 /*
  * This is called before wake_up_new_task(), therefore we really only
@@ -8411,6 +8517,8 @@ static void cpu_cgroup_fork(struct task_struct *task)
 	struct rq *rq;
 
 	rq = task_rq_lock(task, &rf);
+=======
+>>>>>>> upstream/rpi-4.4.y
 
 	sched_change_group(task, TASK_SET_GROUP);
 

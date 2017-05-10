@@ -215,7 +215,10 @@ struct musb_platform_ops {
 				dma_addr_t *dma_addr, u32 *len);
 	void	(*pre_root_reset_end)(struct musb *musb);
 	void	(*post_root_reset_end)(struct musb *musb);
+<<<<<<< HEAD
 	int	(*phy_callback)(enum musb_vbus_id_status status);
+=======
+>>>>>>> upstream/rpi-4.4.y
 	void	(*clear_ep_rxintr)(struct musb *musb, int epnum);
 };
 

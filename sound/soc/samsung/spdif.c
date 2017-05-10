@@ -441,6 +441,21 @@ static int spdif_probe(struct platform_device *pdev)
 		goto err4;
 	}
 
+<<<<<<< HEAD
+=======
+	spdif_stereo_out.dma_size = 2;
+	spdif_stereo_out.dma_addr = mem_res->start + DATA_OUTBUF;
+	spdif_stereo_out.slave = spdif_pdata ? spdif_pdata->dma_playback : NULL;
+
+	spdif->dma_playback = &spdif_stereo_out;
+
+	ret = samsung_asoc_dma_platform_register(&pdev->dev);
+	if (ret) {
+		dev_err(&pdev->dev, "failed to register DMA: %d\n", ret);
+		goto err4;
+	}
+
+>>>>>>> upstream/rpi-4.4.y
 	return 0;
 err4:
 	iounmap(spdif->regs);

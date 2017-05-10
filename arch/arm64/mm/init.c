@@ -452,9 +452,26 @@ void __init mem_init(void)
 		MLM((unsigned long)phys_to_page(memblock_start_of_DRAM()),
 		    (unsigned long)virt_to_page(high_memory)));
 #endif
+<<<<<<< HEAD
 	pr_notice("    memory  : 0x%16lx - 0x%16lx   (%6ld MB)\n",
 		MLM(__phys_to_virt(memblock_start_of_DRAM()),
 		    (unsigned long)high_memory));
+=======
+		  MLG(VMALLOC_START, VMALLOC_END),
+#ifdef CONFIG_SPARSEMEM_VMEMMAP
+		  MLG(VMEMMAP_START,
+		      VMEMMAP_START + VMEMMAP_SIZE),
+		  MLM((unsigned long)virt_to_page(PAGE_OFFSET),
+		      (unsigned long)virt_to_page(high_memory)),
+#endif
+		  MLK(FIXADDR_START, FIXADDR_TOP),
+		  MLM(PCI_IO_START, PCI_IO_END),
+		  MLM(MODULES_VADDR, MODULES_END),
+		  MLM(PAGE_OFFSET, (unsigned long)high_memory),
+		  MLK_ROUNDUP(__init_begin, __init_end),
+		  MLK_ROUNDUP(_text, _etext),
+		  MLK_ROUNDUP(_sdata, _edata));
+>>>>>>> upstream/rpi-4.4.y
 
 #undef MLK
 #undef MLM

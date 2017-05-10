@@ -266,7 +266,11 @@ struct kvm_mips_tlb {
 
 #define KVM_MIPS_GUEST_TLB_SIZE	64
 struct kvm_vcpu_arch {
+<<<<<<< HEAD
 	void *guest_ebase;
+=======
+	void *host_ebase, *guest_ebase;
+>>>>>>> upstream/rpi-4.4.y
 	int (*vcpu_run)(struct kvm_run *run, struct kvm_vcpu *vcpu);
 	unsigned long host_stack;
 	unsigned long host_gp;
@@ -701,9 +705,15 @@ extern enum emulation_result kvm_mips_emulate_msadis_exc(u32 cause,
 extern enum emulation_result kvm_mips_complete_mmio_load(struct kvm_vcpu *vcpu,
 							 struct kvm_run *run);
 
+<<<<<<< HEAD
 u32 kvm_mips_read_count(struct kvm_vcpu *vcpu);
 void kvm_mips_write_count(struct kvm_vcpu *vcpu, u32 count);
 void kvm_mips_write_compare(struct kvm_vcpu *vcpu, u32 compare, bool ack);
+=======
+uint32_t kvm_mips_read_count(struct kvm_vcpu *vcpu);
+void kvm_mips_write_count(struct kvm_vcpu *vcpu, uint32_t count);
+void kvm_mips_write_compare(struct kvm_vcpu *vcpu, uint32_t compare, bool ack);
+>>>>>>> upstream/rpi-4.4.y
 void kvm_mips_init_count(struct kvm_vcpu *vcpu);
 int kvm_mips_set_count_ctl(struct kvm_vcpu *vcpu, s64 count_ctl);
 int kvm_mips_set_count_resume(struct kvm_vcpu *vcpu, s64 count_resume);

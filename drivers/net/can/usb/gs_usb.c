@@ -1000,7 +1000,10 @@ static int gs_usb_probe(struct usb_interface *intf,
 				gs_destroy_candev(dev->canch[i]);
 
 			usb_kill_anchored_urbs(&dev->rx_submitted);
+<<<<<<< HEAD
 			kfree(dconf);
+=======
+>>>>>>> upstream/rpi-4.4.y
 			kfree(dev);
 			return rc;
 		}

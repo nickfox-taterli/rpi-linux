@@ -322,7 +322,11 @@ void tcp_req_err(struct sock *sk, u32 seq, bool abort)
 	 * an established socket here.
 	 */
 	if (seq != tcp_rsk(req)->snt_isn) {
+<<<<<<< HEAD
 		__NET_INC_STATS(net, LINUX_MIB_OUTOFWINDOWICMPS);
+=======
+		NET_INC_STATS_BH(net, LINUX_MIB_OUTOFWINDOWICMPS);
+>>>>>>> upstream/rpi-4.4.y
 	} else if (abort) {
 		/*
 		 * Still in SYN_RECV, just remove it silently.
@@ -1540,6 +1544,7 @@ bool tcp_prequeue(struct sock *sk, struct sk_buff *skb)
 }
 EXPORT_SYMBOL(tcp_prequeue);
 
+<<<<<<< HEAD
 bool tcp_add_backlog(struct sock *sk, struct sk_buff *skb)
 {
 	u32 limit = sk->sk_rcvbuf + sk->sk_sndbuf;
@@ -1568,6 +1573,8 @@ bool tcp_add_backlog(struct sock *sk, struct sk_buff *skb)
 }
 EXPORT_SYMBOL(tcp_add_backlog);
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 int tcp_filter(struct sock *sk, struct sk_buff *skb)
 {
 	struct tcphdr *th = (struct tcphdr *)skb->data;
@@ -1654,7 +1661,10 @@ process:
 
 		sk = req->rsk_listener;
 		if (unlikely(tcp_v4_inbound_md5_hash(sk, skb))) {
+<<<<<<< HEAD
 			sk_drops_add(sk, skb);
+=======
+>>>>>>> upstream/rpi-4.4.y
 			reqsk_put(req);
 			goto discard_it;
 		}
@@ -1662,11 +1672,15 @@ process:
 			inet_csk_reqsk_queue_drop_and_put(sk, req);
 			goto lookup;
 		}
+<<<<<<< HEAD
 		/* We own a reference on the listener, increase it again
 		 * as we might lose it too soon.
 		 */
 		sock_hold(sk);
 		refcounted = true;
+=======
+		sock_hold(sk);
+>>>>>>> upstream/rpi-4.4.y
 		nsk = tcp_check_req(sk, skb, req, false);
 		if (!nsk) {
 			reqsk_put(req);

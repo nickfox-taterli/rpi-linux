@@ -1041,6 +1041,7 @@ int ip6_tnl_xmit(struct sk_buff *skb, struct net_device *dev, __u8 dsfield,
 	struct ipv6_tel_txoption opt;
 	struct dst_entry *dst = NULL, *ndst = NULL;
 	struct net_device *tdev;
+	bool use_cache = false;
 	int mtu;
 	unsigned int psh_hlen = sizeof(struct ipv6hdr) + t->encap_hlen;
 	unsigned int max_headroom = psh_hlen;
@@ -1087,8 +1088,23 @@ int ip6_tnl_xmit(struct sk_buff *skb, struct net_device *dev, __u8 dsfield,
 		use_cache = true;
 	}
 
+<<<<<<< HEAD
 	if (use_cache)
 		dst = dst_cache_get(&t->dst_cache);
+=======
+		memcpy(&fl6->daddr, addr6, sizeof(fl6->daddr));
+		neigh_release(neigh);
+	} else if (!(t->parms.flags &
+		     (IP6_TNL_F_USE_ORIG_TCLASS | IP6_TNL_F_USE_ORIG_FWMARK))) {
+		/* enable the cache only only if the routing decision does
+		 * not depend on the current inner header value
+		 */
+		use_cache = true;
+	}
+
+	if (use_cache)
+		dst = ip6_tnl_dst_get(t);
+>>>>>>> upstream/rpi-4.4.y
 
 	if (!ip6_tnl_xmit_ctl(t, &fl6->saddr, &fl6->daddr))
 		goto tx_err_link_failure;
@@ -1167,6 +1183,7 @@ route_lookup:
 		skb = new_skb;
 	}
 
+<<<<<<< HEAD
 	if (t->parms.collect_md) {
 		if (t->encap.type != TUNNEL_ENCAP_NONE)
 			goto tx_err_dst_release;
@@ -1174,6 +1191,10 @@ route_lookup:
 		if (use_cache && ndst)
 			dst_cache_set_ip6(&t->dst_cache, ndst, &fl6->saddr);
 	}
+=======
+	if (use_cache && ndst)
+		ip6_tnl_dst_set(t, ndst);
+>>>>>>> upstream/rpi-4.4.y
 	skb_dst_set(skb, dst);
 
 	if (encap_limit >= 0) {

@@ -71,7 +71,12 @@ void batadv_hardif_release(struct kref *ref);
  */
 static inline void batadv_hardif_put(struct batadv_hard_iface *hard_iface)
 {
+<<<<<<< HEAD
 	kref_put(&hard_iface->refcount, batadv_hardif_release);
+=======
+	if (atomic_dec_and_test(&hard_iface->refcount))
+		call_rcu(&hard_iface->rcu, batadv_hardif_free_rcu);
+>>>>>>> upstream/rpi-4.4.y
 }
 
 static inline struct batadv_hard_iface *

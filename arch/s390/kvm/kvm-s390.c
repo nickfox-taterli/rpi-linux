@@ -1726,6 +1726,7 @@ int kvm_arch_vcpu_init(struct kvm_vcpu *vcpu)
 	return 0;
 }
 
+<<<<<<< HEAD
 /* needs disabled preemption to protect from TOD sync and vcpu_load/put */
 static void __start_cpu_timer_accounting(struct kvm_vcpu *vcpu)
 {
@@ -1815,15 +1816,26 @@ __u64 kvm_s390_get_cpu_timer(struct kvm_vcpu *vcpu)
 
 void kvm_arch_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
 {
+=======
+void kvm_arch_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
+{
+>>>>>>> upstream/rpi-4.4.y
 	/* Save host register state */
 	save_fpu_regs();
 	vcpu->arch.host_fpregs.fpc = current->thread.fpu.fpc;
 	vcpu->arch.host_fpregs.regs = current->thread.fpu.regs;
 
+<<<<<<< HEAD
 	if (MACHINE_HAS_VX)
 		current->thread.fpu.regs = vcpu->run->s.regs.vrs;
 	else
 		current->thread.fpu.regs = vcpu->run->s.regs.fprs;
+=======
+	/* Depending on MACHINE_HAS_VX, data stored to vrs either
+	 * has vector register or floating point register format.
+	 */
+	current->thread.fpu.regs = vcpu->run->s.regs.vrs;
+>>>>>>> upstream/rpi-4.4.y
 	current->thread.fpu.fpc = vcpu->run->s.regs.fpc;
 	if (test_fp_ctl(current->thread.fpu.fpc))
 		/* User space provided an invalid FPC, let's clear it */
@@ -2027,7 +2039,10 @@ struct kvm_vcpu *kvm_arch_vcpu_create(struct kvm *kvm,
 	vcpu->arch.local_int.float_int = &kvm->arch.float_int;
 	vcpu->arch.local_int.wq = &vcpu->wq;
 	vcpu->arch.local_int.cpuflags = &vcpu->arch.sie_block->cpuflags;
+<<<<<<< HEAD
 	seqcount_init(&vcpu->arch.cputm_seqcount);
+=======
+>>>>>>> upstream/rpi-4.4.y
 
 	rc = kvm_vcpu_init(vcpu, kvm, id);
 	if (rc)
@@ -2266,10 +2281,16 @@ int kvm_arch_vcpu_ioctl_set_fpu(struct kvm_vcpu *vcpu, struct kvm_fpu *fpu)
 		return -EINVAL;
 	current->thread.fpu.fpc = fpu->fpc;
 	if (MACHINE_HAS_VX)
+<<<<<<< HEAD
 		convert_fp_to_vx((__vector128 *) vcpu->run->s.regs.vrs,
 				 (freg_t *) fpu->fprs);
 	else
 		memcpy(vcpu->run->s.regs.fprs, &fpu->fprs, sizeof(fpu->fprs));
+=======
+		convert_fp_to_vx(current->thread.fpu.vxrs, (freg_t *)fpu->fprs);
+	else
+		memcpy(current->thread.fpu.fprs, &fpu->fprs, sizeof(fpu->fprs));
+>>>>>>> upstream/rpi-4.4.y
 	return 0;
 }
 
@@ -2278,10 +2299,16 @@ int kvm_arch_vcpu_ioctl_get_fpu(struct kvm_vcpu *vcpu, struct kvm_fpu *fpu)
 	/* make sure we have the latest values */
 	save_fpu_regs();
 	if (MACHINE_HAS_VX)
+<<<<<<< HEAD
 		convert_vx_to_fp((freg_t *) fpu->fprs,
 				 (__vector128 *) vcpu->run->s.regs.vrs);
 	else
 		memcpy(fpu->fprs, vcpu->run->s.regs.fprs, sizeof(fpu->fprs));
+=======
+		convert_vx_to_fp((freg_t *)fpu->fprs, current->thread.fpu.vxrs);
+	else
+		memcpy(fpu->fprs, current->thread.fpu.fprs, sizeof(fpu->fprs));
+>>>>>>> upstream/rpi-4.4.y
 	fpu->fpc = current->thread.fpu.fpc;
 	return 0;
 }
@@ -2848,7 +2875,11 @@ int kvm_s390_store_status_unloaded(struct kvm_vcpu *vcpu, unsigned long gpa)
 				     fprs, 128);
 	} else {
 		rc = write_guest_abs(vcpu, gpa + __LC_FPREGS_SAVE_AREA,
+<<<<<<< HEAD
 				     vcpu->run->s.regs.fprs, 128);
+=======
+				     vcpu->run->s.regs.vrs, 128);
+>>>>>>> upstream/rpi-4.4.y
 	}
 	rc |= write_guest_abs(vcpu, gpa + __LC_GPREGS_SAVE_AREA,
 			      vcpu->run->s.regs.gprs, 128);
@@ -2860,9 +2891,14 @@ int kvm_s390_store_status_unloaded(struct kvm_vcpu *vcpu, unsigned long gpa)
 			      &vcpu->run->s.regs.fpc, 4);
 	rc |= write_guest_abs(vcpu, gpa + __LC_TOD_PROGREG_SAVE_AREA,
 			      &vcpu->arch.sie_block->todpr, 4);
+<<<<<<< HEAD
 	cputm = kvm_s390_get_cpu_timer(vcpu);
 	rc |= write_guest_abs(vcpu, gpa + __LC_CPU_TIMER_SAVE_AREA,
 			      &cputm, 8);
+=======
+	rc |= write_guest_abs(vcpu, gpa + __LC_CPU_TIMER_SAVE_AREA,
+			      &vcpu->arch.sie_block->cputm, 8);
+>>>>>>> upstream/rpi-4.4.y
 	clkcomp = vcpu->arch.sie_block->ckc >> 8;
 	rc |= write_guest_abs(vcpu, gpa + __LC_CLOCK_COMP_SAVE_AREA,
 			      &clkcomp, 8);

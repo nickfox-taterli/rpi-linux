@@ -629,9 +629,24 @@ static int pseries_eeh_configure_bridge(struct eeh_pe *pe)
 		config_addr = pe->addr;
 
 	while (max_wait > 0) {
+<<<<<<< HEAD
 		ret = rtas_call(ibm_configure_pe, 3, 1, NULL,
 				config_addr, BUID_HI(pe->phb->buid),
 				BUID_LO(pe->phb->buid));
+=======
+		/* Use new configure-pe function, if supported */
+		if (ibm_configure_pe != RTAS_UNKNOWN_SERVICE) {
+			ret = rtas_call(ibm_configure_pe, 3, 1, NULL,
+					config_addr, BUID_HI(pe->phb->buid),
+					BUID_LO(pe->phb->buid));
+		} else if (ibm_configure_bridge != RTAS_UNKNOWN_SERVICE) {
+			ret = rtas_call(ibm_configure_bridge, 3, 1, NULL,
+					config_addr, BUID_HI(pe->phb->buid),
+					BUID_LO(pe->phb->buid));
+		} else {
+			return -EFAULT;
+		}
+>>>>>>> upstream/rpi-4.4.y
 
 		if (!ret)
 			return ret;

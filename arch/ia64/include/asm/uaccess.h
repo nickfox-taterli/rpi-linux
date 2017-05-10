@@ -272,7 +272,10 @@ __copy_from_user (void *to, const void __user *from, unsigned long count)
 static inline unsigned long
 copy_from_user(void *to, const void __user *from, unsigned long n)
 {
+<<<<<<< HEAD
 	check_object_size(to, n, false);
+=======
+>>>>>>> upstream/rpi-4.4.y
 	if (likely(__access_ok(from, n, get_fs())))
 		n = __copy_user((__force void __user *) to, from, n);
 	else

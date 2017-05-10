@@ -4334,6 +4334,10 @@ static struct ceph_msg *get_reply(struct ceph_connection *con,
 	if (!req) {
 		dout("%s osd%d tid %llu unknown, skipping\n", __func__,
 		     osd->o_osd, tid);
+<<<<<<< HEAD
+=======
+		m = NULL;
+>>>>>>> upstream/rpi-4.4.y
 		*skip = 1;
 		goto out_unlock_session;
 	}

@@ -592,11 +592,18 @@ static int mlx5e_get_coalesce(struct net_device *netdev,
 	if (!MLX5_CAP_GEN(priv->mdev, cq_moderation))
 		return -ENOTSUPP;
 
+<<<<<<< HEAD
 	coal->rx_coalesce_usecs       = priv->params.rx_cq_moderation.usec;
 	coal->rx_max_coalesced_frames = priv->params.rx_cq_moderation.pkts;
 	coal->tx_coalesce_usecs       = priv->params.tx_cq_moderation.usec;
 	coal->tx_max_coalesced_frames = priv->params.tx_cq_moderation.pkts;
 	coal->use_adaptive_rx_coalesce = priv->params.rx_am_enabled;
+=======
+	coal->rx_coalesce_usecs       = priv->params.rx_cq_moderation_usec;
+	coal->rx_max_coalesced_frames = priv->params.rx_cq_moderation_pkts;
+	coal->tx_coalesce_usecs       = priv->params.tx_cq_moderation_usec;
+	coal->tx_max_coalesced_frames = priv->params.tx_cq_moderation_pkts;
+>>>>>>> upstream/rpi-4.4.y
 
 	return 0;
 }
@@ -618,6 +625,7 @@ static int mlx5e_set_coalesce(struct net_device *netdev,
 		return -ENOTSUPP;
 
 	mutex_lock(&priv->state_lock);
+<<<<<<< HEAD
 
 	was_opened = test_bit(MLX5E_STATE_OPENED, &priv->state);
 	if (was_opened && restart) {
@@ -631,6 +639,15 @@ static int mlx5e_set_coalesce(struct net_device *netdev,
 	priv->params.rx_cq_moderation.pkts = coal->rx_max_coalesced_frames;
 
 	if (!was_opened || restart)
+		goto out;
+=======
+	priv->params.tx_cq_moderation_usec = coal->tx_coalesce_usecs;
+	priv->params.tx_cq_moderation_pkts = coal->tx_max_coalesced_frames;
+	priv->params.rx_cq_moderation_usec = coal->rx_coalesce_usecs;
+	priv->params.rx_cq_moderation_pkts = coal->rx_max_coalesced_frames;
+>>>>>>> upstream/rpi-4.4.y
+
+	if (!test_bit(MLX5E_STATE_OPENED, &priv->state))
 		goto out;
 
 	for (i = 0; i < priv->params.num_channels; ++i) {
@@ -649,11 +666,16 @@ static int mlx5e_set_coalesce(struct net_device *netdev,
 	}
 
 out:
+<<<<<<< HEAD
 	if (was_opened && restart)
 		err = mlx5e_open_locked(netdev);
 
 	mutex_unlock(&priv->state_lock);
 	return err;
+=======
+	mutex_unlock(&priv->state_lock);
+	return 0;
+>>>>>>> upstream/rpi-4.4.y
 }
 
 static void ptys2ethtool_supported_link(unsigned long *supported_modes,

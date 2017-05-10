@@ -3402,6 +3402,34 @@ intel_dp_program_link_training_pattern(struct intel_dp *intel_dp,
 
 	I915_WRITE(intel_dp->output_reg, intel_dp->DP);
 	POSTING_READ(intel_dp->output_reg);
+<<<<<<< HEAD
+=======
+
+	buf[0] = dp_train_pat;
+	if ((dp_train_pat & DP_TRAINING_PATTERN_MASK) ==
+	    DP_TRAINING_PATTERN_DISABLE) {
+		/* don't write DP_TRAINING_LANEx_SET on disable */
+		len = 1;
+	} else {
+		/* DP_TRAINING_LANEx_SET follow DP_TRAINING_PATTERN_SET */
+		memcpy(buf + 1, intel_dp->train_set, intel_dp->lane_count);
+		len = intel_dp->lane_count + 1;
+	}
+
+	ret = drm_dp_dpcd_write(&intel_dp->aux, DP_TRAINING_PATTERN_SET,
+				buf, len);
+
+	return ret == len;
+}
+
+static bool
+intel_dp_reset_link_train(struct intel_dp *intel_dp, uint32_t *DP,
+			uint8_t dp_train_pat)
+{
+	memset(intel_dp->train_set, 0, sizeof(intel_dp->train_set));
+	intel_dp_set_signal_levels(intel_dp, DP);
+	return intel_dp_set_link_train(intel_dp, DP, dp_train_pat);
+>>>>>>> upstream/rpi-4.4.y
 }
 
 void intel_dp_set_idle_link_train(struct intel_dp *intel_dp)
@@ -3437,6 +3465,215 @@ void intel_dp_set_idle_link_train(struct intel_dp *intel_dp)
 		DRM_ERROR("Timed out waiting for DP idle patterns\n");
 }
 
+<<<<<<< HEAD
+=======
+/* Enable corresponding port and start training pattern 1 */
+static void
+intel_dp_link_training_clock_recovery(struct intel_dp *intel_dp)
+{
+	struct drm_encoder *encoder = &dp_to_dig_port(intel_dp)->base.base;
+	struct drm_device *dev = encoder->dev;
+	int i;
+	uint8_t voltage;
+	int voltage_tries, loop_tries;
+	uint32_t DP = intel_dp->DP;
+	uint8_t link_config[2];
+	uint8_t link_bw, rate_select;
+
+	if (HAS_DDI(dev))
+		intel_ddi_prepare_link_retrain(encoder);
+
+	intel_dp_compute_rate(intel_dp, intel_dp->link_rate,
+			      &link_bw, &rate_select);
+
+	/* Write the link configuration data */
+	link_config[0] = link_bw;
+	link_config[1] = intel_dp->lane_count;
+	if (drm_dp_enhanced_frame_cap(intel_dp->dpcd))
+		link_config[1] |= DP_LANE_COUNT_ENHANCED_FRAME_EN;
+	drm_dp_dpcd_write(&intel_dp->aux, DP_LINK_BW_SET, link_config, 2);
+	if (intel_dp->num_sink_rates)
+		drm_dp_dpcd_write(&intel_dp->aux, DP_LINK_RATE_SET,
+				  &rate_select, 1);
+
+	link_config[0] = 0;
+	link_config[1] = DP_SET_ANSI_8B10B;
+	drm_dp_dpcd_write(&intel_dp->aux, DP_DOWNSPREAD_CTRL, link_config, 2);
+
+	DP |= DP_PORT_EN;
+
+	/* clock recovery */
+	if (!intel_dp_reset_link_train(intel_dp, &DP,
+				       DP_TRAINING_PATTERN_1 |
+				       DP_LINK_SCRAMBLING_DISABLE)) {
+		DRM_ERROR("failed to enable link training\n");
+		return;
+	}
+
+	voltage = 0xff;
+	voltage_tries = 0;
+	loop_tries = 0;
+	for (;;) {
+		uint8_t link_status[DP_LINK_STATUS_SIZE];
+
+		drm_dp_link_train_clock_recovery_delay(intel_dp->dpcd);
+		if (!intel_dp_get_link_status(intel_dp, link_status)) {
+			DRM_ERROR("failed to get link status\n");
+			break;
+		}
+
+		if (drm_dp_clock_recovery_ok(link_status, intel_dp->lane_count)) {
+			DRM_DEBUG_KMS("clock recovery OK\n");
+			break;
+		}
+
+
+		/* Check to see if we've tried the max voltage */
+		for (i = 0; i < intel_dp->lane_count; i++)
+			if ((intel_dp->train_set[i] & DP_TRAIN_MAX_SWING_REACHED) == 0)
+				break;
+		if (i == intel_dp->lane_count) {
+			++loop_tries;
+			if (loop_tries == 5) {
+				DRM_ERROR("too many full retries, give up\n");
+				break;
+			}
+			intel_dp_reset_link_train(intel_dp, &DP,
+						  DP_TRAINING_PATTERN_1 |
+						  DP_LINK_SCRAMBLING_DISABLE);
+			voltage_tries = 0;
+			continue;
+		}
+
+		/* Check to see if we've tried the same voltage 5 times */
+		if ((intel_dp->train_set[0] & DP_TRAIN_VOLTAGE_SWING_MASK) == voltage) {
+			++voltage_tries;
+			if (voltage_tries == 5) {
+				DRM_ERROR("too many voltage retries, give up\n");
+				break;
+			}
+		} else
+			voltage_tries = 0;
+		voltage = intel_dp->train_set[0] & DP_TRAIN_VOLTAGE_SWING_MASK;
+
+		/* Update training set as requested by target */
+		if (!intel_dp_update_link_train(intel_dp, &DP, link_status)) {
+			DRM_ERROR("failed to update link training\n");
+			break;
+		}
+	}
+
+	intel_dp->DP = DP;
+}
+
+static void
+intel_dp_link_training_channel_equalization(struct intel_dp *intel_dp)
+{
+	struct intel_digital_port *dig_port = dp_to_dig_port(intel_dp);
+	struct drm_device *dev = dig_port->base.base.dev;
+	bool channel_eq = false;
+	int tries, cr_tries;
+	uint32_t DP = intel_dp->DP;
+	uint32_t training_pattern = DP_TRAINING_PATTERN_2;
+
+	/*
+	 * Training Pattern 3 for HBR2 or 1.2 devices that support it.
+	 *
+	 * Intel platforms that support HBR2 also support TPS3. TPS3 support is
+	 * also mandatory for downstream devices that support HBR2.
+	 *
+	 * Due to WaDisableHBR2 SKL < B0 is the only exception where TPS3 is
+	 * supported but still not enabled.
+	 */
+	if (intel_dp_source_supports_hbr2(dev) &&
+	    drm_dp_tps3_supported(intel_dp->dpcd))
+		training_pattern = DP_TRAINING_PATTERN_3;
+	else if (intel_dp->link_rate == 540000)
+		DRM_ERROR("5.4 Gbps link rate without HBR2/TPS3 support\n");
+
+	/* channel equalization */
+	if (!intel_dp_set_link_train(intel_dp, &DP,
+				     training_pattern |
+				     DP_LINK_SCRAMBLING_DISABLE)) {
+		DRM_ERROR("failed to start channel equalization\n");
+		return;
+	}
+
+	tries = 0;
+	cr_tries = 0;
+	channel_eq = false;
+	for (;;) {
+		uint8_t link_status[DP_LINK_STATUS_SIZE];
+
+		if (cr_tries > 5) {
+			DRM_ERROR("failed to train DP, aborting\n");
+			break;
+		}
+
+		drm_dp_link_train_channel_eq_delay(intel_dp->dpcd);
+		if (!intel_dp_get_link_status(intel_dp, link_status)) {
+			DRM_ERROR("failed to get link status\n");
+			break;
+		}
+
+		/* Make sure clock is still ok */
+		if (!drm_dp_clock_recovery_ok(link_status,
+					      intel_dp->lane_count)) {
+			intel_dp_link_training_clock_recovery(intel_dp);
+			intel_dp_set_link_train(intel_dp, &DP,
+						training_pattern |
+						DP_LINK_SCRAMBLING_DISABLE);
+			cr_tries++;
+			continue;
+		}
+
+		if (drm_dp_channel_eq_ok(link_status,
+					 intel_dp->lane_count)) {
+			channel_eq = true;
+			break;
+		}
+
+		/* Try 5 times, then try clock recovery if that fails */
+		if (tries > 5) {
+			intel_dp_link_training_clock_recovery(intel_dp);
+			intel_dp_set_link_train(intel_dp, &DP,
+						training_pattern |
+						DP_LINK_SCRAMBLING_DISABLE);
+			tries = 0;
+			cr_tries++;
+			continue;
+		}
+
+		/* Update training set as requested by target */
+		if (!intel_dp_update_link_train(intel_dp, &DP, link_status)) {
+			DRM_ERROR("failed to update link training\n");
+			break;
+		}
+		++tries;
+	}
+
+	intel_dp_set_idle_link_train(intel_dp);
+
+	intel_dp->DP = DP;
+
+	if (channel_eq)
+		DRM_DEBUG_KMS("Channel EQ done. DP Training successful\n");
+}
+
+void intel_dp_stop_link_train(struct intel_dp *intel_dp)
+{
+	intel_dp_set_link_train(intel_dp, &intel_dp->DP,
+				DP_TRAINING_PATTERN_DISABLE);
+}
+
+void
+intel_dp_start_link_train(struct intel_dp *intel_dp)
+{
+	intel_dp_link_training_clock_recovery(intel_dp);
+	intel_dp_link_training_channel_equalization(intel_dp);
+}
+
+>>>>>>> upstream/rpi-4.4.y
 static void
 intel_dp_link_down(struct intel_dp *intel_dp)
 {
@@ -4833,9 +5070,18 @@ intel_dp_hpd_pulse(struct intel_digital_port *intel_dig_port, bool long_hpd)
 		      long_hpd ? "long" : "short");
 
 	if (long_hpd) {
+<<<<<<< HEAD
 		intel_dp->detect_done = false;
 		return IRQ_NONE;
 	}
+=======
+		if (!intel_digital_port_connected(dev_priv, intel_dig_port))
+			goto mst_fail;
+
+		if (!intel_dp_get_dpcd(intel_dp)) {
+			goto mst_fail;
+		}
+>>>>>>> upstream/rpi-4.4.y
 
 	power_domain = intel_display_port_aux_power_domain(intel_encoder);
 	intel_display_power_get(dev_priv, power_domain);
@@ -5796,7 +6042,11 @@ fail:
 }
 
 bool intel_dp_init(struct drm_device *dev,
+<<<<<<< HEAD
 		   i915_reg_t output_reg,
+=======
+		   int output_reg,
+>>>>>>> upstream/rpi-4.4.y
 		   enum port port)
 {
 	struct drm_i915_private *dev_priv = to_i915(dev);

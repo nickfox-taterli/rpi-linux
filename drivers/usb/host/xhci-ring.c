@@ -1308,6 +1308,7 @@ void xhci_handle_command_timeout(struct work_struct *work)
 		}
 
 		goto time_out_completed;
+<<<<<<< HEAD
 	}
 
 	/* host removed. Bail out */
@@ -1318,6 +1319,18 @@ void xhci_handle_command_timeout(struct work_struct *work)
 		goto time_out_completed;
 	}
 
+=======
+	}
+
+	/* host removed. Bail out */
+	if (xhci->xhc_state & XHCI_STATE_REMOVING) {
+		xhci_dbg(xhci, "host removed, ring start fail?\n");
+		xhci_cleanup_command_queue(xhci);
+
+		goto time_out_completed;
+	}
+
+>>>>>>> upstream/rpi-4.4.y
 	/* command timeout on stopped ring, ring can't be aborted */
 	xhci_dbg(xhci, "Command timeout on stopped ring\n");
 	xhci_handle_stopped_cmd_ring(xhci, xhci->current_cmd);
@@ -3498,7 +3511,11 @@ static unsigned int xhci_get_burst_count(struct xhci_hcd *xhci,
 {
 	unsigned int max_burst;
 
+<<<<<<< HEAD
 	if (xhci->hci_version < 0x100 || urb->dev->speed < USB_SPEED_SUPER)
+=======
+	if (xhci->hci_version < 0x100 || udev->speed < USB_SPEED_SUPER)
+>>>>>>> upstream/rpi-4.4.y
 		return 0;
 
 	max_burst = urb->ep->ss_ep_comp.bMaxBurst;
@@ -3522,7 +3539,13 @@ static unsigned int xhci_get_last_burst_packet_count(struct xhci_hcd *xhci,
 	if (xhci->hci_version < 0x100)
 		return 0;
 
+<<<<<<< HEAD
 	if (urb->dev->speed >= USB_SPEED_SUPER) {
+=======
+	switch (udev->speed) {
+	case USB_SPEED_SUPER_PLUS:
+	case USB_SPEED_SUPER:
+>>>>>>> upstream/rpi-4.4.y
 		/* bMaxBurst is zero based: 0 means 1 packet per burst */
 		max_burst = urb->ep->ss_ep_comp.bMaxBurst;
 		residue = total_packet_count % (max_burst + 1);

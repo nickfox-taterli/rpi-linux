@@ -3227,12 +3227,22 @@ u32 intel_fb_stride_alignment(const struct drm_i915_private *dev_priv,
 	}
 }
 
+<<<<<<< HEAD
 u32 intel_fb_gtt_offset(struct drm_framebuffer *fb,
 			unsigned int rotation)
+=======
+u32 intel_plane_obj_offset(struct intel_plane *intel_plane,
+			   struct drm_i915_gem_object *obj,
+			   unsigned int plane)
+>>>>>>> upstream/rpi-4.4.y
 {
 	struct drm_i915_gem_object *obj = intel_fb_obj(fb);
 	struct i915_ggtt_view view;
 	struct i915_vma *vma;
+<<<<<<< HEAD
+=======
+	u64 offset;
+>>>>>>> upstream/rpi-4.4.y
 
 	intel_fill_fb_ggtt_view(&view, fb, rotation);
 
@@ -3241,7 +3251,20 @@ u32 intel_fb_gtt_offset(struct drm_framebuffer *fb,
 		 view.type))
 		return -1;
 
+<<<<<<< HEAD
 	return i915_ggtt_offset(vma);
+=======
+	offset = vma->node.start;
+
+	if (plane == 1) {
+		offset += vma->ggtt_view.rotation_info.uv_start_page *
+			  PAGE_SIZE;
+	}
+
+	WARN_ON(upper_32_bits(offset));
+
+	return lower_32_bits(offset);
+>>>>>>> upstream/rpi-4.4.y
 }
 
 static void skl_detach_scaler(struct intel_crtc *intel_crtc, int id)
@@ -3384,6 +3407,7 @@ static void skylake_update_primary_plane(struct drm_plane *plane,
 	struct drm_framebuffer *fb = plane_state->base.fb;
 	const struct skl_wm_values *wm = &dev_priv->wm.skl_results;
 	int pipe = intel_crtc->pipe;
+<<<<<<< HEAD
 	u32 plane_ctl;
 	unsigned int rotation = plane_state->base.rotation;
 	u32 stride = skl_plane_stride(fb, 0, rotation);
@@ -3397,6 +3421,27 @@ static void skylake_update_primary_plane(struct drm_plane *plane,
 	int dst_y = plane_state->base.dst.y1;
 	int dst_w = drm_rect_width(&plane_state->base.dst);
 	int dst_h = drm_rect_height(&plane_state->base.dst);
+=======
+	u32 plane_ctl, stride_div, stride;
+	u32 tile_height, plane_offset, plane_size;
+	unsigned int rotation;
+	int x_offset, y_offset;
+	u32 surf_addr;
+	struct intel_crtc_state *crtc_state = intel_crtc->config;
+	struct intel_plane_state *plane_state;
+	int src_x = 0, src_y = 0, src_w = 0, src_h = 0;
+	int dst_x = 0, dst_y = 0, dst_w = 0, dst_h = 0;
+	int scaler_id = -1;
+
+	plane_state = to_intel_plane_state(plane->state);
+
+	if (!visible || !fb) {
+		I915_WRITE(PLANE_CTL(pipe, 0), 0);
+		I915_WRITE(PLANE_SURF(pipe, 0), 0);
+		POSTING_READ(PLANE_CTL(pipe, 0));
+		return;
+	}
+>>>>>>> upstream/rpi-4.4.y
 
 	plane_ctl = PLANE_CTL_ENABLE |
 		    PLANE_CTL_PIPE_GAMMA_ENABLE |
@@ -4279,7 +4324,11 @@ static void page_flip_completed(struct intel_crtc *intel_crtc)
 	trace_i915_flip_complete(intel_crtc->plane,
 				 work->pending_flip_obj);
 
+<<<<<<< HEAD
 	queue_work(dev_priv->wq, &work->unpin_work);
+=======
+	queue_work(dev_priv->wq, &work->work);
+>>>>>>> upstream/rpi-4.4.y
 }
 
 static int intel_crtc_wait_for_pending_flips(struct drm_crtc *crtc)
@@ -4737,7 +4786,7 @@ int skl_update_scaler_crtc(struct intel_crtc_state *state)
 		      intel_crtc->pipe, SKL_CRTC_INDEX);
 
 	return skl_update_scaler(state, !state->base.active, SKL_CRTC_INDEX,
-		&state->scaler_state.scaler_id, DRM_ROTATE_0,
+		&state->scaler_state.scaler_id, BIT(DRM_ROTATE_0),
 		state->pipe_src_w, state->pipe_src_h,
 		adjusted_mode->crtc_hdisplay, adjusted_mode->crtc_vdisplay);
 }
@@ -14815,7 +14864,11 @@ intel_check_primary_plane(struct drm_plane *plane,
 	bool can_position = false;
 	int ret;
 
+<<<<<<< HEAD
 	if (INTEL_GEN(dev_priv) >= 9) {
+=======
+	if (INTEL_INFO(plane->dev)->gen >= 9) {
+>>>>>>> upstream/rpi-4.4.y
 		/* use scaler when colorkey is not required */
 		if (state->ckey.flags == I915_SET_COLORKEY_NONE) {
 			min_scale = 1;
@@ -15482,7 +15535,11 @@ static void intel_setup_outputs(struct drm_device *dev)
 
 		if (I915_READ(PCH_DP_D) & DP_DETECTED)
 			intel_dp_init(dev, PCH_DP_D, PORT_D);
+<<<<<<< HEAD
 	} else if (IS_VALLEYVIEW(dev) || IS_CHERRYVIEW(dev)) {
+=======
+	} else if (IS_VALLEYVIEW(dev)) {
+>>>>>>> upstream/rpi-4.4.y
 		bool has_edp, has_port;
 
 		/*
@@ -17079,7 +17136,16 @@ void intel_modeset_cleanup(struct drm_device *dev)
 
 	intel_cleanup_overlay(dev_priv);
 
+<<<<<<< HEAD
 	intel_cleanup_gt_powersave(dev_priv);
+=======
+	mutex_lock(&dev->struct_mutex);
+	intel_cleanup_gt_powersave(dev);
+	mutex_unlock(&dev->struct_mutex);
+
+	intel_teardown_gmbus(dev);
+}
+>>>>>>> upstream/rpi-4.4.y
 
 	intel_teardown_gmbus(dev);
 }

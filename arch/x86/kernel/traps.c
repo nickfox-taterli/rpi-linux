@@ -96,6 +96,16 @@ static inline void cond_local_irq_disable(struct pt_regs *regs)
 		local_irq_disable();
 }
 
+<<<<<<< HEAD
+=======
+static inline void preempt_conditional_cli(struct pt_regs *regs)
+{
+	if (regs->flags & X86_EFLAGS_IF)
+		local_irq_disable();
+	preempt_count_dec();
+}
+
+>>>>>>> upstream/rpi-4.4.y
 /*
  * In IST context, we explicitly disable preemption.  This serves two
  * purposes: it makes it much less likely that we would accidentally

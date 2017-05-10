@@ -38,8 +38,11 @@
 #include "usb.h"
 #include "dwc_otg_cil.h"
 #include "dwc_otg_pcd_if.h"
+<<<<<<< HEAD
 #include "dwc_otg_driver.h"
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 struct cfiobject;
 
 /**
@@ -255,11 +258,14 @@ struct dwc_otg_pcd {
 
 };
 
+<<<<<<< HEAD
 static inline struct device *dwc_otg_pcd_to_dev(struct dwc_otg_pcd *pcd)
 {
 	return &pcd->otg_dev->os_dep.platformdev->dev;
 }
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 //FIXME this functions should be static, and this prototypes should be removed
 extern void dwc_otg_request_nuke(dwc_otg_pcd_ep_t * ep);
 extern void dwc_otg_request_done(dwc_otg_pcd_ep_t * ep,

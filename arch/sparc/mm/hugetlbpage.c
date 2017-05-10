@@ -160,35 +160,84 @@ pte_t *huge_pte_offset(struct mm_struct *mm, unsigned long addr)
 void set_huge_pte_at(struct mm_struct *mm, unsigned long addr,
 		     pte_t *ptep, pte_t entry)
 {
+<<<<<<< HEAD
 	pte_t orig;
+=======
+	int i;
+	pte_t orig[2];
+	unsigned long nptes;
+>>>>>>> upstream/rpi-4.4.y
 
 	if (!pte_present(*ptep) && pte_present(entry))
 		mm->context.hugetlb_pte_count++;
 
 	addr &= HPAGE_MASK;
+<<<<<<< HEAD
 	orig = *ptep;
 	*ptep = entry;
 
 	/* Issue TLB flush at REAL_HPAGE_SIZE boundaries */
 	maybe_tlb_batch_add(mm, addr, ptep, orig, 0);
 	maybe_tlb_batch_add(mm, addr + REAL_HPAGE_SIZE, ptep, orig, 0);
+=======
+
+	nptes = 1 << HUGETLB_PAGE_ORDER;
+	orig[0] = *ptep;
+	orig[1] = *(ptep + nptes / 2);
+	for (i = 0; i < nptes; i++) {
+		*ptep = entry;
+		ptep++;
+		addr += PAGE_SIZE;
+		pte_val(entry) += PAGE_SIZE;
+	}
+
+	/* Issue TLB flush at REAL_HPAGE_SIZE boundaries */
+	addr -= REAL_HPAGE_SIZE;
+	ptep -= nptes / 2;
+	maybe_tlb_batch_add(mm, addr, ptep, orig[1], 0);
+	addr -= REAL_HPAGE_SIZE;
+	ptep -= nptes / 2;
+	maybe_tlb_batch_add(mm, addr, ptep, orig[0], 0);
+>>>>>>> upstream/rpi-4.4.y
 }
 
 pte_t huge_ptep_get_and_clear(struct mm_struct *mm, unsigned long addr,
 			      pte_t *ptep)
 {
 	pte_t entry;
+<<<<<<< HEAD
+=======
+	int i;
+	unsigned long nptes;
+>>>>>>> upstream/rpi-4.4.y
 
 	entry = *ptep;
 	if (pte_present(entry))
 		mm->context.hugetlb_pte_count--;
 
 	addr &= HPAGE_MASK;
+<<<<<<< HEAD
 	*ptep = __pte(0UL);
 
 	/* Issue TLB flush at REAL_HPAGE_SIZE boundaries */
 	maybe_tlb_batch_add(mm, addr, ptep, entry, 0);
 	maybe_tlb_batch_add(mm, addr + REAL_HPAGE_SIZE, ptep, entry, 0);
+=======
+	nptes = 1 << HUGETLB_PAGE_ORDER;
+	for (i = 0; i < nptes; i++) {
+		*ptep = __pte(0UL);
+		addr += PAGE_SIZE;
+		ptep++;
+	}
+>>>>>>> upstream/rpi-4.4.y
+
+	/* Issue TLB flush at REAL_HPAGE_SIZE boundaries */
+	addr -= REAL_HPAGE_SIZE;
+	ptep -= nptes / 2;
+	maybe_tlb_batch_add(mm, addr, ptep, entry, 0);
+	addr -= REAL_HPAGE_SIZE;
+	ptep -= nptes / 2;
+	maybe_tlb_batch_add(mm, addr, ptep, entry, 0);
 
 	return entry;
 }

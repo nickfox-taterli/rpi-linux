@@ -4316,6 +4316,7 @@ int nand_scan_ident(struct mtd_info *mtd, int maxchips,
 	if (!mtd->name && mtd->dev.parent)
 		mtd->name = dev_name(mtd->dev.parent);
 
+<<<<<<< HEAD
 	if ((!chip->cmdfunc || !chip->select_chip) && !chip->cmd_ctrl) {
 		/*
 		 * Default functions assigned for chip_select() and
@@ -4325,6 +4326,8 @@ int nand_scan_ident(struct mtd_info *mtd, int maxchips,
 		pr_err("chip.cmd_ctrl() callback is not provided");
 		return -EINVAL;
 	}
+=======
+>>>>>>> upstream/rpi-4.4.y
 	/* Set the default functions */
 	nand_set_defaults(chip, chip->options & NAND_BUSWIDTH_16);
 

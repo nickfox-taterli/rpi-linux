@@ -121,7 +121,11 @@ struct drm_gem_cma_object *drm_gem_cma_create(struct drm_device *drm,
 	return cma_obj;
 
 error:
+<<<<<<< HEAD
 	drm_gem_object_unreference_unlocked(&cma_obj->base);
+=======
+	drm->driver->gem_free_object(&cma_obj->base);
+>>>>>>> upstream/rpi-4.4.y
 	return ERR_PTR(ret);
 }
 EXPORT_SYMBOL_GPL(drm_gem_cma_create);
@@ -168,6 +172,14 @@ drm_gem_cma_create_with_handle(struct drm_file *file_priv,
 		return ERR_PTR(ret);
 
 	return cma_obj;
+<<<<<<< HEAD
+=======
+
+err_handle_create:
+	drm->driver->gem_free_object(gem_obj);
+
+	return ERR_PTR(ret);
+>>>>>>> upstream/rpi-4.4.y
 }
 
 /**

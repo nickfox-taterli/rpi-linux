@@ -40,7 +40,10 @@ struct vc4_crtc {
 	void __iomem *regs;
 
 	struct drm_pending_vblank_event *event;
+<<<<<<< HEAD
 	u32 overscan[4];
+=======
+>>>>>>> upstream/rpi-4.4.y
 };
 
 static inline struct vc4_crtc *to_vc4_crtc(struct drm_crtc *crtc)
@@ -103,11 +106,14 @@ static int vc4_plane_set_primary_blank(struct drm_plane *plane, bool blank)
 	struct vc4_dev *vc4 = to_vc4_dev(plane->dev);
 
 	u32 packet = blank;
+<<<<<<< HEAD
 
 	DRM_DEBUG_ATOMIC("[PLANE:%d:%s] primary plane %s",
 			 plane->base.id, plane->name,
 			 blank ? "blank" : "unblank");
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 	return rpi_firmware_property(vc4->firmware,
 				     RPI_FIRMWARE_FRAMEBUFFER_BLANK,
 				     &packet, sizeof(packet));
@@ -155,6 +161,7 @@ static void vc4_primary_plane_atomic_update(struct drm_plane *plane,
 		WARN_ON_ONCE(vc4_plane->pitch != fb->pitches[0]);
 	}
 
+<<<<<<< HEAD
 	DRM_DEBUG_ATOMIC("[PLANE:%d:%s] primary update %dx%d@%d +%d,%d 0x%08x/%d\n",
 			 plane->base.id, plane->name,
 			 state->crtc_w,
@@ -165,6 +172,8 @@ static void vc4_primary_plane_atomic_update(struct drm_plane *plane,
 			 bo->paddr + fb->offsets[0],
 			 fb->pitches[0]);
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 	ret = rpi_firmware_transaction(vc4->firmware,
 				       RPI_FIRMWARE_CHAN_FB,
 				       vc4_plane->fbinfo_bus_addr);
@@ -182,7 +191,10 @@ static void vc4_cursor_plane_atomic_update(struct drm_plane *plane,
 					   struct drm_plane_state *old_state)
 {
 	struct vc4_dev *vc4 = to_vc4_dev(plane->dev);
+<<<<<<< HEAD
 	struct vc4_crtc *vc4_crtc = to_vc4_crtc(plane->crtc);
+=======
+>>>>>>> upstream/rpi-4.4.y
 	struct drm_plane_state *state = plane->state;
 	struct drm_framebuffer *fb = state->fb;
 	struct drm_gem_cma_object *bo = drm_fb_cma_get_gem_obj(fb, 0);
@@ -195,6 +207,7 @@ static void vc4_cursor_plane_atomic_update(struct drm_plane *plane,
 	WARN_ON_ONCE(fb->pitches[0] != state->crtc_w * 4);
 	WARN_ON_ONCE(fb->bits_per_pixel != 32);
 
+<<<<<<< HEAD
 	DRM_DEBUG_ATOMIC("[PLANE:%d:%s] update %dx%d cursor at %d,%d (0x%08x/%d)",
 			 plane->base.id, plane->name,
 			 state->crtc_w,
@@ -210,6 +223,8 @@ static void vc4_cursor_plane_atomic_update(struct drm_plane *plane,
 		packet_state[2] += vc4_crtc->overscan[1];
 	}
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 	ret = rpi_firmware_property(vc4->firmware,
 				    RPI_FIRMWARE_SET_CURSOR_STATE,
 				    &packet_state,
@@ -232,8 +247,11 @@ static void vc4_cursor_plane_atomic_disable(struct drm_plane *plane,
 	u32 packet_state[] = { false, 0, 0, 0 };
 	int ret;
 
+<<<<<<< HEAD
 	DRM_DEBUG_ATOMIC("[PLANE:%d:%s] disabling cursor", plane->base.id, plane->name);
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 	ret = rpi_firmware_property(vc4->firmware,
 				    RPI_FIRMWARE_SET_CURSOR_STATE,
 				    &packet_state,
@@ -301,7 +319,11 @@ static struct drm_plane *vc4_fkms_plane_init(struct drm_device *dev,
 	ret = drm_universal_plane_init(dev, plane, 0xff,
 				       &vc4_plane_funcs,
 				       primary ? &xrgb8888 : &argb8888, 1,
+<<<<<<< HEAD
 				       type, primary ? "primary" : "cursor");
+=======
+				       type);
+>>>>>>> upstream/rpi-4.4.y
 
 	if (type == DRM_PLANE_TYPE_PRIMARY) {
 		vc4_plane->fbinfo =
@@ -439,7 +461,11 @@ void vc4_fkms_cancel_page_flip(struct drm_crtc *crtc, struct drm_file *file)
 	spin_lock_irqsave(&dev->event_lock, flags);
 
 	if (vc4_crtc->event && vc4_crtc->event->base.file_priv == file) {
+<<<<<<< HEAD
 		kfree(&vc4_crtc->event->base);
+=======
+		vc4_crtc->event->base.destroy(&vc4_crtc->event->base);
+>>>>>>> upstream/rpi-4.4.y
 		drm_crtc_vblank_put(crtc);
 		vc4_crtc->event = NULL;
 	}
@@ -624,7 +650,11 @@ static int vc4_fkms_bind(struct device *dev, struct device *master, void *data)
 	}
 
 	drm_crtc_init_with_planes(drm, crtc, primary_plane, cursor_plane,
+<<<<<<< HEAD
 				  &vc4_crtc_funcs, NULL);
+=======
+				  &vc4_crtc_funcs);
+>>>>>>> upstream/rpi-4.4.y
 	drm_crtc_helper_add(crtc, &vc4_crtc_helper_funcs);
 	primary_plane->crtc = crtc;
 	cursor_plane->crtc = crtc;
@@ -636,7 +666,11 @@ static int vc4_fkms_bind(struct device *dev, struct device *master, void *data)
 	vc4_crtc->encoder = &vc4_encoder->base;
 	vc4_encoder->base.possible_crtcs |= drm_crtc_mask(crtc) ;
 	drm_encoder_init(drm, &vc4_encoder->base, &vc4_fkms_encoder_funcs,
+<<<<<<< HEAD
 			 DRM_MODE_ENCODER_TMDS, NULL);
+=======
+			 DRM_MODE_ENCODER_TMDS);
+>>>>>>> upstream/rpi-4.4.y
 	drm_encoder_helper_add(&vc4_encoder->base,
 			       &vc4_fkms_encoder_helper_funcs);
 
@@ -653,6 +687,7 @@ static int vc4_fkms_bind(struct device *dev, struct device *master, void *data)
 	if (ret)
 		goto err_destroy_connector;
 
+<<<<<<< HEAD
 	ret = rpi_firmware_property(vc4->firmware,
 				    RPI_FIRMWARE_FRAMEBUFFER_GET_OVERSCAN,
 				    &vc4_crtc->overscan,
@@ -662,6 +697,8 @@ static int vc4_fkms_bind(struct device *dev, struct device *master, void *data)
 		memset(&vc4_crtc->overscan, 0, sizeof(vc4_crtc->overscan));
 	}
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 	platform_set_drvdata(pdev, vc4_crtc);
 
 	return 0;

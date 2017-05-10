@@ -1797,7 +1797,22 @@ i915_emit_bb_start(struct drm_i915_gem_request *req,
 	return 0;
 }
 
+<<<<<<< HEAD
 static void cleanup_phys_status_page(struct intel_engine_cs *engine)
+=======
+static void cleanup_phys_status_page(struct intel_engine_cs *ring)
+{
+	struct drm_i915_private *dev_priv = to_i915(ring->dev);
+
+	if (!dev_priv->status_page_dmah)
+		return;
+
+	drm_pci_free(ring->dev, dev_priv->status_page_dmah);
+	ring->status_page.page_addr = NULL;
+}
+
+static void cleanup_status_page(struct intel_engine_cs *ring)
+>>>>>>> upstream/rpi-4.4.y
 {
 	struct drm_i915_private *dev_priv = engine->i915;
 
@@ -1810,11 +1825,19 @@ static void cleanup_phys_status_page(struct intel_engine_cs *engine)
 
 static void cleanup_status_page(struct intel_engine_cs *engine)
 {
+<<<<<<< HEAD
 	struct i915_vma *vma;
 
 	vma = fetch_and_zero(&engine->status_page.vma);
 	if (!vma)
 		return;
+=======
+	struct drm_i915_gem_object *obj = ring->status_page.obj;
+
+	if (obj == NULL) {
+		unsigned flags;
+		int ret;
+>>>>>>> upstream/rpi-4.4.y
 
 	i915_vma_unpin(vma);
 	i915_gem_object_unpin_map(vma->obj);
@@ -2034,9 +2057,15 @@ static int intel_ring_context_pin(struct i915_gem_context *ctx,
 		ret = i915_gem_object_set_to_gtt_domain(ce->state->obj, false);
 		if (ret)
 			goto error;
+<<<<<<< HEAD
 
 		ret = i915_vma_pin(ce->state, 0, ctx->ggtt_alignment,
 				   PIN_GLOBAL | PIN_HIGH);
+=======
+	} else {
+		WARN_ON(ring->id != RCS);
+		ret = init_phys_status_page(ring);
+>>>>>>> upstream/rpi-4.4.y
 		if (ret)
 			goto error;
 	}
@@ -2069,8 +2098,17 @@ static void intel_ring_context_unpin(struct i915_gem_context *ctx,
 	if (--ce->pin_count)
 		return;
 
+<<<<<<< HEAD
 	if (ce->state)
 		i915_vma_unpin(ce->state);
+=======
+	if (I915_NEED_GFX_HWS(ring->dev)) {
+		cleanup_status_page(ring);
+	} else {
+		WARN_ON(ring->id != RCS);
+		cleanup_phys_status_page(ring);
+	}
+>>>>>>> upstream/rpi-4.4.y
 
 	i915_gem_context_put(ctx);
 }
@@ -2273,8 +2311,23 @@ int intel_ring_begin(struct drm_i915_gem_request *req, int num_dwords)
 		 */
 		wait_bytes = remain_actual + req->reserved_space;
 	} else {
+<<<<<<< HEAD
 		/* No wrapping required, just waiting. */
 		wait_bytes = total_bytes;
+=======
+		if (unlikely(total_bytes > remain_usable)) {
+			/*
+			 * The base request will fit but the reserved space
+			 * falls off the end. So don't need an immediate wrap
+			 * and only need to effectively wait for the reserved
+			 * size space from the start of ringbuffer.
+			 */
+			wait_bytes = remain_actual + ringbuf->reserved_size;
+		} else if (total_bytes > ringbuf->space) {
+			/* No wrapping required, just waiting. */
+			wait_bytes = total_bytes;
+		}
+>>>>>>> upstream/rpi-4.4.y
 	}
 
 	if (wait_bytes > ring->space) {

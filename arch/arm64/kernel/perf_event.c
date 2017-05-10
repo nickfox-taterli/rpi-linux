@@ -901,12 +901,17 @@ static void armv8pmu_reset(void *info)
 		armv8pmu_disable_intens(idx);
 	}
 
+<<<<<<< HEAD
 	/*
 	 * Initialize & Reset PMNC. Request overflow interrupt for
 	 * 64 bit cycle counter but cheat in armv8pmu_write_counter().
 	 */
 	armv8pmu_pmcr_write(ARMV8_PMU_PMCR_P | ARMV8_PMU_PMCR_C |
 			    ARMV8_PMU_PMCR_LC);
+=======
+	/* Initialize & Reset PMNC: C and P bits. */
+	armv8pmu_pmcr_write(ARMV8_PMCR_P | ARMV8_PMCR_C);
+>>>>>>> upstream/rpi-4.4.y
 }
 
 static int armv8_pmuv3_map_event(struct perf_event *event)

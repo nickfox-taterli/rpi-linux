@@ -267,7 +267,10 @@ int hvutil_transport_send(struct hvutil_transport *hvt, void *msg, int len,
 	if (hvt->outmsg) {
 		memcpy(hvt->outmsg, msg, len);
 		hvt->outmsg_len = len;
+<<<<<<< HEAD
 		hvt->on_read = on_read_cb;
+=======
+>>>>>>> upstream/rpi-4.4.y
 		wake_up_interruptible(&hvt->outmsg_q);
 	} else
 		ret = -ENOMEM;

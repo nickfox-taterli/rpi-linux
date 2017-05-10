@@ -427,6 +427,11 @@ static void acm_read_bulk_callback(struct urb *urb)
 
 	if (status) {
 		set_bit(rb->index, &acm->read_urbs_free);
+<<<<<<< HEAD
+=======
+		dev_dbg(&acm->data->dev, "%s - non-zero urb status: %d\n",
+							__func__, status);
+>>>>>>> upstream/rpi-4.4.y
 		if ((status != -ENOENT) || (urb->actual_length == 0))
 			return;
 	}

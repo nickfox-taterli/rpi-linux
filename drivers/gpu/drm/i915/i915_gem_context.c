@@ -416,7 +416,17 @@ static void i915_gem_context_unpin(struct i915_gem_context *ctx,
 		if (ce->state)
 			i915_vma_unpin(ce->state);
 
+<<<<<<< HEAD
 		i915_gem_context_put(ctx);
+=======
+			i915_gem_context_unreference(lctx);
+			ring->last_context = NULL;
+		}
+
+		/* Force the GPU state to be reinitialised on enabling */
+		if (ring->default_context)
+			ring->default_context->legacy_hw_ctx.initialized = false;
+>>>>>>> upstream/rpi-4.4.y
 	}
 }
 
@@ -794,7 +804,24 @@ static int do_rcs_switch(struct drm_i915_gem_request *req)
 			goto err;
 	}
 
+<<<<<<< HEAD
 	if (!to->engine[RCS].initialised || i915_gem_context_is_default(to))
+=======
+	/*
+	 * Clear this page out of any CPU caches for coherent swap-in/out. Note
+	 * that thanks to write = false in this call and us not setting any gpu
+	 * write domains when putting a context object onto the active list
+	 * (when switching away from it), this won't block.
+	 *
+	 * XXX: We need a real interface to do this instead of trickery.
+	 */
+	ret = i915_gem_object_set_to_gtt_domain(to->legacy_hw_ctx.rcs_state, false);
+	if (ret)
+		goto unpin_out;
+
+	if (!to->legacy_hw_ctx.initialized || i915_gem_context_is_default(to)) {
+		hw_flags |= MI_RESTORE_INHIBIT;
+>>>>>>> upstream/rpi-4.4.y
 		/* NB: If we inhibit the restore, the context is not allowed to
 		 * die because future work may end up depending on valid address
 		 * space. This means we must enforce that a page table load

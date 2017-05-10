@@ -7129,7 +7129,11 @@ static int sctp_msghdr_parse(const struct msghdr *msg, sctp_cmsgs_t *cmsgs)
 
 			if (cmsgs->srinfo->sinfo_flags &
 			    ~(SCTP_UNORDERED | SCTP_ADDR_OVER |
+<<<<<<< HEAD
 			      SCTP_SACK_IMMEDIATELY | SCTP_PR_SCTP_MASK |
+=======
+			      SCTP_SACK_IMMEDIATELY |
+>>>>>>> upstream/rpi-4.4.y
 			      SCTP_ABORT | SCTP_EOF))
 				return -EINVAL;
 			break;
@@ -7153,7 +7157,11 @@ static int sctp_msghdr_parse(const struct msghdr *msg, sctp_cmsgs_t *cmsgs)
 
 			if (cmsgs->sinfo->snd_flags &
 			    ~(SCTP_UNORDERED | SCTP_ADDR_OVER |
+<<<<<<< HEAD
 			      SCTP_SACK_IMMEDIATELY | SCTP_PR_SCTP_MASK |
+=======
+			      SCTP_SACK_IMMEDIATELY |
+>>>>>>> upstream/rpi-4.4.y
 			      SCTP_ABORT | SCTP_EOF))
 				return -EINVAL;
 			break;
@@ -7436,6 +7444,11 @@ static int sctp_wait_for_sndbuf(struct sctp_association *asoc, long *timeo_p,
 		 */
 		release_sock(sk);
 		current_timeo = schedule_timeout(current_timeo);
+<<<<<<< HEAD
+=======
+		if (sk != asoc->base.sk)
+			goto do_error;
+>>>>>>> upstream/rpi-4.4.y
 		lock_sock(sk);
 
 		*timeo_p = current_timeo;

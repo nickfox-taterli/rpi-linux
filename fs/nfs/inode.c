@@ -1664,7 +1664,10 @@ static int nfs_update_inode(struct inode *inode, struct nfs_fattr *fattr)
 	unsigned long invalid = 0;
 	unsigned long now = jiffies;
 	unsigned long save_cache_validity;
+<<<<<<< HEAD
 	bool have_writers = nfs_file_has_buffered_writers(nfsi);
+=======
+>>>>>>> upstream/rpi-4.4.y
 	bool cache_revalidated = true;
 
 	dfprintk(VFS, "NFS: %s(%s/%lu fh_crc=0x%08x ct=%d info=0x%x)\n",

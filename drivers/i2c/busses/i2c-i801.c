@@ -269,7 +269,10 @@ struct i801_priv {
 	 */
 	bool acpi_reserved;
 	struct mutex acpi_lock;
+<<<<<<< HEAD
 	struct smbus_host_notify *host_notify;
+=======
+>>>>>>> upstream/rpi-4.4.y
 };
 
 #define SMBHSTNTFY_SIZE		8
@@ -822,8 +825,11 @@ static s32 i801_access(struct i2c_adapter *adap, u16 addr,
 		return -EBUSY;
 	}
 
+<<<<<<< HEAD
 	pm_runtime_get_sync(&priv->pci_dev->dev);
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 	hwpec = (priv->features & FEATURE_SMBUS_PEC) && (flags & I2C_CLIENT_PEC)
 		&& size != I2C_SMBUS_QUICK
 		&& size != I2C_SMBUS_I2C_BLOCK_DATA;
@@ -929,8 +935,11 @@ static s32 i801_access(struct i2c_adapter *adap, u16 addr,
 	}
 
 out:
+<<<<<<< HEAD
 	pm_runtime_mark_last_busy(&priv->pci_dev->dev);
 	pm_runtime_put_autosuspend(&priv->pci_dev->dev);
+=======
+>>>>>>> upstream/rpi-4.4.y
 	mutex_unlock(&priv->acpi_lock);
 	return ret;
 }
@@ -1411,12 +1420,15 @@ i801_acpi_io_handler(u32 function, acpi_physical_address address, u32 bits,
 
 		dev_warn(&pdev->dev, "BIOS is accessing SMBus registers\n");
 		dev_warn(&pdev->dev, "Driver SMBus register access inhibited\n");
+<<<<<<< HEAD
 
 		/*
 		 * BIOS is accessing the host controller so prevent it from
 		 * suspending automatically from now on.
 		 */
 		pm_runtime_get_sync(&pdev->dev);
+=======
+>>>>>>> upstream/rpi-4.4.y
 	}
 
 	if ((function & ACPI_IO_MASK) == ACPI_READ)
@@ -1456,11 +1468,14 @@ static void i801_acpi_remove(struct i801_priv *priv)
 
 	acpi_remove_address_space_handler(adev->handle,
 		ACPI_ADR_SPACE_SYSTEM_IO, i801_acpi_io_handler);
+<<<<<<< HEAD
 
 	mutex_lock(&priv->acpi_lock);
 	if (priv->acpi_reserved)
 		pm_runtime_put(&priv->pci_dev->dev);
 	mutex_unlock(&priv->acpi_lock);
+=======
+>>>>>>> upstream/rpi-4.4.y
 }
 #else
 static inline int i801_acpi_probe(struct i801_priv *priv) { return 0; }
@@ -1629,6 +1644,10 @@ static int i801_probe(struct pci_dev *dev, const struct pci_device_id *id)
 		"SMBus I801 adapter at %04lx", priv->smba);
 	err = i2c_add_adapter(&priv->adapter);
 	if (err) {
+<<<<<<< HEAD
+=======
+		dev_err(&dev->dev, "Failed to add SMBus adapter\n");
+>>>>>>> upstream/rpi-4.4.y
 		i801_acpi_remove(priv);
 		return err;
 	}

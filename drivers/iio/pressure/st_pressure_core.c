@@ -28,6 +28,7 @@
 #include <linux/iio/common/st_sensors.h>
 #include "st_pressure.h"
 
+<<<<<<< HEAD
 /*
  * About determining pressure scaling factors
  * ------------------------------------------
@@ -94,6 +95,8 @@
  *               = offset[mCelsius] * gain2
  */
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 #define MCELSIUS_PER_CELSIUS			1000
 
 /* Default pressure sensitivity */
@@ -104,6 +107,11 @@
 /* Default temperature sensitivity */
 #define ST_PRESS_LSB_PER_CELSIUS		480UL
 #define ST_PRESS_MILLI_CELSIUS_OFFSET		42500UL
+<<<<<<< HEAD
+=======
+
+#define ST_PRESS_NUMBER_DATA_CHANNELS		1
+>>>>>>> upstream/rpi-4.4.y
 
 /* FULLSCALE */
 #define ST_PRESS_FS_AVL_1100MB			1100
@@ -139,9 +147,13 @@
 #define ST_PRESS_LPS331AP_OD_IRQ_MASK		0x40
 #define ST_PRESS_LPS331AP_MULTIREAD_BIT		true
 
+<<<<<<< HEAD
 /*
  * CUSTOM VALUES FOR THE OBSOLETE LPS001WP SENSOR
  */
+=======
+/* CUSTOM VALUES FOR LPS001WP SENSOR */
+>>>>>>> upstream/rpi-4.4.y
 
 /* LPS001WP pressure resolution */
 #define ST_PRESS_LPS001WP_LSB_PER_MBAR		16UL
@@ -267,6 +279,10 @@ static const struct iio_chan_spec st_press_lps001wp_channels[] = {
 		.info_mask_separate =
 			BIT(IIO_CHAN_INFO_RAW) |
 			BIT(IIO_CHAN_INFO_SCALE),
+<<<<<<< HEAD
+=======
+		.modified = 0,
+>>>>>>> upstream/rpi-4.4.y
 	},
 	{
 		.type = IIO_TEMP,
@@ -281,6 +297,7 @@ static const struct iio_chan_spec st_press_lps001wp_channels[] = {
 		.info_mask_separate =
 			BIT(IIO_CHAN_INFO_RAW) |
 			BIT(IIO_CHAN_INFO_SCALE),
+<<<<<<< HEAD
 	},
 	IIO_CHAN_SOFT_TIMESTAMP(2)
 };
@@ -315,6 +332,9 @@ static const struct iio_chan_spec st_press_lps22hb_channels[] = {
 			BIT(IIO_CHAN_INFO_RAW) |
 			BIT(IIO_CHAN_INFO_SCALE),
 		.info_mask_shared_by_all = BIT(IIO_CHAN_INFO_SAMP_FREQ),
+=======
+		.modified = 0,
+>>>>>>> upstream/rpi-4.4.y
 	},
 	IIO_CHAN_SOFT_TIMESTAMP(2)
 };

@@ -4049,6 +4049,7 @@ static void iscsit_release_commands_from_conn(struct iscsi_conn *conn)
 	 */
 	spin_lock_bh(&conn->cmd_lock);
 	list_splice_init(&conn->conn_cmd_list, &tmp_list);
+<<<<<<< HEAD
 
 	list_for_each_entry(cmd, &tmp_list, i_conn_node) {
 		struct se_cmd *se_cmd = &cmd->se_cmd;
@@ -4061,6 +4062,20 @@ static void iscsit_release_commands_from_conn(struct iscsi_conn *conn)
 	}
 	spin_unlock_bh(&conn->cmd_lock);
 
+=======
+
+	list_for_each_entry(cmd, &tmp_list, i_conn_node) {
+		struct se_cmd *se_cmd = &cmd->se_cmd;
+
+		if (se_cmd->se_tfo != NULL) {
+			spin_lock(&se_cmd->t_state_lock);
+			se_cmd->transport_state |= CMD_T_FABRIC_STOP;
+			spin_unlock(&se_cmd->t_state_lock);
+		}
+	}
+	spin_unlock_bh(&conn->cmd_lock);
+
+>>>>>>> upstream/rpi-4.4.y
 	list_for_each_entry_safe(cmd, cmd_tmp, &tmp_list, i_conn_node) {
 		list_del_init(&cmd->i_conn_node);
 

@@ -772,7 +772,11 @@ static int fq_change(struct Qdisc *sch, struct nlattr *opt)
 		if (!skb)
 			break;
 		drop_len += qdisc_pkt_len(skb);
+<<<<<<< HEAD
 		rtnl_kfree_skbs(skb, skb);
+=======
+		kfree_skb(skb);
+>>>>>>> upstream/rpi-4.4.y
 		drop_count++;
 	}
 	qdisc_tree_reduce_backlog(sch, drop_count, drop_len);

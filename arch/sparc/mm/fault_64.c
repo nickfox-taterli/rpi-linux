@@ -484,7 +484,10 @@ good_area:
 		tsb_grow(mm, MM_TSB_BASE, mm_rss);
 #if defined(CONFIG_HUGETLB_PAGE) || defined(CONFIG_TRANSPARENT_HUGEPAGE)
 	mm_rss = mm->context.hugetlb_pte_count + mm->context.thp_pte_count;
+<<<<<<< HEAD
 	mm_rss *= REAL_HPAGE_PER_HPAGE;
+=======
+>>>>>>> upstream/rpi-4.4.y
 	if (unlikely(mm_rss >
 		     mm->context.tsb_block[MM_TSB_HUGE].tsb_rss_limit)) {
 		if (mm->context.tsb_block[MM_TSB_HUGE].tsb)

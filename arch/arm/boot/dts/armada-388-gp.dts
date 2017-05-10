@@ -308,6 +308,10 @@
 		regulator-min-microvolt = <5000000>;
 		regulator-max-microvolt = <5000000>;
 		enable-active-high;
+<<<<<<< HEAD
+=======
+		regulator-always-on;
+>>>>>>> upstream/rpi-4.4.y
 		gpio = <&expander0 4 GPIO_ACTIVE_HIGH>;
 	};
 

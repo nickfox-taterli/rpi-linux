@@ -4,7 +4,11 @@
 #include <asm/page.h>
 #include <asm-generic/hugetlb.h>
 
+<<<<<<< HEAD
 #define hugepages_supported() boot_cpu_has(X86_FEATURE_PSE)
+=======
+#define hugepages_supported() cpu_has_pse
+>>>>>>> upstream/rpi-4.4.y
 
 static inline int is_hugepage_only_range(struct mm_struct *mm,
 					 unsigned long addr,

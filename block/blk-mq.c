@@ -629,7 +629,22 @@ static void blk_mq_check_expired(struct blk_mq_hw_ctx *hctx,
 {
 	struct blk_mq_timeout_data *data = priv;
 
+<<<<<<< HEAD
 	if (!test_bit(REQ_ATOM_STARTED, &rq->atomic_flags))
+=======
+	if (!test_bit(REQ_ATOM_STARTED, &rq->atomic_flags)) {
+		/*
+		 * If a request wasn't started before the queue was
+		 * marked dying, kill it here or it'll go unnoticed.
+		 */
+		if (unlikely(blk_queue_dying(rq->q))) {
+			rq->errors = -EIO;
+			blk_mq_end_request(rq, rq->errors);
+		}
+		return;
+	}
+	if (rq->cmd_flags & REQ_NO_TIMEOUT)
+>>>>>>> upstream/rpi-4.4.y
 		return;
 
 	if (time_after_eq(jiffies, rq->deadline)) {

@@ -1707,6 +1707,14 @@ megasas_queue_command(struct Scsi_Host *shost, struct scsi_cmnd *scmd)
 	if ((scmd->cmnd[0] == SYNCHRONIZE_CACHE) && MEGASAS_IS_LOGICAL(scmd)) {
 		scmd->result = DID_OK << 16;
 		goto out_done;
+<<<<<<< HEAD
+=======
+	}
+
+	if (instance->instancet->build_and_issue_cmd(instance, scmd)) {
+		dev_err(&instance->pdev->dev, "Err returned from build_and_issue_cmd\n");
+		return SCSI_MLQUEUE_HOST_BUSY;
+>>>>>>> upstream/rpi-4.4.y
 	}
 
 	return instance->instancet->build_and_issue_cmd(instance, scmd);
@@ -5020,7 +5028,11 @@ static int megasas_init_fw(struct megasas_instance *instance)
 
 	/* Find first memory bar */
 	bar_list = pci_select_bars(instance->pdev, IORESOURCE_MEM);
+<<<<<<< HEAD
 	instance->bar = find_first_bit(&bar_list, BITS_PER_LONG);
+=======
+	instance->bar = find_first_bit(&bar_list, sizeof(unsigned long));
+>>>>>>> upstream/rpi-4.4.y
 	if (pci_request_selected_regions(instance->pdev, 1<<instance->bar,
 					 "megasas: LSI")) {
 		dev_printk(KERN_DEBUG, &instance->pdev->dev, "IO memory region busy!\n");
@@ -7031,7 +7043,11 @@ megasas_aen_polling(struct work_struct *work)
 	int     i, j, doscan = 0;
 	u32 seq_num, wait_time = MEGASAS_RESET_WAIT_TIME;
 	int error;
+<<<<<<< HEAD
 	u8  dcmd_ret = DCMD_SUCCESS;
+=======
+	u8  dcmd_ret = 0;
+>>>>>>> upstream/rpi-4.4.y
 
 	if (!instance) {
 		printk(KERN_ERR "invalid instance!\n");
@@ -7056,7 +7072,11 @@ megasas_aen_polling(struct work_struct *work)
 		case MR_EVT_PD_INSERTED:
 		case MR_EVT_PD_REMOVED:
 			dcmd_ret = megasas_get_pd_list(instance);
+<<<<<<< HEAD
 			if (dcmd_ret == DCMD_SUCCESS)
+=======
+			if (dcmd_ret == 0)
+>>>>>>> upstream/rpi-4.4.y
 				doscan = SCAN_PD_CHANNEL;
 			break;
 
@@ -7068,7 +7088,11 @@ megasas_aen_polling(struct work_struct *work)
 				(instance->requestorId && megasas_get_ld_vf_affiliation(instance, 0)))
 				dcmd_ret = megasas_ld_list_query(instance, MR_LD_QUERY_TYPE_EXPOSED_TO_HOST);
 
+<<<<<<< HEAD
 			if (dcmd_ret == DCMD_SUCCESS)
+=======
+			if (dcmd_ret == 0)
+>>>>>>> upstream/rpi-4.4.y
 				doscan = SCAN_VD_CHANNEL;
 
 			break;
@@ -7078,14 +7102,22 @@ megasas_aen_polling(struct work_struct *work)
 		case MR_EVT_LD_STATE_CHANGE:
 			dcmd_ret = megasas_get_pd_list(instance);
 
+<<<<<<< HEAD
 			if (dcmd_ret != DCMD_SUCCESS)
+=======
+			if (dcmd_ret != 0)
+>>>>>>> upstream/rpi-4.4.y
 				break;
 
 			if (!instance->requestorId ||
 				(instance->requestorId && megasas_get_ld_vf_affiliation(instance, 0)))
 				dcmd_ret = megasas_ld_list_query(instance, MR_LD_QUERY_TYPE_EXPOSED_TO_HOST);
 
+<<<<<<< HEAD
 			if (dcmd_ret != DCMD_SUCCESS)
+=======
+			if (dcmd_ret != 0)
+>>>>>>> upstream/rpi-4.4.y
 				break;
 
 			doscan = SCAN_VD_CHANNEL | SCAN_PD_CHANNEL;
@@ -7150,7 +7182,11 @@ megasas_aen_polling(struct work_struct *work)
 		}
 	}
 
+<<<<<<< HEAD
 	if (dcmd_ret == DCMD_SUCCESS)
+=======
+	if (dcmd_ret == 0)
+>>>>>>> upstream/rpi-4.4.y
 		seq_num = le32_to_cpu(instance->evt_detail->seq_num) + 1;
 	else
 		seq_num = instance->last_seq_num;

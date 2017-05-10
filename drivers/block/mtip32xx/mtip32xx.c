@@ -176,7 +176,11 @@ static struct mtip_cmd *mtip_get_int_command(struct driver_data *dd)
 	if (mtip_check_surprise_removal(dd->pdev))
 		return NULL;
 
+<<<<<<< HEAD
 	rq = blk_mq_alloc_request(dd->queue, 0, BLK_MQ_REQ_RESERVED);
+=======
+	rq = blk_mq_alloc_request(dd->queue, 0, __GFP_RECLAIM, true);
+>>>>>>> upstream/rpi-4.4.y
 	if (IS_ERR(rq))
 		return NULL;
 
@@ -3000,14 +3004,22 @@ restart_eh:
 					"Completion workers still active!");
 
 			spin_lock(dd->queue->queue_lock);
+<<<<<<< HEAD
 			blk_mq_tagset_busy_iter(&dd->tags,
+=======
+			blk_mq_all_tag_busy_iter(*dd->tags.tags,
+>>>>>>> upstream/rpi-4.4.y
 							mtip_queue_cmd, dd);
 			spin_unlock(dd->queue->queue_lock);
 
 			set_bit(MTIP_PF_ISSUE_CMDS_BIT, &dd->port->flags);
 
 			if (mtip_device_reset(dd))
+<<<<<<< HEAD
 				blk_mq_tagset_busy_iter(&dd->tags,
+=======
+				blk_mq_all_tag_busy_iter(*dd->tags.tags,
+>>>>>>> upstream/rpi-4.4.y
 							mtip_abort_cmd, dd);
 
 			clear_bit(MTIP_PF_TO_ACTIVE_BIT, &dd->port->flags);
@@ -3686,7 +3698,11 @@ static int mtip_block_open(struct block_device *dev, fmode_t mode)
 	return -ENODEV;
 }
 
+<<<<<<< HEAD
 static void mtip_block_release(struct gendisk *disk, fmode_t mode)
+=======
+void mtip_block_release(struct gendisk *disk, fmode_t mode)
+>>>>>>> upstream/rpi-4.4.y
 {
 }
 
@@ -3878,6 +3894,10 @@ static enum blk_eh_timer_return mtip_cmd_timeout(struct request *req,
 								bool reserved)
 {
 	struct driver_data *dd = req->q->queuedata;
+<<<<<<< HEAD
+=======
+	int ret = BLK_EH_RESET_TIMER;
+>>>>>>> upstream/rpi-4.4.y
 
 	if (reserved)
 		goto exit_handler;
@@ -3890,7 +3910,11 @@ static enum blk_eh_timer_return mtip_cmd_timeout(struct request *req,
 
 	wake_up_interruptible(&dd->port->svc_wait);
 exit_handler:
+<<<<<<< HEAD
 	return BLK_EH_RESET_TIMER;
+=======
+	return ret;
+>>>>>>> upstream/rpi-4.4.y
 }
 
 static struct blk_mq_ops mtip_mq_ops = {
@@ -4166,7 +4190,11 @@ static int mtip_block_remove(struct driver_data *dd)
 
 	blk_mq_freeze_queue_start(dd->queue);
 	blk_mq_stop_hw_queues(dd->queue);
+<<<<<<< HEAD
 	blk_mq_tagset_busy_iter(&dd->tags, mtip_no_dev_cleanup, dd);
+=======
+	blk_mq_all_tag_busy_iter(dd->tags.tags[0], mtip_no_dev_cleanup, dd);
+>>>>>>> upstream/rpi-4.4.y
 
 	/*
 	 * Delete our gendisk structure. This also removes the device

@@ -123,6 +123,7 @@ config LEDS_TRIGGER_INPUT
 	  This allows the GPIOs assigned to be LEDs to be initialised to inputs.
 	  If unsure, say Y.
 
+<<<<<<< HEAD
 config LEDS_TRIGGER_PANIC
 	bool "LED Panic Trigger"
 	depends on LEDS_TRIGGERS
@@ -133,4 +134,6 @@ config LEDS_TRIGGER_PANIC
 	  a different trigger.
 	  If unsure, say Y.
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 endif # LEDS_TRIGGERS

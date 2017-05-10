@@ -512,7 +512,13 @@ struct r5conf {
 	} __percpu *percpu;
 	int scribble_disks;
 	int scribble_sectors;
+<<<<<<< HEAD
 	struct hlist_node node;
+=======
+#ifdef CONFIG_HOTPLUG_CPU
+	struct notifier_block	cpu_notify;
+#endif
+>>>>>>> upstream/rpi-4.4.y
 
 	/*
 	 * Free stripes pool

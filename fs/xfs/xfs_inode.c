@@ -3240,6 +3240,7 @@ xfs_iflush_cluster(
 		 * We need to check under the i_flags_lock for a valid inode
 		 * here. Skip it if it is not valid or the wrong inode.
 		 */
+<<<<<<< HEAD
 		spin_lock(&cip->i_flags_lock);
 		if (!cip->i_ino ||
 		    __xfs_iflags_test(cip, XFS_ISTALE)) {
@@ -3257,6 +3258,16 @@ xfs_iflush_cluster(
 			break;
 		}
 		spin_unlock(&cip->i_flags_lock);
+=======
+		spin_lock(&iq->i_flags_lock);
+		if (!iq->i_ino ||
+		    __xfs_iflags_test(iq, XFS_ISTALE) ||
+		    (XFS_INO_TO_AGINO(mp, iq->i_ino) & mask) != first_index) {
+			spin_unlock(&iq->i_flags_lock);
+			continue;
+		}
+		spin_unlock(&iq->i_flags_lock);
+>>>>>>> upstream/rpi-4.4.y
 
 		/*
 		 * Do an un-protected check to see if the inode is dirty and

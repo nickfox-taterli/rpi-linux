@@ -1662,7 +1662,7 @@ generic_add_lease(struct file *filp, long arg, struct file_lock **flp, void **pr
 {
 	struct file_lock *fl, *my_fl = NULL, *lease;
 	struct dentry *dentry = filp->f_path.dentry;
-	struct inode *inode = dentry->d_inode;
+	struct inode *inode = file_inode(filp);
 	struct file_lock_context *ctx;
 	bool is_deleg = (*flp)->fl_flags & FL_DELEG;
 	int error;
@@ -2284,12 +2284,19 @@ int fcntl_setlk(unsigned int fd, struct file *filp, unsigned int cmd,
 	error = do_lock_file_wait(filp, cmd, file_lock);
 
 	/*
+<<<<<<< HEAD
 	 * Attempt to detect a close/fcntl race and recover by releasing the
 	 * lock that was just acquired. There is no need to do that when we're
 	 * unlocking though, or for OFD locks.
 	 */
 	if (!error && file_lock->fl_type != F_UNLCK &&
 	    !(file_lock->fl_flags & FL_OFDLCK)) {
+=======
+	 * Attempt to detect a close/fcntl race and recover by
+	 * releasing the lock that was just acquired.
+	 */
+	if (!error && file_lock->fl_type != F_UNLCK) {
+>>>>>>> upstream/rpi-4.4.y
 		/*
 		 * We need that spin_lock here - it prevents reordering between
 		 * update of i_flctx->flc_posix and check for it done in
@@ -2433,8 +2440,12 @@ int fcntl_setlk64(unsigned int fd, struct file *filp, unsigned int cmd,
 	 * lock that was just acquired. There is no need to do that when we're
 	 * unlocking though, or for OFD locks.
 	 */
+<<<<<<< HEAD
 	if (!error && file_lock->fl_type != F_UNLCK &&
 	    !(file_lock->fl_flags & FL_OFDLCK)) {
+=======
+	if (!error && file_lock->fl_type != F_UNLCK) {
+>>>>>>> upstream/rpi-4.4.y
 		/*
 		 * We need that spin_lock here - it prevents reordering between
 		 * update of i_flctx->flc_posix and check for it done in

@@ -12,8 +12,11 @@
 #include <linux/xattr.h>
 #include <linux/security.h>
 #include <linux/cred.h>
+<<<<<<< HEAD
 #include <linux/posix_acl.h>
 #include <linux/posix_acl_xattr.h>
+=======
+>>>>>>> upstream/rpi-4.4.y
 #include <linux/atomic.h>
 #include "overlayfs.h"
 
@@ -686,7 +689,11 @@ static int ovl_remove_upper(struct dentry *dentry, bool is_dir)
 	struct dentry *upper;
 	int err;
 
+<<<<<<< HEAD
 	inode_lock_nested(dir, I_MUTEX_PARENT);
+=======
+	mutex_lock_nested(&dir->i_mutex, I_MUTEX_PARENT);
+>>>>>>> upstream/rpi-4.4.y
 	upper = lookup_one_len(dentry->d_name.name, upperdir,
 			       dentry->d_name.len);
 	err = PTR_ERR(upper);
@@ -712,7 +719,11 @@ static int ovl_remove_upper(struct dentry *dentry, bool is_dir)
 	if (!err)
 		d_drop(dentry);
 out_unlock:
+<<<<<<< HEAD
 	inode_unlock(dir);
+=======
+	mutex_unlock(&dir->i_mutex);
+>>>>>>> upstream/rpi-4.4.y
 
 	return err;
 }
@@ -923,6 +934,10 @@ static int ovl_rename2(struct inode *olddir, struct dentry *old,
 				goto out_dput;
 		}
 	} else {
+<<<<<<< HEAD
+=======
+		new_create = true;
+>>>>>>> upstream/rpi-4.4.y
 		if (!d_is_negative(newdentry) &&
 		    (!new_opaque || !ovl_is_whiteout(newdentry)))
 			goto out_dput;

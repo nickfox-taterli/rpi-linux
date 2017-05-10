@@ -35,6 +35,10 @@
 #include "drm_atomic_helper.h"
 #include "drm_crtc_helper.h"
 #include "linux/clk.h"
+<<<<<<< HEAD
+=======
+#include "linux/debugfs.h"
+>>>>>>> upstream/rpi-4.4.y
 #include "drm_fb_cma_helper.h"
 #include "linux/component.h"
 #include "linux/of_device.h"
@@ -89,6 +93,7 @@ struct vc4_crtc_data {
 #define CRTC_WRITE(offset, val) writel(val, vc4_crtc->regs + (offset))
 #define CRTC_READ(offset) readl(vc4_crtc->regs + (offset))
 
+<<<<<<< HEAD
 #define CRTC_REG(reg) { reg, #reg }
 static const struct {
 	u32 reg;
@@ -107,17 +112,27 @@ static const struct {
 	CRTC_REG(PV_INTSTAT),
 	CRTC_REG(PV_STAT),
 	CRTC_REG(PV_HACT_ACT),
+=======
+static const struct debugfs_reg32 crtc_regs[] = {
+	VC4_DEBUG_REG(PV_CONTROL),
+	VC4_DEBUG_REG(PV_V_CONTROL),
+	VC4_DEBUG_REG(PV_VSYNCD_EVEN),
+	VC4_DEBUG_REG(PV_HORZA),
+	VC4_DEBUG_REG(PV_HORZB),
+	VC4_DEBUG_REG(PV_VERTA),
+	VC4_DEBUG_REG(PV_VERTB),
+	VC4_DEBUG_REG(PV_VERTA_EVEN),
+	VC4_DEBUG_REG(PV_VERTB_EVEN),
+	VC4_DEBUG_REG(PV_INTEN),
+	VC4_DEBUG_REG(PV_INTSTAT),
+	VC4_DEBUG_REG(PV_STAT),
+	VC4_DEBUG_REG(PV_HACT_ACT),
+>>>>>>> upstream/rpi-4.4.y
 };
 
 static void vc4_crtc_dump_regs(struct vc4_crtc *vc4_crtc)
 {
-	int i;
-
-	for (i = 0; i < ARRAY_SIZE(crtc_regs); i++) {
-		DRM_INFO("0x%04x (%s): 0x%08x\n",
-			 crtc_regs[i].reg, crtc_regs[i].name,
-			 CRTC_READ(crtc_regs[i].reg));
-	}
+	vc4_dump_regs32(crtc_regs, ARRAY_SIZE(crtc_regs), vc4_crtc->regs, "");
 }
 
 #ifdef CONFIG_DEBUG_FS
@@ -140,11 +155,8 @@ int vc4_crtc_debugfs_regs(struct seq_file *m, void *unused)
 		return 0;
 	vc4_crtc = to_vc4_crtc(crtc);
 
-	for (i = 0; i < ARRAY_SIZE(crtc_regs); i++) {
-		seq_printf(m, "%s (0x%04x): 0x%08x\n",
-			   crtc_regs[i].name, crtc_regs[i].reg,
-			   CRTC_READ(crtc_regs[i].reg));
-	}
+	debugfs_print_regs32(m, crtc_regs, ARRAY_SIZE(crtc_regs),
+			     vc4_crtc->regs, "");
 
 	return 0;
 }
@@ -315,22 +327,35 @@ vc4_crtc_lut_load(struct drm_crtc *crtc)
 		HVS_WRITE(SCALER_GAMDATA, vc4_crtc->lut_b[i]);
 }
 
+<<<<<<< HEAD
 static int
 vc4_crtc_gamma_set(struct drm_crtc *crtc, u16 *r, u16 *g, u16 *b,
 		   uint32_t size)
+=======
+static void
+vc4_crtc_gamma_set(struct drm_crtc *crtc, u16 *r, u16 *g, u16 *b,
+		   uint32_t start, uint32_t size)
+>>>>>>> upstream/rpi-4.4.y
 {
 	struct vc4_crtc *vc4_crtc = to_vc4_crtc(crtc);
 	u32 i;
 
+<<<<<<< HEAD
 	for (i = 0; i < size; i++) {
+=======
+	for (i = start; i < start + size; i++) {
+>>>>>>> upstream/rpi-4.4.y
 		vc4_crtc->lut_r[i] = r[i] >> 8;
 		vc4_crtc->lut_g[i] = g[i] >> 8;
 		vc4_crtc->lut_b[i] = b[i] >> 8;
 	}
 
 	vc4_crtc_lut_load(crtc);
+<<<<<<< HEAD
 
 	return 0;
+=======
+>>>>>>> upstream/rpi-4.4.y
 }
 
 static u32 vc4_get_fifo_full_level(u32 format)
@@ -354,7 +379,11 @@ static u32 vc4_get_fifo_full_level(u32 format)
 /*
  * Returns the encoder attached to the CRTC.
  *
+<<<<<<< HEAD
  * VC4 can only scan out to one encoder at a time, while the DRM core
+=======
+ * VC4 can only scan out to one encoder at a type, while the DRM core
+>>>>>>> upstream/rpi-4.4.y
  * allows drivers to push pixels to more than one encoder from the
  * same CRTC.
  */
@@ -381,10 +410,17 @@ static void vc4_crtc_mode_set_nofb(struct drm_crtc *crtc)
 	struct drm_crtc_state *state = crtc->state;
 	struct drm_display_mode *mode = &state->adjusted_mode;
 	bool interlace = mode->flags & DRM_MODE_FLAG_INTERLACE;
+<<<<<<< HEAD
 	u32 pixel_rep = (mode->flags & DRM_MODE_FLAG_DBLCLK) ? 2 : 1;
 	bool is_dsi = (vc4_encoder->type == VC4_ENCODER_TYPE_DSI0 ||
 		       vc4_encoder->type == VC4_ENCODER_TYPE_DSI1);
 	u32 format = is_dsi ? PV_CONTROL_FORMAT_DSIV_24 : PV_CONTROL_FORMAT_24;
+=======
+	bool is_dsi = (vc4_encoder->type == VC4_ENCODER_TYPE_DSI0 ||
+		       vc4_encoder->type == VC4_ENCODER_TYPE_DSI1);
+	u32 format = is_dsi ? PV_CONTROL_FORMAT_DSIV_24 : PV_CONTROL_FORMAT_24;
+	u32 pixel_rep = (mode->flags & DRM_MODE_FLAG_DBLCLK) ? 2 : 1;
+>>>>>>> upstream/rpi-4.4.y
 	bool debug_dump_regs = false;
 
 	if (debug_dump_regs) {
@@ -503,6 +539,22 @@ static void vc4_crtc_disable(struct drm_crtc *crtc)
 	/* Disable vblank irq handling before crtc is disabled. */
 	drm_crtc_vblank_off(crtc);
 
+<<<<<<< HEAD
+=======
+	if (VC4_DSI_USE_FIRMWARE_SETUP &&
+	    (CRTC_READ(PV_V_CONTROL) & PV_VCONTROL_DSI)) {
+		/* Skip disabling the PV/HVS for the channel if it was
+		 * connected to the DSI panel and we're using the
+		 * firmware setup.  Instead, just set it to stuff
+		 * black in the composite output buffer.
+		 */
+		HVS_WRITE(SCALER_DISPBKGNDX(vc4_crtc->channel),
+			  HVS_READ(SCALER_DISPBKGNDX(vc4_crtc->channel)) |
+			  SCALER_DISPBKGND_FILL);
+		return;
+	}
+
+>>>>>>> upstream/rpi-4.4.y
 	CRTC_WRITE(PV_V_CONTROL,
 		   CRTC_READ(PV_V_CONTROL) & ~PV_VCONTROL_VIDEN);
 	ret = wait_for(!(CRTC_READ(PV_V_CONTROL) & PV_VCONTROL_VIDEN), 1);
@@ -580,7 +632,10 @@ static int vc4_crtc_atomic_check(struct drm_crtc *crtc,
 	struct vc4_dev *vc4 = to_vc4_dev(dev);
 	struct drm_plane *plane;
 	unsigned long flags;
+<<<<<<< HEAD
 	const struct drm_plane_state *plane_state;
+=======
+>>>>>>> upstream/rpi-4.4.y
 	u32 dlist_count = 0;
 	int ret;
 
@@ -590,8 +645,25 @@ static int vc4_crtc_atomic_check(struct drm_crtc *crtc,
 	if (hweight32(state->connector_mask) > 1)
 		return -EINVAL;
 
+<<<<<<< HEAD
 	drm_atomic_crtc_state_for_each_plane_state(plane, plane_state, state)
 		dlist_count += vc4_plane_dlist_size(plane_state);
+=======
+	if (state->active) {
+		drm_atomic_crtc_state_for_each_plane(plane, state) {
+			struct drm_plane_state *plane_state =
+				state->state->plane_states[drm_plane_index(plane)];
+
+			/* plane might not have changed, in which case take
+			 * current state:
+			 */
+			if (!plane_state)
+				plane_state = plane->state;
+
+			dlist_count += vc4_plane_dlist_size(plane_state);
+		}
+	}
+>>>>>>> upstream/rpi-4.4.y
 
 	dlist_count++; /* Account for SCALER_CTL0_END. */
 
@@ -623,8 +695,15 @@ static void vc4_crtc_atomic_flush(struct drm_crtc *crtc,
 	}
 
 	/* Copy all the active planes' dlist contents to the hardware dlist. */
+<<<<<<< HEAD
 	drm_atomic_crtc_for_each_plane(plane, crtc) {
 		dlist_next += vc4_plane_write_dlist(plane, dlist_next);
+=======
+	if (crtc->state->active) {
+		drm_atomic_crtc_for_each_plane(plane, crtc) {
+			dlist_next += vc4_plane_write_dlist(plane, dlist_next);
+		}
+>>>>>>> upstream/rpi-4.4.y
 	}
 
 	writel(SCALER_CTL0_END, dlist_next);
@@ -860,6 +939,7 @@ static void vc4_crtc_destroy_state(struct drm_crtc *crtc,
 	drm_atomic_helper_crtc_destroy_state(crtc, state);
 }
 
+<<<<<<< HEAD
 static void
 vc4_crtc_reset(struct drm_crtc *crtc)
 {
@@ -871,6 +951,8 @@ vc4_crtc_reset(struct drm_crtc *crtc)
 		crtc->state->crtc = crtc;
 }
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 static const struct drm_crtc_funcs vc4_crtc_funcs = {
 	.set_config = drm_atomic_helper_set_config,
 	.destroy = vc4_crtc_destroy,
@@ -878,7 +960,11 @@ static const struct drm_crtc_funcs vc4_crtc_funcs = {
 	.set_property = NULL,
 	.cursor_set = NULL, /* handled by drm_mode_cursor_universal */
 	.cursor_move = NULL, /* handled by drm_mode_cursor_universal */
+<<<<<<< HEAD
 	.reset = vc4_crtc_reset,
+=======
+	.reset = drm_atomic_helper_crtc_reset,
+>>>>>>> upstream/rpi-4.4.y
 	.atomic_duplicate_state = vc4_crtc_duplicate_state,
 	.atomic_destroy_state = vc4_crtc_destroy_state,
 	.gamma_set = vc4_crtc_gamma_set,
@@ -894,6 +980,7 @@ static const struct drm_crtc_helper_funcs vc4_crtc_helper_funcs = {
 };
 
 static const struct vc4_crtc_data pv0_data = {
+<<<<<<< HEAD
 	.hvs_channel = 0,
 	.encoder_types = {
 		[PV_CONTROL_CLK_SELECT_DSI] = VC4_ENCODER_TYPE_DSI0,
@@ -907,6 +994,17 @@ static const struct vc4_crtc_data pv1_data = {
 		[PV_CONTROL_CLK_SELECT_DSI] = VC4_ENCODER_TYPE_DSI1,
 		[PV_CONTROL_CLK_SELECT_DPI_SMI_HDMI] = VC4_ENCODER_TYPE_SMI,
 	},
+=======
+	.hvs_channel = 2,
+	.encoder0_type = VC4_ENCODER_TYPE_DSI0,
+	.encoder1_type = VC4_ENCODER_TYPE_DPI,
+};
+
+static const struct vc4_crtc_data pv1_data = {
+	.hvs_channel = 0,
+	.encoder0_type = VC4_ENCODER_TYPE_DSI1,
+	.encoder1_type = VC4_ENCODER_TYPE_SMI,
+>>>>>>> upstream/rpi-4.4.y
 };
 
 static const struct vc4_crtc_data pv2_data = {
@@ -1001,7 +1099,11 @@ static int vc4_crtc_bind(struct device *dev, struct device *master, void *data)
 	}
 
 	drm_crtc_init_with_planes(drm, crtc, primary_plane, NULL,
+<<<<<<< HEAD
 				  &vc4_crtc_funcs, NULL);
+=======
+				  &vc4_crtc_funcs);
+>>>>>>> upstream/rpi-4.4.y
 	drm_crtc_helper_add(crtc, &vc4_crtc_helper_funcs);
 	primary_plane->crtc = crtc;
 	vc4->crtc[drm_crtc_index(crtc)] = vc4_crtc;

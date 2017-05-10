@@ -346,12 +346,21 @@ static int s3c_ac97_probe(struct platform_device *pdev)
 	if (IS_ERR(s3c_ac97.regs))
 		return PTR_ERR(s3c_ac97.regs);
 
+<<<<<<< HEAD
 	s3c_ac97_pcm_out.filter_data = ac97_pdata->dma_playback;
 	s3c_ac97_pcm_out.addr = mem_res->start + S3C_AC97_PCM_DATA;
 	s3c_ac97_pcm_in.filter_data = ac97_pdata->dma_capture;
 	s3c_ac97_pcm_in.addr = mem_res->start + S3C_AC97_PCM_DATA;
 	s3c_ac97_mic_in.filter_data = ac97_pdata->dma_capture_mic;
 	s3c_ac97_mic_in.addr = mem_res->start + S3C_AC97_MIC_DATA;
+=======
+	s3c_ac97_pcm_out.slave = ac97_pdata->dma_playback;
+	s3c_ac97_pcm_out.dma_addr = mem_res->start + S3C_AC97_PCM_DATA;
+	s3c_ac97_pcm_in.slave = ac97_pdata->dma_capture;
+	s3c_ac97_pcm_in.dma_addr = mem_res->start + S3C_AC97_PCM_DATA;
+	s3c_ac97_mic_in.slave = ac97_pdata->dma_capture_mic;
+	s3c_ac97_mic_in.dma_addr = mem_res->start + S3C_AC97_MIC_DATA;
+>>>>>>> upstream/rpi-4.4.y
 
 	init_completion(&s3c_ac97.done);
 	mutex_init(&s3c_ac97.lock);

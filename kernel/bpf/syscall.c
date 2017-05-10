@@ -672,14 +672,22 @@ static struct bpf_prog *____bpf_prog_get(struct fd f)
 	return f.file->private_data;
 }
 
+<<<<<<< HEAD
 struct bpf_prog *bpf_prog_add(struct bpf_prog *prog, int i)
 {
 	if (atomic_add_return(i, &prog->aux->refcnt) > BPF_MAX_REFCNT) {
 		atomic_sub(i, &prog->aux->refcnt);
+=======
+struct bpf_prog *bpf_prog_inc(struct bpf_prog *prog)
+{
+	if (atomic_inc_return(&prog->aux->refcnt) > BPF_MAX_REFCNT) {
+		atomic_dec(&prog->aux->refcnt);
+>>>>>>> upstream/rpi-4.4.y
 		return ERR_PTR(-EBUSY);
 	}
 	return prog;
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL_GPL(bpf_prog_add);
 
 struct bpf_prog *bpf_prog_inc(struct bpf_prog *prog)
@@ -688,6 +696,13 @@ struct bpf_prog *bpf_prog_inc(struct bpf_prog *prog)
 }
 
 static struct bpf_prog *__bpf_prog_get(u32 ufd, enum bpf_prog_type *type)
+=======
+
+/* called by sockets/tracing/seccomp before attaching program to an event
+ * pairs with bpf_prog_put()
+ */
+struct bpf_prog *bpf_prog_get(u32 ufd)
+>>>>>>> upstream/rpi-4.4.y
 {
 	struct fd f = fdget(ufd);
 	struct bpf_prog *prog;
@@ -701,7 +716,10 @@ static struct bpf_prog *__bpf_prog_get(u32 ufd, enum bpf_prog_type *type)
 	}
 
 	prog = bpf_prog_inc(prog);
+<<<<<<< HEAD
 out:
+=======
+>>>>>>> upstream/rpi-4.4.y
 	fdput(f);
 	return prog;
 }

@@ -24,9 +24,16 @@
 #include <asm/asm-offsets.h>
 #include <asm/hwcap.h>
 #include <asm/pgtable.h>
+<<<<<<< HEAD
 #include <asm/pgtable-hwdef.h>
 #include <asm/cpufeature.h>
 #include <asm/alternative.h>
+=======
+#include <asm/cpufeature.h>
+#include <asm/alternative.h>
+
+#include "proc-macros.S"
+>>>>>>> upstream/rpi-4.4.y
 
 #ifdef CONFIG_ARM64_64K_PAGES
 #define TCR_TG_FLAGS	TCR_TG0_64K | TCR_TG1_64K
@@ -118,6 +125,11 @@ ENTRY(cpu_do_resume)
 	ubfx	x11, x11, #1, #1
 	msr	oslar_el1, x11
 	reset_pmuserenr_el0 x0			// Disable PMU access from EL0
+<<<<<<< HEAD
+=======
+	mov	x0, x12
+	dsb	nsh		// Make sure local tlb invalidation completed
+>>>>>>> upstream/rpi-4.4.y
 	isb
 	ret
 ENDPROC(cpu_do_resume)
@@ -136,12 +148,25 @@ ENTRY(cpu_do_switch_mm)
 	bfi	x0, x1, #48, #16		// set the ASID
 	msr	ttbr0_el1, x0			// set TTBR0
 	isb
+<<<<<<< HEAD
 alternative_if ARM64_WORKAROUND_CAVIUM_27456
 	ic	iallu
 	dsb	nsh
 	isb
 alternative_else_nop_endif
+=======
+alternative_if_not ARM64_WORKAROUND_CAVIUM_27456
+>>>>>>> upstream/rpi-4.4.y
 	ret
+	nop
+	nop
+	nop
+alternative_else
+	ic	iallu
+	dsb	nsh
+	isb
+	ret
+alternative_endif
 ENDPROC(cpu_do_switch_mm)
 
 	.pushsection ".idmap.text", "ax"

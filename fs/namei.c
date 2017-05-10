@@ -1777,12 +1777,19 @@ static int walk_component(struct nameidata *nd, int flags)
 		if (unlikely(err < 0))
 			return err;
 
+<<<<<<< HEAD
 		if (unlikely(d_is_negative(path.dentry))) {
 			path_to_nameidata(&path, nd);
 			return -ENOENT;
 		}
 
 		seq = 0;	/* we are already out of RCU mode */
+=======
+		seq = 0;	/* we are already out of RCU mode */
+		err = -ENOENT;
+		if (d_is_negative(path.dentry))
+			goto out_path_put;
+>>>>>>> upstream/rpi-4.4.y
 		inode = d_backing_inode(path.dentry);
 	}
 
@@ -3052,6 +3059,24 @@ static int atomic_open(struct nameidata *nd, struct dentry *dentry,
 	}
 	dput(dentry);
 	return error;
+<<<<<<< HEAD
+=======
+
+no_open:
+	if (need_lookup) {
+		dentry = lookup_real(dir, dentry, nd->flags);
+		if (IS_ERR(dentry))
+			return PTR_ERR(dentry);
+	}
+	if (create_error && !dentry->d_inode) {
+		error = create_error;
+		goto out;
+	}
+looked_up:
+	path->dentry = dentry;
+	path->mnt = nd->path.mnt;
+	return 1;
+>>>>>>> upstream/rpi-4.4.y
 }
 
 /*
@@ -3314,10 +3339,16 @@ static int do_last(struct nameidata *nd,
 	if (unlikely(error < 0))
 		return error;
 
+<<<<<<< HEAD
+=======
+	BUG_ON(nd->flags & LOOKUP_RCU);
+	seq = 0;	/* out of RCU mode, so the value doesn't matter */
+>>>>>>> upstream/rpi-4.4.y
 	if (unlikely(d_is_negative(path.dentry))) {
 		path_to_nameidata(&path, nd);
 		return -ENOENT;
 	}
+<<<<<<< HEAD
 
 	/*
 	 * create/update audit record if it already exists.
@@ -3330,6 +3361,8 @@ static int do_last(struct nameidata *nd,
 	}
 
 	seq = 0;	/* out of RCU mode, so the value doesn't matter */
+=======
+>>>>>>> upstream/rpi-4.4.y
 	inode = d_backing_inode(path.dentry);
 finish_lookup:
 	if (nd->depth)
@@ -3339,7 +3372,18 @@ finish_lookup:
 	if (unlikely(error))
 		return error;
 
+<<<<<<< HEAD
 	path_to_nameidata(&path, nd);
+=======
+	if ((nd->flags & LOOKUP_RCU) || nd->path.mnt != path.mnt) {
+		path_to_nameidata(&path, nd);
+	} else {
+		save_parent.dentry = nd->path.dentry;
+		save_parent.mnt = mntget(path.mnt);
+		nd->path.dentry = path.dentry;
+
+	}
+>>>>>>> upstream/rpi-4.4.y
 	nd->inode = inode;
 	nd->seq = seq;
 	/* Why this, you ask?  _Now_ we might have grown LOOKUP_JUMPED... */
@@ -3348,6 +3392,10 @@ finish_open:
 	if (error)
 		return error;
 	audit_inode(nd->name, nd->path.dentry, 0);
+	if (unlikely(d_is_symlink(nd->path.dentry)) && !(open_flag & O_PATH)) {
+		error = -ELOOP;
+		goto out;
+	}
 	error = -EISDIR;
 	if ((open_flag & O_CREAT) && d_is_dir(nd->path.dentry))
 		goto out;
@@ -3379,8 +3427,11 @@ opened:
 	if (!error && will_truncate)
 		error = handle_truncate(file);
 out:
+<<<<<<< HEAD
 	if (unlikely(error) && (*opened & FILE_OPENED))
 		fput(file);
+=======
+>>>>>>> upstream/rpi-4.4.y
 	if (unlikely(error > 0)) {
 		WARN_ON(1);
 		error = -EINVAL;
@@ -4346,7 +4397,11 @@ int vfs_rename(struct inode *old_dir, struct dentry *old_dentry,
 	 * Check source == target.
 	 * On overlayfs need to look at underlying inodes.
 	 */
+<<<<<<< HEAD
 	if (d_real_inode(old_dentry) == d_real_inode(new_dentry))
+=======
+	if (vfs_select_inode(old_dentry, 0) == vfs_select_inode(new_dentry, 0))
+>>>>>>> upstream/rpi-4.4.y
 		return 0;
 
 	error = may_delete(old_dir, old_dentry, is_dir);

@@ -129,10 +129,14 @@ static int __init __reserved_mem_alloc_size(unsigned long node,
 	}
 
 	/* Need adjust the alignment to satisfy the CMA requirement */
+<<<<<<< HEAD
 	if (IS_ENABLED(CONFIG_CMA)
 	    && of_flat_dt_is_compatible(node, "shared-dma-pool")
 	    && of_get_flat_dt_prop(node, "reusable", NULL)
 	    && !of_get_flat_dt_prop(node, "no-map", NULL)) {
+=======
+	if (IS_ENABLED(CONFIG_CMA) && of_flat_dt_is_compatible(node, "shared-dma-pool")) {
+>>>>>>> upstream/rpi-4.4.y
 		unsigned long order =
 			max_t(unsigned long, MAX_ORDER - 1, pageblock_order);
 

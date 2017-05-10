@@ -92,6 +92,7 @@ void iommu_put_dma_cookie(struct iommu_domain *domain)
 	if (!cookie)
 		return;
 
+<<<<<<< HEAD
 	if (cookie->iovad.granule)
 		put_iova_domain(&cookie->iovad);
 
@@ -100,6 +101,11 @@ void iommu_put_dma_cookie(struct iommu_domain *domain)
 		kfree(msi);
 	}
 	kfree(cookie);
+=======
+	if (iovad->granule)
+		put_iova_domain(iovad);
+	kfree(iovad);
+>>>>>>> upstream/rpi-4.4.y
 	domain->iova_cookie = NULL;
 }
 EXPORT_SYMBOL(iommu_put_dma_cookie);
@@ -481,7 +487,11 @@ static int __finalise_sg(struct device *dev, struct scatterlist *sg, int nents,
 		unsigned int s_length = sg_dma_len(s);
 		unsigned int s_iova_len = s->length;
 
+<<<<<<< HEAD
 		s->offset += s_iova_off;
+=======
+		s->offset += s_offset;
+>>>>>>> upstream/rpi-4.4.y
 		s->length = s_length;
 		sg_dma_address(s) = DMA_ERROR_CODE;
 		sg_dma_len(s) = 0;

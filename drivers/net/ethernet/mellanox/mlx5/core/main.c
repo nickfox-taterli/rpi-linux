@@ -466,7 +466,11 @@ static int handle_hca_cap(struct mlx5_core_dev *dev)
 		      128);
 	/* we limit the size of the pkey table to 128 entries for now */
 	MLX5_SET(cmd_hca_cap, set_hca_cap, pkey_table_size,
+<<<<<<< HEAD
 		 to_fw_pkey_sz(dev, 128));
+=======
+		 to_fw_pkey_sz(128));
+>>>>>>> upstream/rpi-4.4.y
 
 	/* Check log_max_qp from HCA caps to set in current profile */
 	if (MLX5_CAP_GEN_MAX(dev, log_max_qp) < profile[prof_sel].log_max_qp) {

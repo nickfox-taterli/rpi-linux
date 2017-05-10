@@ -109,10 +109,13 @@ SECTIONS
 
 	RO_DATA_SECTION(8)
 
+<<<<<<< HEAD
 	/* RO because of BUILDTIME_EXTABLE_SORT */
 	EXCEPTION_TABLE(8)
 	NOTES
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 	/* unwind info */
 	.PARISC.unwind : {
 		__start___unwind = .;

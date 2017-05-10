@@ -200,8 +200,11 @@ ifeq ($(CONFIG_CPU_HAS_MSA),y)
 toolchain-msa				:= $(call cc-option-yn,$(mips-cflags) -mhard-float -mfp64 -Wa$(comma)-mmsa)
 cflags-$(toolchain-msa)			+= -DTOOLCHAIN_SUPPORTS_MSA
 endif
+<<<<<<< HEAD
 toolchain-virt				:= $(call cc-option-yn,$(mips-cflags) -mvirt)
 cflags-$(toolchain-virt)		+= -DTOOLCHAIN_SUPPORTS_VIRT
+=======
+>>>>>>> upstream/rpi-4.4.y
 
 #
 # Firmware support

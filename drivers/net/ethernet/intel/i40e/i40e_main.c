@@ -1273,9 +1273,14 @@ int i40e_del_mac_all_vlan(struct i40e_vsi *vsi, u8 *macaddr,
 		    (is_vf == f->is_vf) &&
 		    (is_netdev == f->is_netdev)) {
 			f->counter--;
+<<<<<<< HEAD
 			changed = 1;
 			if (f->counter == 0)
 				f->state = I40E_FILTER_REMOVE;
+=======
+			f->changed = true;
+			changed = 1;
+>>>>>>> upstream/rpi-4.4.y
 		}
 	}
 	if (changed) {
@@ -1516,6 +1521,10 @@ static int i40e_set_mac(struct net_device *netdev, void *p)
 				    i40e_aq_str(hw, hw->aq.asq_last_status));
 	}
 
+<<<<<<< HEAD
+=======
+	ether_addr_copy(netdev->dev_addr, addr->sa_data);
+>>>>>>> upstream/rpi-4.4.y
 	/* schedule our worker thread which will take care of
 	 * applying the new filter changes
 	 */
@@ -1887,11 +1896,21 @@ int i40e_sync_vsi_filters(struct i40e_vsi *vsi)
 
 	/* Now process 'del_list' outside the lock */
 	if (!list_empty(&tmp_del_list)) {
+<<<<<<< HEAD
 		filter_list_len = hw->aq.asq_buf_size /
 			    sizeof(struct i40e_aqc_remove_macvlan_element_data);
 		list_size = filter_list_len *
 			    sizeof(struct i40e_aqc_remove_macvlan_element_data);
 		del_list = kzalloc(list_size, GFP_ATOMIC);
+=======
+		int del_list_size;
+
+		filter_list_len = pf->hw.aq.asq_buf_size /
+			    sizeof(struct i40e_aqc_remove_macvlan_element_data);
+		del_list_size = filter_list_len *
+			    sizeof(struct i40e_aqc_remove_macvlan_element_data);
+		del_list = kzalloc(del_list_size, GFP_KERNEL);
+>>>>>>> upstream/rpi-4.4.y
 		if (!del_list) {
 			/* Undo VSI's MAC filter entry element updates */
 			spin_lock_bh(&vsi->mac_filter_list_lock);
@@ -1925,7 +1944,11 @@ int i40e_sync_vsi_filters(struct i40e_vsi *vsi)
 								num_del, NULL);
 				aq_err = hw->aq.asq_last_status;
 				num_del = 0;
+<<<<<<< HEAD
 				memset(del_list, 0, list_size);
+=======
+				memset(del_list, 0, del_list_size);
+>>>>>>> upstream/rpi-4.4.y
 
 				/* Explicitly ignore and do not report when
 				 * firmware returns ENOENT.
@@ -1970,12 +1993,23 @@ int i40e_sync_vsi_filters(struct i40e_vsi *vsi)
 	}
 
 	if (!list_empty(&tmp_add_list)) {
+<<<<<<< HEAD
 		/* Do all the adds now. */
 		filter_list_len = hw->aq.asq_buf_size /
 			       sizeof(struct i40e_aqc_add_macvlan_element_data);
 		list_size = filter_list_len *
 			       sizeof(struct i40e_aqc_add_macvlan_element_data);
 		add_list = kzalloc(list_size, GFP_ATOMIC);
+=======
+		int add_list_size;
+
+		/* do all the adds now */
+		filter_list_len = pf->hw.aq.asq_buf_size /
+			       sizeof(struct i40e_aqc_add_macvlan_element_data),
+		add_list_size = filter_list_len *
+			       sizeof(struct i40e_aqc_add_macvlan_element_data);
+		add_list = kzalloc(add_list_size, GFP_KERNEL);
+>>>>>>> upstream/rpi-4.4.y
 		if (!add_list) {
 			retval = -ENOMEM;
 			goto out;
@@ -2029,6 +2063,13 @@ int i40e_sync_vsi_filters(struct i40e_vsi *vsi)
 				}
 				memset(add_list, 0, list_size);
 				num_add = 0;
+<<<<<<< HEAD
+=======
+
+				if (ret)
+					break;
+				memset(add_list, 0, add_list_size);
+>>>>>>> upstream/rpi-4.4.y
 			}
 		}
 		if (num_add) {
@@ -2127,6 +2168,7 @@ int i40e_sync_vsi_filters(struct i40e_vsi *vsi)
 			 */
 			if (pf->cur_promisc != cur_promisc) {
 				pf->cur_promisc = cur_promisc;
+<<<<<<< HEAD
 				if (cur_promisc)
 					aq_ret =
 					      i40e_aq_set_default_vsi(hw,
@@ -2147,6 +2189,9 @@ int i40e_sync_vsi_filters(struct i40e_vsi *vsi)
 						 i40e_aq_str(hw,
 						     hw->aq.asq_last_status));
 				}
+=======
+				set_bit(__I40E_PF_RESET_REQUESTED, &pf->state);
+>>>>>>> upstream/rpi-4.4.y
 			}
 		} else {
 			aq_ret = i40e_aq_set_vsi_unicast_promiscuous(
@@ -6948,7 +6993,12 @@ static void i40e_reset_and_rebuild(struct i40e_pf *pf, bool reinit)
 		wr32(hw, I40E_REG_MSS, val);
 	}
 
+<<<<<<< HEAD
 	if (pf->flags & I40E_FLAG_RESTART_AUTONEG) {
+=======
+	if (((pf->hw.aq.fw_maj_ver == 4) && (pf->hw.aq.fw_min_ver < 33)) ||
+	    (pf->hw.aq.fw_maj_ver < 4)) {
+>>>>>>> upstream/rpi-4.4.y
 		msleep(75);
 		ret = i40e_aq_set_link_restart_an(&pf->hw, true, NULL);
 		if (ret)
@@ -10733,6 +10783,10 @@ static int i40e_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
 	u16 wol_nvm_bits;
 	u16 link_status;
 	int err;
+<<<<<<< HEAD
+=======
+	u32 len;
+>>>>>>> upstream/rpi-4.4.y
 	u32 val;
 	u32 i;
 	u8 set_fc_aq_fail;
@@ -11060,7 +11114,12 @@ static int i40e_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
 		wr32(hw, I40E_REG_MSS, val);
 	}
 
+<<<<<<< HEAD
 	if (pf->flags & I40E_FLAG_RESTART_AUTONEG) {
+=======
+	if (((pf->hw.aq.fw_maj_ver == 4) && (pf->hw.aq.fw_min_ver < 33)) ||
+	    (pf->hw.aq.fw_maj_ver < 4)) {
+>>>>>>> upstream/rpi-4.4.y
 		msleep(75);
 		err = i40e_aq_set_link_restart_an(&pf->hw, true, NULL);
 		if (err)

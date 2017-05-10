@@ -175,10 +175,17 @@ static const struct stepping_info kbl_stepping_info[] = {
 };
 
 static const struct stepping_info skl_stepping_info[] = {
+<<<<<<< HEAD
 	{'A', '0'}, {'B', '0'}, {'C', '0'},
 	{'D', '0'}, {'E', '0'}, {'F', '0'},
 	{'G', '0'}, {'H', '0'}, {'I', '0'},
 	{'J', '0'}, {'K', '0'}
+=======
+		{'A', '0'}, {'B', '0'}, {'C', '0'},
+		{'D', '0'}, {'E', '0'}, {'F', '0'},
+		{'G', '0'}, {'H', '0'}, {'I', '0'},
+		{'J', '0'}, {'K', '0'}
+>>>>>>> upstream/rpi-4.4.y
 };
 
 static const struct stepping_info bxt_stepping_info[] = {

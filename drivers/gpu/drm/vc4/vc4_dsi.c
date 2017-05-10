@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 /*
  * Copyright (C) 2016 Broadcom
+=======
+ /*
+ * Copyright (C) 2016 Broadcom Limited
+>>>>>>> upstream/rpi-4.4.y
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 as published by
@@ -15,6 +20,7 @@
  */
 
 /**
+<<<<<<< HEAD
  * DOC: VC4 DSI0/DSI1 module
  *
  * BCM2835 contains two DSI modules, DSI0 and DSI1.  DSI0 is a
@@ -27,6 +33,9 @@
  * This driver has been tested for DSI1 video-mode display only
  * currently, with most of the information necessary for DSI0
  * hopefully present.
+=======
+ * DOC: VC4 DSI0 module
+>>>>>>> upstream/rpi-4.4.y
  */
 
 #include "drm_atomic_helper.h"
@@ -38,11 +47,20 @@
 #include "linux/clk-provider.h"
 #include "linux/completion.h"
 #include "linux/component.h"
+<<<<<<< HEAD
 #include "linux/dmaengine.h"
 #include "linux/i2c.h"
 #include "linux/of_address.h"
 #include "linux/of_platform.h"
 #include "linux/pm_runtime.h"
+=======
+#include "linux/debugfs.h"
+#include "linux/dmaengine.h"
+#include "linux/i2c.h"
+#include "linux/of_address.h"
+#include "linux/of_gpio.h"
+#include "linux/of_platform.h"
+>>>>>>> upstream/rpi-4.4.y
 #include "vc4_drv.h"
 #include "vc4_regs.h"
 
@@ -75,7 +93,10 @@
 
 # define DSI_TXPKT1C_CMD_TX_TIME_MASK	VC4_MASK(7, 6)
 # define DSI_TXPKT1C_CMD_TX_TIME_SHIFT	6
+<<<<<<< HEAD
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 # define DSI_TXPKT1C_CMD_CTRL_MASK	VC4_MASK(5, 4)
 # define DSI_TXPKT1C_CMD_CTRL_SHIFT	4
 /* Command only.  Uses TXPKT1H and DISPLAY_NO */
@@ -158,7 +179,11 @@
 # define DSI_DISP_HBP_CTRL		BIT(7)
 # define DSI_DISP0_CHANNEL_MASK		VC4_MASK(6, 5)
 # define DSI_DISP0_CHANNEL_SHIFT	5
+<<<<<<< HEAD
 /* Enables end events for HSYNC/VSYNC, not just start events. */
+=======
+/* Enables and end events for HSYNC/VSYNC, not just start events. */
+>>>>>>> upstream/rpi-4.4.y
 # define DSI_DISP0_ST_END		BIT(4)
 # define DSI_DISP0_PFORMAT_MASK		VC4_MASK(3, 2)
 # define DSI_DISP0_PFORMAT_SHIFT	2
@@ -256,9 +281,15 @@
 # define DSI1_PHYC_ESC_CLK_LPDT_MASK	VC4_MASK(25, 20)
 # define DSI1_PHYC_ESC_CLK_LPDT_SHIFT	20
 # define DSI1_PHYC_HS_CLK_CONTINUOUS	BIT(18)
+<<<<<<< HEAD
 # define DSI0_PHYC_ESC_CLK_LPDT_MASK	VC4_MASK(17, 12)
 # define DSI0_PHYC_ESC_CLK_LPDT_SHIFT	12
 # define DSI1_PHYC_CLANE_ULPS		BIT(17)
+=======
+# define DSI1_PHYC_CLANE_ULPS		BIT(17)
+# define DSI0_PHYC_ESC_CLK_LPDT_MASK	VC4_MASK(17, 12)
+# define DSI0_PHYC_ESC_CLK_LPDT_SHIFT	12
+>>>>>>> upstream/rpi-4.4.y
 # define DSI1_PHYC_CLANE_ENABLE		BIT(16)
 # define DSI_PHYC_DLANE3_ULPS		BIT(13)
 # define DSI_PHYC_DLANE3_ENABLE		BIT(12)
@@ -333,6 +364,10 @@
 #define DSI0_ID			0x74
 # define DSI_ID_VALUE		0x00647369
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> upstream/rpi-4.4.y
 #define DSI1_CTRL		0x00
 # define DSI_CTRL_HS_CLKC_MASK		VC4_MASK(15, 14)
 # define DSI_CTRL_HS_CLKC_SHIFT		14
@@ -377,6 +412,10 @@
 #define DSI1_DISP0_CTRL		0x28
 #define DSI1_INT_STAT		0x30
 #define DSI1_INT_EN		0x34
+<<<<<<< HEAD
+=======
+
+>>>>>>> upstream/rpi-4.4.y
 /* State reporting bits.  These mostly behave like INT_STAT, where
  * writing a 1 clears the bit.
  */
@@ -522,16 +561,24 @@ struct vc4_dsi {
 	enum mipi_dsi_pixel_format format;
 	u32 mode_flags;
 
+<<<<<<< HEAD
 	/* Input clock from CPRMAN to the digital PHY, for the DSI
 	 * escape clock.
 	 */
 	struct clk *escape_clock;
 
 	/* Input clock to the analog PHY, used to generate the DSI bit
+=======
+	/* Input clock to the PHY, for the DSI escape clock. */
+	struct clk *escape_clock;
+
+	/* Input clock to the PHY, used to generate the DSI bit
+>>>>>>> upstream/rpi-4.4.y
 	 * clock.
 	 */
 	struct clk *pll_phy_clock;
 
+<<<<<<< HEAD
 	/* HS Clocks generated within the DSI analog PHY. */
 	struct clk_fixed_factor phy_clocks[3];
 
@@ -539,24 +586,49 @@ struct vc4_dsi {
 
 	/* Pixel clock output to the pixelvalve, generated from the HS
 	 * clock.
+=======
+	/* Byte clock generated within the DSI PHY. */
+	struct clk_hw phy_byte_clock;
+
+	struct clk_onecell_data clk_onecell;
+
+	/* Pixel clock output to the pixelvalve, generated from the
+	 * byte clock.
+>>>>>>> upstream/rpi-4.4.y
 	 */
 	struct clk *pixel_clock;
 
 	struct completion xfer_completion;
 	int xfer_result;
+<<<<<<< HEAD
 };
 
 #define host_to_dsi(host) container_of(host, struct vc4_dsi, dsi_host)
 
 static inline void
 dsi_dma_workaround_write(struct vc4_dsi *dsi, u32 offset, u32 val)
+=======
+
+	bool use_firmware_setup;
+};
+
+static inline void
+dsi_write(struct vc4_dsi *dsi, u32 offset, u32 val)
+>>>>>>> upstream/rpi-4.4.y
 {
 	struct dma_chan *chan = dsi->reg_dma_chan;
 	struct dma_async_tx_descriptor *tx;
 	dma_cookie_t cookie;
 	int ret;
 
+<<<<<<< HEAD
 	/* DSI0 should be able to write normally. */
+=======
+#if 0 /* XXX */
+	dev_info(&dsi->pdev->dev, "WRITE 0x%04x -> 0x%08x\n", offset, val);
+#endif
+
+>>>>>>> upstream/rpi-4.4.y
 	if (!chan) {
 		writel(val, dsi->regs + offset);
 		return;
@@ -582,10 +654,26 @@ dsi_dma_workaround_write(struct vc4_dsi *dsi, u32 offset, u32 val)
 	ret = dma_sync_wait(chan, cookie);
 	if (ret)
 		DRM_ERROR("Failed to wait for DMA: %d\n", ret);
+<<<<<<< HEAD
 }
 
 #define DSI_READ(offset) readl(dsi->regs + (offset))
 #define DSI_WRITE(offset, val) dsi_dma_workaround_write(dsi, offset, val)
+=======
+
+#if 0 /* XXX */
+	if (offset != DSI1_TXPKT_CMD_FIFO &&
+	    offset != DSI1_TXPKT_PIX_FIFO) {
+		dev_info(&dsi->pdev->dev,
+			 "             -> 0x%08x\n",
+			 readl(dsi->regs + (offset)));
+	}
+#endif
+}
+
+#define DSI_READ(offset) readl(dsi->regs + (offset))
+#define DSI_WRITE(offset, val) dsi_write(dsi, offset, val)
+>>>>>>> upstream/rpi-4.4.y
 #define DSI_PORT_READ(offset) \
 	DSI_READ(dsi->port ? DSI1_##offset : DSI0_##offset)
 #define DSI_PORT_WRITE(offset, val) \
@@ -603,11 +691,24 @@ to_vc4_dsi_encoder(struct drm_encoder *encoder)
 {
 	return container_of(encoder, struct vc4_dsi_encoder, base.base);
 }
+<<<<<<< HEAD
+=======
+#define host_to_dsi(host) container_of(host, struct vc4_dsi, dsi_host)
+>>>>>>> upstream/rpi-4.4.y
 
 /* VC4 DSI connector KMS struct */
 struct vc4_dsi_connector {
 	struct drm_connector base;
 	struct vc4_dsi *dsi;
+<<<<<<< HEAD
+=======
+
+	/* Since the connector is attached to just the one encoder,
+	 * this is the reference to it so we can do the best_encoder()
+	 * hook.
+	 */
+	struct drm_encoder *encoder;
+>>>>>>> upstream/rpi-4.4.y
 };
 
 static inline struct vc4_dsi_connector *
@@ -616,6 +717,7 @@ to_vc4_dsi_connector(struct drm_connector *connector)
 	return container_of(connector, struct vc4_dsi_connector, base);
 }
 
+<<<<<<< HEAD
 #define DSI_REG(reg) { reg, #reg }
 static const struct {
 	u32 reg;
@@ -689,10 +791,61 @@ static void vc4_dsi_dump_regs(struct vc4_dsi *dsi)
 				 dsi1_regs[i].reg, dsi1_regs[i].name,
 				 DSI_READ(dsi1_regs[i].reg));
 		}
+=======
+static const struct debugfs_reg32 dsi0_regs[] = {
+	VC4_DEBUG_REG(DSI0_CTRL),
+	VC4_DEBUG_REG(DSI0_STAT),
+	VC4_DEBUG_REG(DSI0_DISP0_CTRL),
+	VC4_DEBUG_REG(DSI0_DISP1_CTRL),
+	VC4_DEBUG_REG(DSI0_PHYC),
+	VC4_DEBUG_REG(DSI0_STAT),
+	VC4_DEBUG_REG(DSI0_HS_CLT0),
+	VC4_DEBUG_REG(DSI0_HS_CLT1),
+	VC4_DEBUG_REG(DSI0_HS_CLT2),
+	VC4_DEBUG_REG(DSI0_HS_DLT3),
+	VC4_DEBUG_REG(DSI0_HS_DLT4),
+	VC4_DEBUG_REG(DSI0_HS_DLT5),
+	VC4_DEBUG_REG(DSI0_HS_DLT6),
+	VC4_DEBUG_REG(DSI0_HS_DLT7),
+	VC4_DEBUG_REG(DSI0_PHY_AFEC0),
+	VC4_DEBUG_REG(DSI0_PHY_AFEC1),
+	VC4_DEBUG_REG(DSI0_ID),
+};
+
+static const struct debugfs_reg32 dsi1_regs[] = {
+	VC4_DEBUG_REG(DSI1_CTRL),
+	VC4_DEBUG_REG(DSI1_STAT),
+	VC4_DEBUG_REG(DSI1_DISP0_CTRL),
+	VC4_DEBUG_REG(DSI1_DISP1_CTRL),
+	VC4_DEBUG_REG(DSI1_PHYC),
+	VC4_DEBUG_REG(DSI1_STAT),
+	VC4_DEBUG_REG(DSI1_HS_CLT0),
+	VC4_DEBUG_REG(DSI1_HS_CLT1),
+	VC4_DEBUG_REG(DSI1_HS_CLT2),
+	VC4_DEBUG_REG(DSI1_HS_DLT3),
+	VC4_DEBUG_REG(DSI1_HS_DLT4),
+	VC4_DEBUG_REG(DSI1_HS_DLT5),
+	VC4_DEBUG_REG(DSI1_HS_DLT6),
+	VC4_DEBUG_REG(DSI1_HS_DLT7),
+	VC4_DEBUG_REG(DSI1_PHY_AFEC0),
+	VC4_DEBUG_REG(DSI1_PHY_AFEC1),
+	VC4_DEBUG_REG(DSI1_ID),
+};
+
+static void vc4_dsi_dump_regs(struct vc4_dsi *dsi, const char *prefix)
+{
+	if (dsi->port == 0) {
+		vc4_dump_regs32(dsi0_regs, ARRAY_SIZE(dsi0_regs), dsi->regs,
+				prefix);
+	} else {
+		vc4_dump_regs32(dsi1_regs, ARRAY_SIZE(dsi1_regs), dsi->regs,
+				prefix);
+>>>>>>> upstream/rpi-4.4.y
 	}
 }
 
 #ifdef CONFIG_DEBUG_FS
+<<<<<<< HEAD
 int vc4_dsi_debugfs_regs(struct seq_file *m, void *unused)
 {
 	struct drm_info_node *node = (struct drm_info_node *)m->private;
@@ -717,6 +870,24 @@ int vc4_dsi_debugfs_regs(struct seq_file *m, void *unused)
 				   dsi1_regs[i].reg, dsi1_regs[i].name,
 				   DSI_READ(dsi1_regs[i].reg));
 		}
+=======
+int vc4_dsi_debugfs_regs(struct seq_file *m, void *number)
+{
+	struct drm_info_node *node = (struct drm_info_node *)m->private;
+	struct drm_device *dev = node->minor->dev;
+	struct vc4_dev *vc4 = to_vc4_dev(dev);
+	struct vc4_dsi *dsi;
+	int port = (uintptr_t)number;
+
+	if (port == 0) {
+		dsi = vc4->dsi0;
+		debugfs_print_regs32(m, dsi0_regs, ARRAY_SIZE(dsi0_regs),
+				     dsi->regs, "");
+	} else {
+		dsi = vc4->dsi1;
+		debugfs_print_regs32(m, dsi1_regs, ARRAY_SIZE(dsi1_regs),
+				     dsi->regs, "");
+>>>>>>> upstream/rpi-4.4.y
 	}
 
 	return 0;
@@ -754,6 +925,17 @@ static int vc4_dsi_connector_get_modes(struct drm_connector *connector)
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+static struct drm_encoder *
+vc4_dsi_connector_best_encoder(struct drm_connector *connector)
+{
+	struct vc4_dsi_connector *dsi_connector =
+		to_vc4_dsi_connector(connector);
+	return dsi_connector->encoder;
+}
+
+>>>>>>> upstream/rpi-4.4.y
 static const struct drm_connector_funcs vc4_dsi_connector_funcs = {
 	.dpms = drm_atomic_helper_connector_dpms,
 	.detect = vc4_dsi_connector_detect,
@@ -766,6 +948,10 @@ static const struct drm_connector_funcs vc4_dsi_connector_funcs = {
 
 static const struct drm_connector_helper_funcs vc4_dsi_connector_helper_funcs = {
 	.get_modes = vc4_dsi_connector_get_modes,
+<<<<<<< HEAD
+=======
+	.best_encoder = vc4_dsi_connector_best_encoder,
+>>>>>>> upstream/rpi-4.4.y
 };
 
 static struct drm_connector *vc4_dsi_connector_init(struct drm_device *dev,
@@ -776,13 +962,21 @@ static struct drm_connector *vc4_dsi_connector_init(struct drm_device *dev,
 	int ret = 0;
 
 	dsi_connector = devm_kzalloc(dev->dev, sizeof(*dsi_connector),
+<<<<<<< HEAD
 				     GFP_KERNEL);
+=======
+				      GFP_KERNEL);
+>>>>>>> upstream/rpi-4.4.y
 	if (!dsi_connector) {
 		ret = -ENOMEM;
 		goto fail;
 	}
 	connector = &dsi_connector->base;
 
+<<<<<<< HEAD
+=======
+	dsi_connector->encoder = dsi->encoder;
+>>>>>>> upstream/rpi-4.4.y
 	dsi_connector->dsi = dsi;
 
 	drm_connector_init(dev, connector, &vc4_dsi_connector_funcs,
@@ -797,7 +991,11 @@ static struct drm_connector *vc4_dsi_connector_init(struct drm_device *dev,
 
 	return connector;
 
+<<<<<<< HEAD
 fail:
+=======
+ fail:
+>>>>>>> upstream/rpi-4.4.y
 	if (connector)
 		vc4_dsi_connector_destroy(connector);
 
@@ -828,18 +1026,30 @@ static void vc4_dsi_latch_ulps(struct vc4_dsi *dsi, bool latch)
 /* Enters or exits Ultra Low Power State. */
 static void vc4_dsi_ulps(struct vc4_dsi *dsi, bool ulps)
 {
+<<<<<<< HEAD
 	bool continuous = dsi->mode_flags & MIPI_DSI_CLOCK_NON_CONTINUOUS;
 	u32 phyc_ulps = ((continuous ? DSI_PORT_BIT(PHYC_CLANE_ULPS) : 0) |
+=======
+	u32 phyc_ulps = (DSI_PORT_BIT(PHYC_CLANE_ULPS) |
+>>>>>>> upstream/rpi-4.4.y
 			 DSI_PHYC_DLANE0_ULPS |
 			 (dsi->lanes > 1 ? DSI_PHYC_DLANE1_ULPS : 0) |
 			 (dsi->lanes > 2 ? DSI_PHYC_DLANE2_ULPS : 0) |
 			 (dsi->lanes > 3 ? DSI_PHYC_DLANE3_ULPS : 0));
+<<<<<<< HEAD
 	u32 stat_ulps = ((continuous ? DSI1_STAT_PHY_CLOCK_ULPS : 0) |
+=======
+	u32 stat_ulps = (DSI1_STAT_PHY_CLOCK_ULPS |
+>>>>>>> upstream/rpi-4.4.y
 			 DSI1_STAT_PHY_D0_ULPS |
 			 (dsi->lanes > 1 ? DSI1_STAT_PHY_D1_ULPS : 0) |
 			 (dsi->lanes > 2 ? DSI1_STAT_PHY_D2_ULPS : 0) |
 			 (dsi->lanes > 3 ? DSI1_STAT_PHY_D3_ULPS : 0));
+<<<<<<< HEAD
 	u32 stat_stop = ((continuous ? DSI1_STAT_PHY_CLOCK_STOP : 0) |
+=======
+	u32 stat_stop = (DSI1_STAT_PHY_CLOCK_STOP |
+>>>>>>> upstream/rpi-4.4.y
 			 DSI1_STAT_PHY_D0_STOP |
 			 (dsi->lanes > 1 ? DSI1_STAT_PHY_D1_STOP : 0) |
 			 (dsi->lanes > 2 ? DSI1_STAT_PHY_D2_STOP : 0) |
@@ -848,7 +1058,11 @@ static void vc4_dsi_ulps(struct vc4_dsi *dsi, bool ulps)
 
 	DSI_PORT_WRITE(STAT, stat_ulps);
 	DSI_PORT_WRITE(PHYC, DSI_PORT_READ(PHYC) | phyc_ulps);
+<<<<<<< HEAD
 	ret = wait_for((DSI_PORT_READ(STAT) & stat_ulps) == stat_ulps, 200);
+=======
+	ret = wait_for((DSI_PORT_READ(STAT) & stat_ulps) == stat_ulps, 20);
+>>>>>>> upstream/rpi-4.4.y
 	if (ret) {
 		dev_warn(&dsi->pdev->dev,
 			 "Timeout waiting for DSI ULPS entry: STAT 0x%08x",
@@ -867,7 +1081,11 @@ static void vc4_dsi_ulps(struct vc4_dsi *dsi, bool ulps)
 
 	DSI_PORT_WRITE(STAT, stat_stop);
 	DSI_PORT_WRITE(PHYC, DSI_PORT_READ(PHYC) & ~phyc_ulps);
+<<<<<<< HEAD
 	ret = wait_for((DSI_PORT_READ(STAT) & stat_stop) == stat_stop, 200);
+=======
+	ret = wait_for((DSI_PORT_READ(STAT) & stat_stop) == stat_stop, 20);
+>>>>>>> upstream/rpi-4.4.y
 	if (ret) {
 		dev_warn(&dsi->pdev->dev,
 			 "Timeout waiting for DSI STOP entry: STAT 0x%08x",
@@ -877,7 +1095,11 @@ static void vc4_dsi_ulps(struct vc4_dsi *dsi, bool ulps)
 	}
 }
 
+<<<<<<< HEAD
 static u32
+=======
+static uint32_t
+>>>>>>> upstream/rpi-4.4.y
 dsi_hs_timing(u32 ui_ns, u32 ns, u32 ui)
 {
 	/* The HS timings have to be rounded up to a multiple of 8
@@ -889,7 +1111,11 @@ dsi_hs_timing(u32 ui_ns, u32 ns, u32 ui)
 /* ESC always runs at 100Mhz. */
 #define ESC_TIME_NS 10
 
+<<<<<<< HEAD
 static u32
+=======
+static uint32_t
+>>>>>>> upstream/rpi-4.4.y
 dsi_esc_timing(u32 ns)
 {
 	return DIV_ROUND_UP(ns, ESC_TIME_NS);
@@ -899,6 +1125,7 @@ static void vc4_dsi_encoder_disable(struct drm_encoder *encoder)
 {
 	struct vc4_dsi_encoder *vc4_encoder = to_vc4_dsi_encoder(encoder);
 	struct vc4_dsi *dsi = vc4_encoder->dsi;
+<<<<<<< HEAD
 	struct device *dev = &dsi->pdev->dev;
 
 	drm_panel_disable(dsi->panel);
@@ -912,6 +1139,27 @@ static void vc4_dsi_encoder_disable(struct drm_encoder *encoder)
 	clk_disable_unprepare(dsi->pixel_clock);
 
 	pm_runtime_put(dev);
+=======
+
+	drm_panel_disable(dsi->panel);
+
+	if (!dsi->use_firmware_setup)
+		vc4_dsi_ulps(dsi, true);
+
+	drm_panel_unprepare(dsi->panel);
+
+	if (dsi->use_firmware_setup) {
+		/* Since we're using the firmware setup and aren't
+		 * communicating with the panel to bring the link
+		 * down, we need to just keep the clocks and DSI
+		 * module running.
+		 */
+	} else {
+		clk_disable_unprepare(dsi->pll_phy_clock);
+		clk_disable_unprepare(dsi->escape_clock);
+		clk_disable_unprepare(dsi->pixel_clock);
+	}
+>>>>>>> upstream/rpi-4.4.y
 }
 
 static void vc4_dsi_encoder_enable(struct drm_encoder *encoder)
@@ -920,6 +1168,7 @@ static void vc4_dsi_encoder_enable(struct drm_encoder *encoder)
 	struct vc4_dsi_encoder *vc4_encoder = to_vc4_dsi_encoder(encoder);
 	struct vc4_dsi *dsi = vc4_encoder->dsi;
 	struct device *dev = &dsi->pdev->dev;
+<<<<<<< HEAD
 	u32 format = 0, divider = 0;
 	bool debug_dump_regs = false;
 	unsigned long hs_clock;
@@ -937,17 +1186,82 @@ static void vc4_dsi_encoder_enable(struct drm_encoder *encoder)
 		return;
 	}
 
+=======
+	uint32_t format = 0, divider = 0;
+	bool debug_dump_regs = false;
+	unsigned long hs_clock;
+	uint32_t ui_ns;
+	/* Minimum LP state duration in escape clock cycles. */
+	uint32_t lpx = dsi_esc_timing(60);
+	uint32_t phyc;
+	int ret;
+
+>>>>>>> upstream/rpi-4.4.y
 	ret = drm_panel_prepare(dsi->panel);
 	if (ret) {
 		DRM_ERROR("Panel failed to prepare\n");
 		return;
 	}
 
+<<<<<<< HEAD
 	if (debug_dump_regs) {
 		DRM_INFO("DSI regs before:\n");
 		vc4_dsi_dump_regs(dsi);
 	}
 
+=======
+	if (debug_dump_regs)
+		vc4_dsi_dump_regs(dsi, "DSI before: ");
+
+	/* XXX */
+	if (!dsi->use_firmware_setup) {
+		ret = clk_set_rate(dsi->pll_phy_clock, 2020000000 / 3);
+		if (ret)
+			dev_err(&dsi->pdev->dev, "Failed to set phy clock: %d\n", ret);
+		dev_info(&dsi->pdev->dev, "Tried to set clock to: %d\n", 2000000000 / 3);
+
+		ret = clk_prepare_enable(dsi->escape_clock);
+		if (ret) {
+			DRM_ERROR("Failed to turn on DSI escape clock: %d\n", ret);
+			return;
+		}
+
+		ret = clk_prepare_enable(dsi->pll_phy_clock);
+		if (ret) {
+			DRM_ERROR("Failed to turn on DSI PLL: %d\n", ret);
+			return;
+		}
+
+		ret = clk_set_rate(dsi->pixel_clock, mode->clock * 1000);
+		if (ret)
+			dev_err(dev, "Failed to set pixel clock: %d\n", ret);
+		dev_info(&dsi->pdev->dev, "Tried to set pixel clock to: %d\n", mode->clock * 1000);
+
+		ret = clk_prepare_enable(dsi->pixel_clock);
+		if (ret) {
+			DRM_ERROR("Failed to turn on DSI pixel clock: %d\n", ret);
+			return;
+		}
+	}
+
+	hs_clock = clk_get_rate(dsi->pll_phy_clock);
+
+	/* Reset the DSI and all its fifos. */
+	if (dsi->port == 0) {
+		DSI_PORT_WRITE(CTRL,
+			       DSI_CTRL_SOFT_RESET_CFG |
+			       DSI0_CTRL_RESET_FIFOS);
+	} else {
+		DSI_PORT_WRITE(CTRL,
+			       DSI_CTRL_SOFT_RESET_CFG |
+			       DSI1_CTRL_RESET_FIFOS);
+	}
+
+	DSI_PORT_WRITE(CTRL,
+		       DSI_CTRL_HSDT_EOT_DISABLE |
+		       DSI_CTRL_RX_LPDT_EOT_DISABLE);
+
+>>>>>>> upstream/rpi-4.4.y
 	switch (dsi->format) {
 	case MIPI_DSI_FMT_RGB888:
 		format = DSI_PFORMAT_RGB888;
@@ -967,6 +1281,7 @@ static void vc4_dsi_encoder_enable(struct drm_encoder *encoder)
 		break;
 	}
 
+<<<<<<< HEAD
 	phy_clock = pixel_clock_hz * divider;
 	ret = clk_set_rate(dsi->pll_phy_clock, phy_clock);
 	if (ret) {
@@ -986,6 +1301,8 @@ static void vc4_dsi_encoder_enable(struct drm_encoder *encoder)
 	/* Clear all stat bits so we see what has happened during enable. */
 	DSI_PORT_WRITE(STAT, DSI_PORT_READ(STAT));
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 	/* Set AFE CTR00/CTR1 to release powerdown of analog. */
 	if (dsi->port == 0) {
 		u32 afec0 = (VC4_SET_FIELD(7, DSI_PHY_AFEC0_PTATADJ) |
@@ -1000,9 +1317,15 @@ static void vc4_dsi_encoder_enable(struct drm_encoder *encoder)
 		DSI_PORT_WRITE(PHY_AFEC0, afec0);
 
 		DSI_PORT_WRITE(PHY_AFEC1,
+<<<<<<< HEAD
 			       VC4_SET_FIELD(6,  DSI0_PHY_AFEC1_IDR_DLANE1) |
 			       VC4_SET_FIELD(6,  DSI0_PHY_AFEC1_IDR_DLANE0) |
 			       VC4_SET_FIELD(6,  DSI0_PHY_AFEC1_IDR_CLANE));
+=======
+			  VC4_SET_FIELD(6,  DSI0_PHY_AFEC1_IDR_DLANE1) |
+			  VC4_SET_FIELD(6,  DSI0_PHY_AFEC1_IDR_DLANE0) |
+			  VC4_SET_FIELD(6,  DSI0_PHY_AFEC1_IDR_CLANE));
+>>>>>>> upstream/rpi-4.4.y
 	} else {
 		u32 afec0 = (VC4_SET_FIELD(7, DSI_PHY_AFEC0_PTATADJ) |
 			     VC4_SET_FIELD(7, DSI_PHY_AFEC0_CTATADJ) |
@@ -1019,11 +1342,17 @@ static void vc4_dsi_encoder_enable(struct drm_encoder *encoder)
 		if (dsi->lanes < 2)
 			afec0 |= DSI1_PHY_AFEC0_PD_DLANE1;
 
+<<<<<<< HEAD
 		afec0 |= DSI1_PHY_AFEC0_RESET;
+=======
+		if (!(dsi->mode_flags & MIPI_DSI_MODE_VIDEO))
+			afec0 |= DSI1_PHY_AFEC0_RESET;
+>>>>>>> upstream/rpi-4.4.y
 
 		DSI_PORT_WRITE(PHY_AFEC0, afec0);
 
 		DSI_PORT_WRITE(PHY_AFEC1, 0);
+<<<<<<< HEAD
 
 		/* AFEC reset hold time */
 		mdelay(1);
@@ -1061,6 +1390,8 @@ static void vc4_dsi_encoder_enable(struct drm_encoder *encoder)
 	if (ret) {
 		DRM_ERROR("Failed to turn on DSI pixel clock: %d\n", ret);
 		return;
+=======
+>>>>>>> upstream/rpi-4.4.y
 	}
 
 	/* How many ns one DSI unit interval is.  Note that the clock
@@ -1115,6 +1446,7 @@ static void vc4_dsi_encoder_enable(struct drm_encoder *encoder)
 		       VC4_SET_FIELD(dsi_esc_timing(1000000),
 				     DSI_HS_DLT7_LP_WUP));
 
+<<<<<<< HEAD
 	DSI_PORT_WRITE(PHYC,
 		       DSI_PHYC_DLANE0_ENABLE |
 		       (dsi->lanes >= 2 ? DSI_PHYC_DLANE1_ENABLE : 0) |
@@ -1126,6 +1458,18 @@ static void vc4_dsi_encoder_enable(struct drm_encoder *encoder)
 		       (dsi->port == 0 ?
 			VC4_SET_FIELD(lpx - 1, DSI0_PHYC_ESC_CLK_LPDT) :
 			VC4_SET_FIELD(lpx - 1, DSI1_PHYC_ESC_CLK_LPDT)));
+=======
+	/* Define EOT PKT in EOT reg. */
+
+	phyc = (DSI_PHYC_DLANE0_ENABLE |
+		(dsi->lanes >= 2 ? DSI_PHYC_DLANE1_ENABLE : 0) |
+		(dsi->lanes >= 3 ? DSI_PHYC_DLANE2_ENABLE : 0) |
+		(dsi->lanes >= 4 ? DSI_PHYC_DLANE3_ENABLE : 0) |
+		(dsi->port == 0 ?
+		 VC4_SET_FIELD(lpx - 1, DSI0_PHYC_ESC_CLK_LPDT) :
+		 VC4_SET_FIELD(lpx - 1, DSI1_PHYC_ESC_CLK_LPDT)) |
+		DSI_PORT_BIT(PHYC_CLANE_ENABLE));
+>>>>>>> upstream/rpi-4.4.y
 
 	DSI_PORT_WRITE(CTRL,
 		       DSI_PORT_READ(CTRL) |
@@ -1138,7 +1482,11 @@ static void vc4_dsi_encoder_enable(struct drm_encoder *encoder)
 	/* Bus turnaround timeout */
 	DSI_PORT_WRITE(TA_TO_CNT, 100000);
 	/* Display reset sequence timeout */
+<<<<<<< HEAD
 	DSI_PORT_WRITE(PR_TO_CNT, 100000);
+=======
+	DSI_PORT_WRITE(TA_TO_CNT, 100000);
+>>>>>>> upstream/rpi-4.4.y
 
 	if (dsi->mode_flags & MIPI_DSI_MODE_VIDEO) {
 		DSI_PORT_WRITE(DISP0_CTRL,
@@ -1162,6 +1510,7 @@ static void vc4_dsi_encoder_enable(struct drm_encoder *encoder)
 				     DSI_DISP1_PFORMAT) |
 		       DSI_DISP1_ENABLE);
 
+<<<<<<< HEAD
 	/* Ungate the block. */
 	if (dsi->port == 0)
 		DSI_PORT_WRITE(CTRL, DSI_PORT_READ(CTRL) | DSI0_CTRL_CTRL0);
@@ -1182,6 +1531,25 @@ static void vc4_dsi_encoder_enable(struct drm_encoder *encoder)
 		DRM_INFO("DSI regs after:\n");
 		vc4_dsi_dump_regs(dsi);
 	}
+=======
+	if (!(dsi->mode_flags & MIPI_DSI_CLOCK_NON_CONTINUOUS))
+		phyc |= DSI_PORT_BIT(PHYC_HS_CLK_CONTINUOUS);
+
+	DSI_PORT_WRITE(PHYC, phyc);
+
+	/* Ungate the block. */
+	if (dsi->port == 0)
+		DSI_PORT_WRITE(CTRL, DSI_PORT_READ(CTRL) | DSI0_CTRL_CTRL0);
+	else {
+		DSI_PORT_WRITE(CTRL, DSI_PORT_READ(CTRL) | DSI1_CTRL_EN);
+	}
+
+	if (!dsi->use_firmware_setup)
+		vc4_dsi_ulps(dsi, false);
+
+	if (debug_dump_regs)
+		vc4_dsi_dump_regs(dsi, "DSI after: ");
+>>>>>>> upstream/rpi-4.4.y
 
 	ret = drm_panel_enable(dsi->panel);
 	if (ret) {
@@ -1202,6 +1570,12 @@ static ssize_t vc4_dsi_host_transfer(struct mipi_dsi_host *host,
 	u32 cmd_fifo_len = 0, pix_fifo_len = 0;
 
 	mipi_dsi_create_packet(&packet, msg);
+<<<<<<< HEAD
+=======
+	pr_err("DSI host xfer %db, %s\n",
+	       packet.payload_length,
+	       is_long ? "long" : "short");
+>>>>>>> upstream/rpi-4.4.y
 
 	pkth |= VC4_SET_FIELD(packet.header[0], DSI_TXPKT1H_BC_DT);
 	pkth |= VC4_SET_FIELD(packet.header[1] |
@@ -1217,6 +1591,7 @@ static ssize_t vc4_dsi_host_transfer(struct mipi_dsi_host *host,
 		 *
 		 * With this arrangement, the command FIFO will never get full.
 		 */
+<<<<<<< HEAD
 		if (packet.payload_length <= 16) {
 			cmd_fifo_len = packet.payload_length;
 			pix_fifo_len = 0;
@@ -1226,6 +1601,11 @@ static ssize_t vc4_dsi_host_transfer(struct mipi_dsi_host *host,
 			pix_fifo_len = ((packet.payload_length - cmd_fifo_len) /
 					DSI_PIX_FIFO_WIDTH);
 		}
+=======
+		cmd_fifo_len = packet.payload_length % DSI_PIX_FIFO_WIDTH;
+		pix_fifo_len = ((packet.payload_length - cmd_fifo_len) /
+				DSI_PIX_FIFO_WIDTH);
+>>>>>>> upstream/rpi-4.4.y
 
 		WARN_ON_ONCE(pix_fifo_len >= DSI_PIX_FIFO_DEPTH);
 
@@ -1240,11 +1620,21 @@ static ssize_t vc4_dsi_host_transfer(struct mipi_dsi_host *host,
 				      DSI_TXPKT1C_CMD_CTRL);
 	}
 
+<<<<<<< HEAD
 	for (i = 0; i < cmd_fifo_len; i++)
 		DSI_PORT_WRITE(TXPKT_CMD_FIFO, packet.payload[i]);
 	for (i = 0; i < pix_fifo_len; i++) {
 		const u8 *pix = packet.payload + cmd_fifo_len + i * 4;
 
+=======
+	dev_info(&dsi->pdev->dev, "FIFO setup: %d, %d\n",
+		 cmd_fifo_len, pix_fifo_len);
+
+	for (i = 0; i < cmd_fifo_len; i++)
+		DSI_PORT_WRITE(TXPKT_CMD_FIFO, packet.payload[i]);
+	for (i = 0; i < pix_fifo_len; i++) {
+		const uint8_t *pix = packet.payload + cmd_fifo_len + i * 4;
+>>>>>>> upstream/rpi-4.4.y
 		DSI_PORT_WRITE(TXPKT_PIX_FIFO,
 			       pix[0] |
 			       pix[1] << 8 |
@@ -1288,17 +1678,37 @@ static ssize_t vc4_dsi_host_transfer(struct mipi_dsi_host *host,
 	DSI_PORT_WRITE(TXPKT1C, pktc);
 
 	if (!wait_for_completion_timeout(&dsi->xfer_completion,
+<<<<<<< HEAD
 					 msecs_to_jiffies(1000))) {
 		dev_err(&dsi->pdev->dev, "transfer interrupt wait timeout");
 		dev_err(&dsi->pdev->dev, "instat: 0x%08x\n",
 			DSI_PORT_READ(INT_STAT));
 		ret = -ETIMEDOUT;
+=======
+					 msecs_to_jiffies(100))) {
+		u32 stat = DSI_PORT_READ(STAT);
+
+		dev_err(&dsi->pdev->dev, "transfer interrupt wait timeout");
+		dev_err(&dsi->pdev->dev, "INT_STAT: 0x%08x, STAT: 0x%08x\n",
+			DSI_PORT_READ(INT_STAT), stat);
+
+		if (stat & DSI1_STAT_TXPKT1_DONE) {
+			dev_info(&dsi->pdev->dev,
+				 "STAT reports DONE, though.\n");
+			ret = 0;
+		} else {
+			ret = -ETIMEDOUT;
+		}
+>>>>>>> upstream/rpi-4.4.y
 	} else {
 		ret = dsi->xfer_result;
 	}
 
 	DSI_PORT_WRITE(INT_EN, DSI1_INTERRUPTS_ALWAYS_ENABLED);
+<<<<<<< HEAD
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 	if (ret)
 		goto reset_fifo_and_return;
 
@@ -1307,12 +1717,20 @@ static ssize_t vc4_dsi_host_transfer(struct mipi_dsi_host *host,
 		u8 *msg_rx = msg->rx_buf;
 
 		if (rxpkt1h & DSI_RXPKT1H_PKT_TYPE_LONG) {
+<<<<<<< HEAD
 			u32 rxlen = VC4_GET_FIELD(rxpkt1h,
 						  DSI_RXPKT1H_BC_PARAM);
 
 			if (rxlen != msg->rx_len) {
 				DRM_ERROR("DSI returned %db, expecting %db\n",
 					  rxlen, (int)msg->rx_len);
+=======
+			u32 rxlen = VC4_GET_FIELD(rxpkt1h, DSI_RXPKT1H_BC_PARAM);
+
+			if (rxlen != msg->rx_len) {
+				DRM_ERROR("DSI returned %db, expecting %db\n",
+					  rxlen, msg->rx_len);
+>>>>>>> upstream/rpi-4.4.y
 				ret = -ENXIO;
 				goto reset_fifo_and_return;
 			}
@@ -1320,7 +1738,11 @@ static ssize_t vc4_dsi_host_transfer(struct mipi_dsi_host *host,
 			for (i = 0; i < msg->rx_len; i++)
 				msg_rx[i] = DSI_READ(DSI1_RXPKT_FIFO);
 		} else {
+<<<<<<< HEAD
 			/* FINISHME: Handle AWER */
+=======
+			/* XXX: AWER */
+>>>>>>> upstream/rpi-4.4.y
 
 			msg_rx[0] = VC4_GET_FIELD(rxpkt1h,
 						  DSI_RXPKT1H_SHORT_0);
@@ -1334,6 +1756,7 @@ static ssize_t vc4_dsi_host_transfer(struct mipi_dsi_host *host,
 	return ret;
 
 reset_fifo_and_return:
+<<<<<<< HEAD
 	DRM_ERROR("DSI transfer failed, resetting: %d\n", ret);
 
 	DSI_PORT_WRITE(TXPKT1C, DSI_PORT_READ(TXPKT1C) & ~DSI_TXPKT1C_CMD_EN);
@@ -1344,6 +1767,24 @@ reset_fifo_and_return:
 
 	DSI_PORT_WRITE(TXPKT1C, 0);
 	DSI_PORT_WRITE(INT_EN, DSI1_INTERRUPTS_ALWAYS_ENABLED);
+=======
+	DRM_ERROR("DSI TRANSFER failed, resetting: %d\n", ret);
+
+	DSI_PORT_WRITE(TXPKT1C, DSI_PORT_READ(TXPKT1C) & ~DSI_TXPKT1C_CMD_EN);
+	udelay(1);
+	if (dsi->port == 0) {
+		DSI_PORT_WRITE(CTRL,
+			       DSI_PORT_READ(CTRL) | DSI0_CTRL_RESET_FIFOS);
+	} else {
+		DSI_PORT_WRITE(CTRL,
+			       DSI_PORT_READ(CTRL) | DSI1_CTRL_RESET_FIFOS);
+	}
+
+	DSI_PORT_WRITE(TXPKT1C, 0);
+	DSI_PORT_WRITE(INT_EN, DSI1_INTERRUPTS_ALWAYS_ENABLED);
+
+
+>>>>>>> upstream/rpi-4.4.y
 	return ret;
 }
 
@@ -1351,7 +1792,10 @@ static int vc4_dsi_host_attach(struct mipi_dsi_host *host,
 			       struct mipi_dsi_device *device)
 {
 	struct vc4_dsi *dsi = host_to_dsi(host);
+<<<<<<< HEAD
 	int ret = 0;
+=======
+>>>>>>> upstream/rpi-4.4.y
 
 	dsi->lanes = device->lanes;
 	dsi->channel = device->channel;
@@ -1365,12 +1809,17 @@ static int vc4_dsi_host_attach(struct mipi_dsi_host *host,
 	}
 
 	dsi->panel = of_drm_find_panel(device->dev.of_node);
+<<<<<<< HEAD
 	if (!dsi->panel)
 		return 0;
 
 	ret = drm_panel_attach(dsi->panel, dsi->connector);
 	if (ret != 0)
 		return ret;
+=======
+	if (dsi->panel)
+		return drm_panel_attach(dsi->panel, dsi->connector);
+>>>>>>> upstream/rpi-4.4.y
 
 	drm_helper_hpd_irq_event(dsi->connector->dev);
 
@@ -1384,15 +1833,25 @@ static int vc4_dsi_host_detach(struct mipi_dsi_host *host,
 
 	if (dsi->panel) {
 		int ret = drm_panel_detach(dsi->panel);
+<<<<<<< HEAD
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 		if (ret)
 			return ret;
 
 		dsi->panel = NULL;
+<<<<<<< HEAD
 
 		drm_helper_hpd_irq_event(dsi->connector->dev);
 	}
 
+=======
+	}
+
+	drm_helper_hpd_irq_event(dsi->connector->dev);
+
+>>>>>>> upstream/rpi-4.4.y
 	return 0;
 }
 
@@ -1408,10 +1867,45 @@ static const struct drm_encoder_helper_funcs vc4_dsi_encoder_helper_funcs = {
 };
 
 static const struct of_device_id vc4_dsi_dt_match[] = {
+<<<<<<< HEAD
+=======
+	{ .compatible = "brcm,bcm2835-dsi0", (void *)(uintptr_t)0 },
+>>>>>>> upstream/rpi-4.4.y
 	{ .compatible = "brcm,bcm2835-dsi1", (void *)(uintptr_t)1 },
 	{}
 };
 
+<<<<<<< HEAD
+=======
+static long vc4_dsi_byte_clock_round_rate(struct clk_hw *hw, unsigned long rate,
+					  unsigned long *parent_rate)
+{
+	return *parent_rate / 8;
+}
+
+static unsigned long vc4_dsi_byte_clock_get_rate(struct clk_hw *hw,
+					  unsigned long parent_rate)
+{
+	return parent_rate / 8;
+}
+
+static int vc4_dsi_byte_clock_set_rate(struct clk_hw *hw,
+				       unsigned long rate,
+				       unsigned long parent_rate)
+{
+	return 0;
+}
+
+/* The byte clock has *no* ops filled.  It's always running when the
+ * PHY is.
+ */
+static const struct clk_ops vc4_dsi_byte_clock_ops = {
+	.recalc_rate = vc4_dsi_byte_clock_get_rate,
+	.set_rate = vc4_dsi_byte_clock_set_rate,
+	.round_rate = vc4_dsi_byte_clock_round_rate,
+};
+
+>>>>>>> upstream/rpi-4.4.y
 static void dsi_handle_error(struct vc4_dsi *dsi,
 			     irqreturn_t *ret, u32 stat, u32 bit,
 			     const char *type)
@@ -1460,6 +1954,7 @@ static irqreturn_t vc4_dsi_irq_handler(int irq, void *data)
 	return ret;
 }
 
+<<<<<<< HEAD
 /**
  * Exposes clocks generated by the analog PHY that are consumed by
  * CPRMAN (clk-bcm2835.c).
@@ -1480,6 +1975,36 @@ vc4_dsi_init_phy_clocks(struct vc4_dsi *dsi)
 	int i;
 
 	dsi->clk_onecell.clk_num = ARRAY_SIZE(phy_clocks);
+=======
+static int
+vc4_dsi_init_phy_byte_clock(struct vc4_dsi *dsi)
+{
+	struct device *dev = &dsi->pdev->dev;
+	const char *parent_name = __clk_get_name(dsi->pll_phy_clock);
+	struct clk_init_data init;
+	struct clk *clk;
+
+	memset(&init, 0, sizeof(init));
+	init.parent_names = &parent_name;
+	init.num_parents = 1;
+	if (dsi->port == 1)
+		init.name = "dsi1_byte";
+	else
+		init.name = "dsi0_byte";
+	init.ops = &vc4_dsi_byte_clock_ops;
+	init.flags = 0;
+
+	dsi->phy_byte_clock.init = &init;
+	clk = devm_clk_register(dev, &dsi->phy_byte_clock);
+	if (IS_ERR(clk))
+		return PTR_ERR(clk);
+
+	/* Use the onecell provider because we may need to expose the
+	 * DDR and DDR2 clocks at some point, which we'd want to put
+	 * in slots 1 and 2.
+	 */
+	dsi->clk_onecell.clk_num = 1;
+>>>>>>> upstream/rpi-4.4.y
 	dsi->clk_onecell.clks = devm_kcalloc(dev,
 					     dsi->clk_onecell.clk_num,
 					     sizeof(*dsi->clk_onecell.clks),
@@ -1487,6 +2012,7 @@ vc4_dsi_init_phy_clocks(struct vc4_dsi *dsi)
 	if (!dsi->clk_onecell.clks)
 		return -ENOMEM;
 
+<<<<<<< HEAD
 	for (i = 0; i < ARRAY_SIZE(phy_clocks); i++) {
 		struct clk_fixed_factor *fix = &dsi->phy_clocks[i];
 		struct clk_init_data init;
@@ -1521,6 +2047,9 @@ vc4_dsi_init_phy_clocks(struct vc4_dsi *dsi)
 
 		dsi->clk_onecell.clks[i] = clk;
 	}
+=======
+	dsi->clk_onecell.clks[0] = clk;
+>>>>>>> upstream/rpi-4.4.y
 
 	return of_clk_add_provider(dev->of_node,
 				   of_clk_src_onecell_get,
@@ -1567,6 +2096,43 @@ static int vc4_dsi_bind(struct device *dev, struct device *master, void *data)
 		return -ENODEV;
 	}
 
+<<<<<<< HEAD
+=======
+	if (DSI_PORT_READ(CTRL) == 0) {
+		dev_info(dev, "DSI not set up by firmware.\n");
+		return 0;
+	}
+
+	/* Set this flag to indicate that we're relying on boot-time
+	 * DSI state and can't successfully reconfigure DSI yet.
+	 */
+	dsi->use_firmware_setup = VC4_DSI_USE_FIRMWARE_SETUP;
+
+	if (dsi->use_firmware_setup) {
+		/* Increment references to the various clocks so that
+		 * they stay always enabled and the clock framework
+		 * doesn't disable their parents.
+		 */
+		ret = clk_prepare_enable(dsi->escape_clock);
+		if (ret) {
+			DRM_ERROR("Failed to refcount DSI escape clock: %d\n", ret);
+			return ret;
+		}
+
+		ret = clk_prepare_enable(dsi->pll_phy_clock);
+		if (ret) {
+			DRM_ERROR("Failed to refcount DSI PLL: %d\n", ret);
+			return ret;
+		}
+
+		ret = clk_prepare_enable(dsi->pixel_clock);
+		if (ret) {
+			DRM_ERROR("Failed to refcount pixel clock: %d\n", ret);
+			return ret;
+		}
+	}
+
+>>>>>>> upstream/rpi-4.4.y
 	/* DSI1 has a broken AXI slave that doesn't respond to writes
 	 * from the ARM.  It does handle writes from the DMA engine,
 	 * so set up a channel for talking to it.
@@ -1582,7 +2148,11 @@ static int vc4_dsi_bind(struct device *dev, struct device *master, void *data)
 
 		dma_cap_zero(dma_mask);
 		dma_cap_set(DMA_MEMCPY, dma_mask);
+<<<<<<< HEAD
 		dsi->reg_dma_chan = dma_request_chan_by_mask(&dma_mask);
+=======
+		dsi->reg_dma_chan = dma_request_channel(dma_mask, NULL, NULL);
+>>>>>>> upstream/rpi-4.4.y
 		if (IS_ERR(dsi->reg_dma_chan)) {
 			ret = PTR_ERR(dsi->reg_dma_chan);
 			if (ret != -EPROBE_DEFER)
@@ -1644,7 +2214,11 @@ static int vc4_dsi_bind(struct device *dev, struct device *master, void *data)
 		return ret;
 	}
 
+<<<<<<< HEAD
 	ret = vc4_dsi_init_phy_clocks(dsi);
+=======
+	ret = vc4_dsi_init_phy_byte_clock(dsi);
+>>>>>>> upstream/rpi-4.4.y
 	if (ret)
 		return ret;
 
@@ -1652,7 +2226,11 @@ static int vc4_dsi_bind(struct device *dev, struct device *master, void *data)
 		vc4->dsi1 = dsi;
 
 	drm_encoder_init(drm, dsi->encoder, &vc4_dsi_encoder_funcs,
+<<<<<<< HEAD
 			 DRM_MODE_ENCODER_DSI, NULL);
+=======
+			 DRM_MODE_ENCODER_DSI);
+>>>>>>> upstream/rpi-4.4.y
 	drm_encoder_helper_add(dsi->encoder, &vc4_dsi_encoder_helper_funcs);
 
 	dsi->connector = vc4_dsi_connector_init(drm, dsi);
@@ -1668,8 +2246,11 @@ static int vc4_dsi_bind(struct device *dev, struct device *master, void *data)
 
 	dev_set_drvdata(dev, dsi);
 
+<<<<<<< HEAD
 	pm_runtime_enable(dev);
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 	return 0;
 
 err_destroy_encoder:
@@ -1685,15 +2266,26 @@ static void vc4_dsi_unbind(struct device *dev, struct device *master,
 	struct vc4_dev *vc4 = to_vc4_dev(drm);
 	struct vc4_dsi *dsi = dev_get_drvdata(dev);
 
+<<<<<<< HEAD
 	pm_runtime_disable(dev);
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 	vc4_dsi_connector_destroy(dsi->connector);
 	vc4_dsi_encoder_destroy(dsi->encoder);
 
 	mipi_dsi_host_unregister(&dsi->dsi_host);
 
+<<<<<<< HEAD
 	clk_disable_unprepare(dsi->pll_phy_clock);
 	clk_disable_unprepare(dsi->escape_clock);
+=======
+	if (!dsi->use_firmware_setup) {
+		clk_disable_unprepare(dsi->pll_phy_clock);
+		clk_disable_unprepare(dsi->escape_clock);
+		clk_disable_unprepare(dsi->pixel_clock);
+	}
+>>>>>>> upstream/rpi-4.4.y
 
 	if (dsi->port == 1)
 		vc4->dsi1 = NULL;

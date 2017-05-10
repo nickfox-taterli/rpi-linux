@@ -1661,9 +1661,15 @@ static int __mkroute_input(struct sk_buff *skb,
 				goto rt_cache;
 			}
 		}
+<<<<<<< HEAD
 
 		rth = rcu_dereference(FIB_RES_NH(*res).nh_rth_input);
 
+=======
+
+		rth = rcu_dereference(FIB_RES_NH(*res).nh_rth_input);
+
+>>>>>>> upstream/rpi-4.4.y
 rt_cache:
 		if (rt_cache_valid(rth)) {
 			skb_dst_set_noref(skb, &rth->dst);

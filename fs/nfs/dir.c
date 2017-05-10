@@ -917,6 +917,10 @@ static int nfs_readdir(struct file *file, struct dir_context *ctx)
 	desc->decode = NFS_PROTO(inode)->decode_dirent;
 	desc->plus = nfs_use_readdirplus(inode, ctx) ? 1 : 0;
 
+<<<<<<< HEAD
+=======
+	nfs_block_sillyrename(dentry);
+>>>>>>> upstream/rpi-4.4.y
 	if (ctx->pos == 0 || nfs_attribute_cache_expired(inode))
 		res = nfs_revalidate_mapping(inode, file->f_mapping);
 	if (res < 0)

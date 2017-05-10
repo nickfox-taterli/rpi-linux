@@ -325,6 +325,7 @@ static void dentry_unlink_inode(struct dentry * dentry)
 	__releases(dentry->d_inode->i_lock)
 {
 	struct inode *inode = dentry->d_inode;
+<<<<<<< HEAD
 	bool hashed = !d_unhashed(dentry);
 
 	if (hashed)
@@ -333,6 +334,13 @@ static void dentry_unlink_inode(struct dentry * dentry)
 	hlist_del_init(&dentry->d_u.d_alias);
 	if (hashed)
 		raw_write_seqcount_end(&dentry->d_seq);
+=======
+
+	raw_write_seqcount_begin(&dentry->d_seq);
+	__d_clear_type_and_inode(dentry);
+	hlist_del_init(&dentry->d_u.d_alias);
+	raw_write_seqcount_end(&dentry->d_seq);
+>>>>>>> upstream/rpi-4.4.y
 	spin_unlock(&dentry->d_lock);
 	spin_unlock(&inode->i_lock);
 	if (!inode->i_nlink)
@@ -1705,6 +1713,10 @@ void d_set_d_op(struct dentry *dentry, const struct dentry_operations *op)
 				DCACHE_OP_REVALIDATE	|
 				DCACHE_OP_WEAK_REVALIDATE	|
 				DCACHE_OP_DELETE	|
+<<<<<<< HEAD
+=======
+				DCACHE_OP_SELECT_INODE	|
+>>>>>>> upstream/rpi-4.4.y
 				DCACHE_OP_REAL));
 	dentry->d_op = op;
 	if (!op)
@@ -1721,6 +1733,11 @@ void d_set_d_op(struct dentry *dentry, const struct dentry_operations *op)
 		dentry->d_flags |= DCACHE_OP_DELETE;
 	if (op->d_prune)
 		dentry->d_flags |= DCACHE_OP_PRUNE;
+<<<<<<< HEAD
+=======
+	if (op->d_select_inode)
+		dentry->d_flags |= DCACHE_OP_SELECT_INODE;
+>>>>>>> upstream/rpi-4.4.y
 	if (op->d_real)
 		dentry->d_flags |= DCACHE_OP_REAL;
 
@@ -1784,11 +1801,19 @@ static void __d_instantiate(struct dentry *dentry, struct inode *inode)
 	WARN_ON(d_in_lookup(dentry));
 
 	spin_lock(&dentry->d_lock);
+<<<<<<< HEAD
 	hlist_add_head(&dentry->d_u.d_alias, &inode->i_dentry);
 	raw_write_seqcount_begin(&dentry->d_seq);
 	__d_set_inode_and_type(dentry, inode, add_flags);
 	raw_write_seqcount_end(&dentry->d_seq);
 	fsnotify_update_flags(dentry);
+=======
+	if (inode)
+		hlist_add_head(&dentry->d_u.d_alias, &inode->i_dentry);
+	raw_write_seqcount_begin(&dentry->d_seq);
+	__d_set_inode_and_type(dentry, inode, add_flags);
+	raw_write_seqcount_end(&dentry->d_seq);
+>>>>>>> upstream/rpi-4.4.y
 	spin_unlock(&dentry->d_lock);
 }
 

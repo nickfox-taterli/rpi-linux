@@ -16,7 +16,14 @@
  * this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+<<<<<<< HEAD
 #include "linux/component.h"
+=======
+#include "linux/init.h"
+#include "linux/cma.h"
+#include "linux/component.h"
+#include "linux/dma-contiguous.h"
+>>>>>>> upstream/rpi-4.4.y
 #include "linux/pm_runtime.h"
 #include "vc4_drv.h"
 #include "vc4_regs.h"
@@ -156,6 +163,7 @@ static void vc4_v3d_init_hw(struct drm_device *dev)
 	V3D_WRITE(V3D_VPMBASE, 0);
 }
 
+<<<<<<< HEAD
 int vc4_v3d_get_bin_slot(struct vc4_dev *vc4)
 {
 	struct drm_device *dev = vc4->dev;
@@ -294,6 +302,8 @@ vc4_allocate_bin_bo(struct drm_device *drm)
 	return ret;
 }
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 #ifdef CONFIG_PM
 static int vc4_v3d_runtime_suspend(struct device *dev)
 {
@@ -302,9 +312,12 @@ static int vc4_v3d_runtime_suspend(struct device *dev)
 
 	vc4_irq_uninstall(vc4->dev);
 
+<<<<<<< HEAD
 	drm_gem_object_unreference_unlocked(&vc4->bin_bo->base.base);
 	vc4->bin_bo = NULL;
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 	return 0;
 }
 
@@ -312,11 +325,14 @@ static int vc4_v3d_runtime_resume(struct device *dev)
 {
 	struct vc4_v3d *v3d = dev_get_drvdata(dev);
 	struct vc4_dev *vc4 = v3d->vc4;
+<<<<<<< HEAD
 	int ret;
 
 	ret = vc4_allocate_bin_bo(vc4->dev);
 	if (ret)
 		return ret;
+=======
+>>>>>>> upstream/rpi-4.4.y
 
 	vc4_v3d_init_hw(vc4->dev);
 	vc4_irq_postinstall(vc4->dev);
@@ -331,8 +347,28 @@ static int vc4_v3d_bind(struct device *dev, struct device *master, void *data)
 	struct drm_device *drm = dev_get_drvdata(master);
 	struct vc4_dev *vc4 = to_vc4_dev(drm);
 	struct vc4_v3d *v3d = NULL;
+<<<<<<< HEAD
 	int ret;
 
+=======
+	struct cma *cma;
+	int ret;
+
+	cma = dev_get_cma_area(dev);
+	if (!cma)
+		return -EINVAL;
+
+	if ((cma_get_base(cma) & 0xf0000000) !=
+	    ((cma_get_base(cma) + cma_get_size(cma) - 1) & 0xf0000000)) {
+		DRM_ERROR("V3D requires that the CMA area (0x%08lx - 0x%08lx) "
+			  "not span a 256MB boundary, or memory corruption "
+			  "would happen.\n",
+			  (long)cma_get_base(cma),
+			  cma_get_base(cma) + cma_get_size(cma));
+		return -EINVAL;
+	}
+
+>>>>>>> upstream/rpi-4.4.y
 	v3d = devm_kzalloc(&pdev->dev, sizeof(*v3d), GFP_KERNEL);
 	if (!v3d)
 		return -ENOMEM;
@@ -354,10 +390,13 @@ static int vc4_v3d_bind(struct device *dev, struct device *master, void *data)
 		return -EINVAL;
 	}
 
+<<<<<<< HEAD
 	ret = vc4_allocate_bin_bo(drm);
 	if (ret)
 		return ret;
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 	/* Reset the binner overflow address/size at setup, to be sure
 	 * we don't reuse an old one.
 	 */

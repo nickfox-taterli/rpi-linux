@@ -257,10 +257,43 @@ static int ext4_dax_pmd_fault(struct vm_area_struct *vma, unsigned long addr,
 static int ext4_dax_pfn_mkwrite(struct vm_area_struct *vma,
 				struct vm_fault *vmf)
 {
+<<<<<<< HEAD
 	struct inode *inode = file_inode(vma->vm_file);
 	struct super_block *sb = inode->i_sb;
 	loff_t size;
 	int ret;
+=======
+	int err;
+	struct inode *inode = file_inode(vma->vm_file);
+
+	sb_start_pagefault(inode->i_sb);
+	file_update_time(vma->vm_file);
+	down_read(&EXT4_I(inode)->i_mmap_sem);
+	err = __dax_mkwrite(vma, vmf, ext4_get_block_dax,
+			    ext4_end_io_unwritten);
+	up_read(&EXT4_I(inode)->i_mmap_sem);
+	sb_end_pagefault(inode->i_sb);
+
+	return err;
+}
+
+/*
+ * Handle write fault for VM_MIXEDMAP mappings. Similarly to ext4_dax_mkwrite()
+ * handler we check for races agaist truncate. Note that since we cycle through
+ * i_mmap_sem, we are sure that also any hole punching that began before we
+ * were called is finished by now and so if it included part of the file we
+ * are working on, our pte will get unmapped and the check for pte_same() in
+ * wp_pfn_shared() fails. Thus fault gets retried and things work out as
+ * desired.
+ */
+static int ext4_dax_pfn_mkwrite(struct vm_area_struct *vma,
+				struct vm_fault *vmf)
+{
+	struct inode *inode = file_inode(vma->vm_file);
+	struct super_block *sb = inode->i_sb;
+	int ret = VM_FAULT_NOPAGE;
+	loff_t size;
+>>>>>>> upstream/rpi-4.4.y
 
 	sb_start_pagefault(sb);
 	file_update_time(vma->vm_file);
@@ -268,8 +301,11 @@ static int ext4_dax_pfn_mkwrite(struct vm_area_struct *vma,
 	size = (i_size_read(inode) + PAGE_SIZE - 1) >> PAGE_SHIFT;
 	if (vmf->pgoff >= size)
 		ret = VM_FAULT_SIGBUS;
+<<<<<<< HEAD
 	else
 		ret = dax_pfn_mkwrite(vma, vmf);
+=======
+>>>>>>> upstream/rpi-4.4.y
 	up_read(&EXT4_I(inode)->i_mmap_sem);
 	sb_end_pagefault(sb);
 
@@ -279,7 +315,11 @@ static int ext4_dax_pfn_mkwrite(struct vm_area_struct *vma,
 static const struct vm_operations_struct ext4_dax_vm_ops = {
 	.fault		= ext4_dax_fault,
 	.pmd_fault	= ext4_dax_pmd_fault,
+<<<<<<< HEAD
 	.page_mkwrite	= ext4_dax_fault,
+=======
+	.page_mkwrite	= ext4_dax_mkwrite,
+>>>>>>> upstream/rpi-4.4.y
 	.pfn_mkwrite	= ext4_dax_pfn_mkwrite,
 };
 #else

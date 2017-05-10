@@ -920,7 +920,11 @@ static int azx_resume(struct device *dev)
 	if (chip->driver_caps & AZX_DCAPS_I915_POWERWELL) {
 		snd_hdac_display_power(bus, true);
 		if (hda->need_i915_power)
+<<<<<<< HEAD
 			snd_hdac_i915_set_bclk(bus);
+=======
+			haswell_set_bclk(hda);
+>>>>>>> upstream/rpi-4.4.y
 	}
 
 	if (chip->msi)
@@ -1026,7 +1030,11 @@ static int azx_runtime_resume(struct device *dev)
 	if (chip->driver_caps & AZX_DCAPS_I915_POWERWELL) {
 		snd_hdac_display_power(bus, true);
 		if (hda->need_i915_power)
+<<<<<<< HEAD
 			snd_hdac_i915_set_bclk(bus);
+=======
+			haswell_set_bclk(hda);
+>>>>>>> upstream/rpi-4.4.y
 	}
 
 	/* Read STATESTS before controller reset */

@@ -895,7 +895,11 @@ static int rrpc_submit_io(struct rrpc *rrpc, struct bio *bio,
 		bio_put(bio);
 		if (!(flags & NVM_IOTYPE_GC)) {
 			rrpc_unlock_rq(rrpc, rqd);
+<<<<<<< HEAD
 			if (rqd->nr_ppas > 1)
+=======
+			if (rqd->nr_pages > 1)
+>>>>>>> upstream/rpi-4.4.y
 				nvm_dev_dma_free(rrpc->dev,
 			rqd->ppa_list, rqd->dma_ppa_list);
 		}

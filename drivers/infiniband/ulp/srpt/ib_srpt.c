@@ -1381,11 +1381,19 @@ static void srpt_handle_cmd(struct srpt_rdma_ch *ch,
 			 srp_cmd->tag);
 		goto release_ioctx;
 	}
+<<<<<<< HEAD
 	return;
 
 release_ioctx:
 	send_ioctx->state = SRPT_STATE_DONE;
 	srpt_release_cmd(cmd);
+=======
+	return 0;
+
+send_sense:
+	transport_send_check_condition_and_sense(cmd, ret, 0);
+	return -1;
+>>>>>>> upstream/rpi-4.4.y
 }
 
 static int srp_tmr_to_tcm(int fn)
@@ -1421,6 +1429,10 @@ static void srpt_handle_tsk_mgmt(struct srpt_rdma_ch *ch,
 	struct srp_tsk_mgmt *srp_tsk;
 	struct se_cmd *cmd;
 	struct se_session *sess = ch->sess;
+<<<<<<< HEAD
+=======
+	uint64_t unpacked_lun;
+>>>>>>> upstream/rpi-4.4.y
 	int tcm_tmr;
 	int rc;
 
@@ -1436,10 +1448,18 @@ static void srpt_handle_tsk_mgmt(struct srpt_rdma_ch *ch,
 	srpt_set_cmd_state(send_ioctx, SRPT_STATE_MGMT);
 	send_ioctx->cmd.tag = srp_tsk->tag;
 	tcm_tmr = srp_tmr_to_tcm(srp_tsk->tsk_mgmt_func);
+<<<<<<< HEAD
 	rc = target_submit_tmr(&send_ioctx->cmd, sess, NULL,
 			       scsilun_to_int(&srp_tsk->lun), srp_tsk, tcm_tmr,
 			       GFP_KERNEL, srp_tsk->task_tag,
 			       TARGET_SCF_ACK_KREF);
+=======
+	unpacked_lun = srpt_unpack_lun((uint8_t *)&srp_tsk->lun,
+				       sizeof(srp_tsk->lun));
+	rc = target_submit_tmr(&send_ioctx->cmd, sess, NULL, unpacked_lun,
+				srp_tsk, tcm_tmr, GFP_KERNEL, srp_tsk->task_tag,
+				TARGET_SCF_ACK_KREF);
+>>>>>>> upstream/rpi-4.4.y
 	if (rc != 0) {
 		send_ioctx->cmd.se_tmr_req->response = TMR_FUNCTION_REJECTED;
 		goto fail;

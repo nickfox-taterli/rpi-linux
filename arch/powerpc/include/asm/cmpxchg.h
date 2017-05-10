@@ -20,10 +20,18 @@ __xchg_u32_local(volatile void *p, unsigned long val)
 	unsigned long prev;
 
 	__asm__ __volatile__(
+<<<<<<< HEAD
+=======
+	PPC_ATOMIC_ENTRY_BARRIER
+>>>>>>> upstream/rpi-4.4.y
 "1:	lwarx	%0,0,%2 \n"
 	PPC405_ERR77(0,%2)
 "	stwcx.	%3,0,%2 \n\
 	bne-	1b"
+<<<<<<< HEAD
+=======
+	PPC_ATOMIC_EXIT_BARRIER
+>>>>>>> upstream/rpi-4.4.y
 	: "=&r" (prev), "+m" (*(volatile unsigned int *)p)
 	: "r" (p), "r" (val)
 	: "cc", "memory");
@@ -55,10 +63,18 @@ __xchg_u64_local(volatile void *p, unsigned long val)
 	unsigned long prev;
 
 	__asm__ __volatile__(
+<<<<<<< HEAD
+=======
+	PPC_ATOMIC_ENTRY_BARRIER
+>>>>>>> upstream/rpi-4.4.y
 "1:	ldarx	%0,0,%2 \n"
 	PPC405_ERR77(0,%2)
 "	stdcx.	%3,0,%2 \n\
 	bne-	1b"
+<<<<<<< HEAD
+=======
+	PPC_ATOMIC_EXIT_BARRIER
+>>>>>>> upstream/rpi-4.4.y
 	: "=&r" (prev), "+m" (*(volatile unsigned long *)p)
 	: "r" (p), "r" (val)
 	: "cc", "memory");

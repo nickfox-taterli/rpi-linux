@@ -81,10 +81,15 @@
 };
 
 &i2s {
+<<<<<<< HEAD
+=======
+	#sound-dai-cells = <0>;
+>>>>>>> upstream/rpi-4.4.y
 	pinctrl-names = "default";
 	pinctrl-0 = <&i2s_pins>;
 };
 
+<<<<<<< HEAD
 &audio {
 	pinctrl-names = "default";
 	pinctrl-0 = <&audio_pins>;
@@ -92,11 +97,19 @@
 
 &hdmi {
 	hpd-gpios = <&gpio 46 GPIO_ACTIVE_HIGH>;
+=======
+&random {
+	status = "okay";
+>>>>>>> upstream/rpi-4.4.y
 };
 
 / {
 	__overrides__ {
 		uart0 = <&uart0>,"status";
+<<<<<<< HEAD
+=======
+		uart0_clkrate = <&clk_uart0>,"clock-frequency:0";
+>>>>>>> upstream/rpi-4.4.y
 		uart1 = <&uart1>,"status";
 		i2s = <&i2s>,"status";
 		spi = <&spi0>,"status";

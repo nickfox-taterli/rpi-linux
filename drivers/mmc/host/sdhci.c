@@ -545,7 +545,24 @@ static void sdhci_adma_table_pre(struct sdhci_host *host,
 	 * We currently guess that it is LE.
 	 */
 
+<<<<<<< HEAD
 	host->sg_count = sg_count;
+=======
+	if (data->flags & MMC_DATA_READ)
+		direction = DMA_FROM_DEVICE;
+	else
+		direction = DMA_TO_DEVICE;
+
+	host->align_addr = dma_map_single(mmc_dev(host->mmc),
+		host->align_buffer, host->align_buffer_sz, direction);
+	if (dma_mapping_error(mmc_dev(host->mmc), host->align_addr))
+		goto fail;
+	BUG_ON(host->align_addr & SDHCI_ADMA2_MASK);
+
+	host->sg_count = sdhci_pre_dma_transfer(host, data);
+	if (host->sg_count < 0)
+		goto unmap_align;
+>>>>>>> upstream/rpi-4.4.y
 
 	desc = host->adma_table;
 	align = host->align_buffer;
@@ -626,12 +643,22 @@ static void sdhci_adma_table_post(struct sdhci_host *host,
 	if (data->flags & MMC_DATA_READ) {
 		bool has_unaligned = false;
 
+<<<<<<< HEAD
 		/* Do a quick scan of the SG list for any unaligned mappings */
 		for_each_sg(data->sg, sg, host->sg_count, i)
 			if (sg_dma_address(sg) & SDHCI_ADMA2_MASK) {
 				has_unaligned = true;
 				break;
 			}
+=======
+	/* Do a quick scan of the SG list for any unaligned mappings */
+	has_unaligned = false;
+	for_each_sg(data->sg, sg, host->sg_count, i)
+		if (sg_dma_address(sg) & SDHCI_ADMA2_MASK) {
+			has_unaligned = true;
+			break;
+		}
+>>>>>>> upstream/rpi-4.4.y
 
 		if (has_unaligned) {
 			dma_sync_sg_for_cpu(mmc_dev(host->mmc), data->sg,
@@ -639,17 +666,28 @@ static void sdhci_adma_table_post(struct sdhci_host *host,
 
 			align = host->align_buffer;
 
+<<<<<<< HEAD
 			for_each_sg(data->sg, sg, host->sg_count, i) {
 				if (sg_dma_address(sg) & SDHCI_ADMA2_MASK) {
 					size = SDHCI_ADMA2_ALIGN -
 					       (sg_dma_address(sg) & SDHCI_ADMA2_MASK);
+=======
+		for_each_sg(data->sg, sg, host->sg_count, i) {
+			if (sg_dma_address(sg) & SDHCI_ADMA2_MASK) {
+				size = SDHCI_ADMA2_ALIGN -
+				       (sg_dma_address(sg) & SDHCI_ADMA2_MASK);
+>>>>>>> upstream/rpi-4.4.y
 
 					buffer = sdhci_kmap_atomic(sg, &flags);
 					memcpy(buffer, align, size);
 					sdhci_kunmap_atomic(buffer, &flags);
 
+<<<<<<< HEAD
 					align += SDHCI_ADMA2_ALIGN;
 				}
+=======
+				align += SDHCI_ADMA2_ALIGN;
+>>>>>>> upstream/rpi-4.4.y
 			}
 		}
 	}
@@ -2724,9 +2762,12 @@ static irqreturn_t sdhci_irq(int irq, void *dev_id)
 			pr_err("%s: Card is consuming too much power!\n",
 				mmc_hostname(host->mmc));
 
+<<<<<<< HEAD
 		if (intmask & SDHCI_INT_RETUNE)
 			mmc_retune_needed(host->mmc);
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 		if ((intmask & SDHCI_INT_CARD_INT) &&
 		    (host->ier & SDHCI_INT_CARD_INT)) {
 			sdhci_enable_sdio_irq_nolock(host, false);
@@ -2899,6 +2940,36 @@ int sdhci_resume_host(struct sdhci_host *host)
 
 EXPORT_SYMBOL_GPL(sdhci_resume_host);
 
+<<<<<<< HEAD
+=======
+static int sdhci_runtime_pm_get(struct sdhci_host *host)
+{
+	return pm_runtime_get_sync(host->mmc->parent);
+}
+
+static int sdhci_runtime_pm_put(struct sdhci_host *host)
+{
+	pm_runtime_mark_last_busy(host->mmc->parent);
+	return pm_runtime_put_autosuspend(host->mmc->parent);
+}
+
+static void sdhci_runtime_pm_bus_on(struct sdhci_host *host)
+{
+	if (host->bus_on)
+		return;
+	host->bus_on = true;
+	pm_runtime_get_noresume(host->mmc->parent);
+}
+
+static void sdhci_runtime_pm_bus_off(struct sdhci_host *host)
+{
+	if (!host->bus_on)
+		return;
+	host->bus_on = false;
+	pm_runtime_put_noidle(host->mmc->parent);
+}
+
+>>>>>>> upstream/rpi-4.4.y
 int sdhci_runtime_suspend_host(struct sdhci_host *host)
 {
 	unsigned long flags;
@@ -2994,8 +3065,11 @@ struct sdhci_host *sdhci_alloc_host(struct device *dev,
 	host->mmc = mmc;
 	host->mmc_host_ops = sdhci_ops;
 	mmc->ops = &host->mmc_host_ops;
+<<<<<<< HEAD
 
 	host->flags = SDHCI_SIGNALING_330;
+=======
+>>>>>>> upstream/rpi-4.4.y
 
 	return host;
 }
@@ -3169,6 +3243,7 @@ int sdhci_setup_host(struct sdhci_host *host)
 					      SDHCI_ADMA2_32_DESC_SZ;
 			host->desc_sz = SDHCI_ADMA2_32_DESC_SZ;
 		}
+<<<<<<< HEAD
 
 		host->align_buffer_sz = SDHCI_MAX_SEGS * SDHCI_ADMA2_ALIGN;
 		buf = dma_alloc_coherent(mmc_dev(mmc), host->align_buffer_sz +
@@ -3179,6 +3254,27 @@ int sdhci_setup_host(struct sdhci_host *host)
 			host->flags &= ~SDHCI_USE_ADMA;
 		} else if ((dma + host->align_buffer_sz) &
 			   (SDHCI_ADMA2_DESC_ALIGN - 1)) {
+=======
+		host->adma_table = dma_alloc_coherent(mmc_dev(mmc),
+						      host->adma_table_sz,
+						      &host->adma_addr,
+						      GFP_KERNEL);
+		host->align_buffer_sz = SDHCI_MAX_SEGS * SDHCI_ADMA2_ALIGN;
+		host->align_buffer = kmalloc(host->align_buffer_sz, GFP_KERNEL);
+		if (!host->adma_table || !host->align_buffer) {
+			if (host->adma_table)
+				dma_free_coherent(mmc_dev(mmc),
+						  host->adma_table_sz,
+						  host->adma_table,
+						  host->adma_addr);
+			kfree(host->align_buffer);
+			pr_warn("%s: Unable to allocate ADMA buffers - falling back to standard DMA\n",
+				mmc_hostname(mmc));
+			host->flags &= ~SDHCI_USE_ADMA;
+			host->adma_table = NULL;
+			host->align_buffer = NULL;
+		} else if (host->adma_addr & (SDHCI_ADMA2_DESC_ALIGN - 1)) {
+>>>>>>> upstream/rpi-4.4.y
 			pr_warn("%s: unable to allocate aligned ADMA descriptor\n",
 				mmc_hostname(mmc));
 			host->flags &= ~SDHCI_USE_ADMA;

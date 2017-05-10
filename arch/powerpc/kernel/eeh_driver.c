@@ -639,6 +639,7 @@ static int eeh_reset_device(struct eeh_pe *pe, struct pci_bus *bus,
 	 */
 	eeh_pe_state_mark(pe, EEH_PE_KEEP);
 	if (bus) {
+<<<<<<< HEAD
 		if (pe->type & EEH_PE_VF) {
 			eeh_pe_dev_traverse(pe, eeh_rmv_device, NULL);
 		} else {
@@ -646,6 +647,12 @@ static int eeh_reset_device(struct eeh_pe *pe, struct pci_bus *bus,
 			pci_hp_remove_devices(bus);
 			pci_unlock_rescan_remove();
 		}
+=======
+		eeh_pe_state_clear(pe, EEH_PE_PRI_BUS);
+		pci_lock_rescan_remove();
+		pcibios_remove_pci_devices(bus);
+		pci_unlock_rescan_remove();
+>>>>>>> upstream/rpi-4.4.y
 	} else if (frozen_bus) {
 		eeh_pe_dev_traverse(pe, eeh_rmv_device, rmv_data);
 	}
@@ -905,12 +912,17 @@ perm_error:
 	 * the their PCI config any more.
 	 */
 	if (frozen_bus) {
+<<<<<<< HEAD
 		if (pe->type & EEH_PE_VF) {
 			eeh_pe_dev_traverse(pe, eeh_rmv_device, NULL);
 			eeh_pe_dev_mode_mark(pe, EEH_DEV_REMOVED);
 		} else {
 			eeh_pe_state_clear(pe, EEH_PE_PRI_BUS);
 			eeh_pe_dev_mode_mark(pe, EEH_DEV_REMOVED);
+=======
+		eeh_pe_state_clear(pe, EEH_PE_PRI_BUS);
+		eeh_pe_dev_mode_mark(pe, EEH_DEV_REMOVED);
+>>>>>>> upstream/rpi-4.4.y
 
 			pci_lock_rescan_remove();
 			pci_hp_remove_devices(frozen_bus);
@@ -995,6 +1007,18 @@ static void eeh_handle_special_event(void)
 
 				/* Notify all devices to be down */
 				eeh_pe_state_clear(pe, EEH_PE_PRI_BUS);
+<<<<<<< HEAD
+=======
+				bus = eeh_pe_bus_get(phb_pe);
+				if (!bus) {
+					pr_err("%s: Cannot find PCI bus for "
+					       "PHB#%d-PE#%x\n",
+					       __func__,
+					       pe->phb->global_number,
+					       pe->addr);
+					break;
+				}
+>>>>>>> upstream/rpi-4.4.y
 				eeh_pe_dev_traverse(pe,
 					eeh_report_failure, NULL);
 				bus = eeh_pe_bus_get(phb_pe);

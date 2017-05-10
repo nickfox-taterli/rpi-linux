@@ -201,7 +201,11 @@ static int spear13xx_add_pcie_port(struct spear13xx_pcie *spear13xx_pcie,
 	}
 	ret = devm_request_irq(dev, pp->irq, spear13xx_pcie_irq_handler,
 			       IRQF_SHARED | IRQF_NO_THREAD,
+<<<<<<< HEAD
 			       "spear1340-pcie", spear13xx_pcie);
+=======
+			       "spear1340-pcie", pp);
+>>>>>>> upstream/rpi-4.4.y
 	if (ret) {
 		dev_err(dev, "failed to request irq %d\n", pp->irq);
 		return ret;

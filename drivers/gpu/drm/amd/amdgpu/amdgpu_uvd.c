@@ -179,6 +179,7 @@ int amdgpu_uvd_sw_init(struct amdgpu_device *adev)
 	DRM_INFO("Found UVD firmware Version: %hu.%hu Family ID: %hu\n",
 		version_major, version_minor, family_id);
 
+<<<<<<< HEAD
 	/*
 	 * Limit the number of UVD handles depending on microcode major
 	 * and minor versions. The firmware version which has 40 UVD
@@ -198,6 +199,11 @@ int amdgpu_uvd_sw_init(struct amdgpu_device *adev)
 		DRM_ERROR("POLARIS10/11 UVD firmware version %hu.%hu is too old.\n",
 			  version_major, version_minor);
 
+=======
+	adev->uvd.fw_version = ((version_major << 24) | (version_minor << 16) |
+				(family_id << 8));
+
+>>>>>>> upstream/rpi-4.4.y
 	bo_size = AMDGPU_GPU_PAGE_ALIGN(le32_to_cpu(hdr->ucode_size_bytes) + 8)
 		  +  AMDGPU_UVD_STACK_SIZE + AMDGPU_UVD_HEAP_SIZE
 		  +  AMDGPU_UVD_SESSION_SIZE * adev->uvd.max_handles;
@@ -302,6 +308,16 @@ int amdgpu_uvd_resume(struct amdgpu_device *adev)
 	if (adev->uvd.vcpu_bo == NULL)
 		return -EINVAL;
 
+<<<<<<< HEAD
+=======
+	hdr = (const struct common_firmware_header *)adev->uvd.fw->data;
+	offset = le32_to_cpu(hdr->ucode_array_offset_bytes);
+	memcpy(adev->uvd.cpu_addr, (adev->uvd.fw->data) + offset,
+		(adev->uvd.fw->size) - offset);
+
+	cancel_delayed_work_sync(&adev->uvd.idle_work);
+
+>>>>>>> upstream/rpi-4.4.y
 	size = amdgpu_bo_size(adev->uvd.vcpu_bo);
 	ptr = adev->uvd.cpu_addr;
 

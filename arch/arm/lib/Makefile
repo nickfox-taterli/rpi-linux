@@ -18,7 +18,11 @@ mmu-y		:= clear_user.o copy_page.o getuser.o putuser.o       \
 		   copy_from_user.o copy_to_user.o
 
 # Choose optimised implementations for Raspberry Pi
+<<<<<<< HEAD
 ifeq ($(CONFIG_BCM2835_FAST_MEMCPY),y)
+=======
+ifeq ($(CONFIG_MACH_BCM2708),y)
+>>>>>>> upstream/rpi-4.4.y
   CFLAGS_uaccess_with_memcpy.o += -DCOPY_FROM_USER_THRESHOLD=1600
   CFLAGS_uaccess_with_memcpy.o += -DCOPY_TO_USER_THRESHOLD=672
   obj-$(CONFIG_MODULES) += exports_rpi.o

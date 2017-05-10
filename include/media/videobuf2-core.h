@@ -411,7 +411,11 @@ struct vb2_ops {
  */
 struct vb2_buf_ops {
 	int (*verify_planes_array)(struct vb2_buffer *vb, const void *pb);
+<<<<<<< HEAD
 	void (*fill_user_buffer)(struct vb2_buffer *vb, void *pb);
+=======
+	int (*fill_user_buffer)(struct vb2_buffer *vb, void *pb);
+>>>>>>> upstream/rpi-4.4.y
 	int (*fill_vb2_buffer)(struct vb2_buffer *vb, const void *pb,
 				struct vb2_plane *planes);
 	void (*copy_timestamp)(struct vb2_buffer *vb, const void *pb);

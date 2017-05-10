@@ -1164,7 +1164,11 @@ radix_tree_gang_lookup(struct radix_tree_root *root, void **results,
 		results[ret] = rcu_dereference_raw(*slot);
 		if (!results[ret])
 			continue;
+<<<<<<< HEAD
 		if (radix_tree_is_internal_node(results[ret])) {
+=======
+		if (radix_tree_is_indirect_ptr(results[ret])) {
+>>>>>>> upstream/rpi-4.4.y
 			slot = radix_tree_iter_retry(&iter);
 			continue;
 		}
@@ -1247,7 +1251,11 @@ radix_tree_gang_lookup_tag(struct radix_tree_root *root, void **results,
 		results[ret] = rcu_dereference_raw(*slot);
 		if (!results[ret])
 			continue;
+<<<<<<< HEAD
 		if (radix_tree_is_internal_node(results[ret])) {
+=======
+		if (radix_tree_is_indirect_ptr(results[ret])) {
+>>>>>>> upstream/rpi-4.4.y
 			slot = radix_tree_iter_retry(&iter);
 			continue;
 		}

@@ -274,7 +274,11 @@ static int _i8k_get_fan_type(int fan)
 static int i8k_get_fan_type(int fan)
 {
 	/* I8K_SMM_GET_FAN_TYPE SMM call is expensive, so cache values */
+<<<<<<< HEAD
 	static int types[3] = { INT_MIN, INT_MIN, INT_MIN };
+=======
+	static int types[2] = { INT_MIN, INT_MIN };
+>>>>>>> upstream/rpi-4.4.y
 
 	if (types[fan] == INT_MIN)
 		types[fan] = _i8k_get_fan_type(fan);
@@ -773,7 +777,11 @@ static umode_t i8k_is_visible(struct kobject *kobj, struct attribute *attr,
 			      int index)
 {
 	if (disallow_fan_type_call &&
+<<<<<<< HEAD
 	    (index == 9 || index == 12 || index == 15))
+=======
+	    (index == 9 || index == 12))
+>>>>>>> upstream/rpi-4.4.y
 		return 0;
 	if (index >= 0 && index <= 1 &&
 	    !(i8k_hwmon_flags & I8K_HWMON_HAVE_TEMP1))

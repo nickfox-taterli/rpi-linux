@@ -36,8 +36,20 @@
 	status = "okay";
 };
 
+<<<<<<< HEAD
 / {
 	__overrides__ {
+=======
+&audio {
+	pinctrl-names = "default";
+	pinctrl-0 = <&audio_pins>;
+};
+
+/ {
+	__overrides__ {
+		core_freq = <&clk_core>,"clock-frequency:0";
+
+>>>>>>> upstream/rpi-4.4.y
 		act_led_gpio = <&act_led>,"gpios:4";
 		act_led_activelow = <&act_led>,"gpios:8";
 		act_led_trigger = <&act_led>,"linux,default-trigger";

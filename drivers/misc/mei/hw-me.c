@@ -1274,7 +1274,10 @@ static bool mei_me_fw_type_sps(struct pci_dev *pdev)
 	 */
 	devfn = PCI_DEVFN(PCI_SLOT(pdev->devfn), 0);
 	pci_bus_read_config_dword(pdev->bus, devfn, PCI_CFG_HFS_1, &reg);
+<<<<<<< HEAD
 	trace_mei_pci_cfg_read(&pdev->dev, "PCI_CFG_HFS_1", PCI_CFG_HFS_1, reg);
+=======
+>>>>>>> upstream/rpi-4.4.y
 	/* if bits [19:16] = 15, running SPS Firmware */
 	return (reg & 0xf0000) == 0xf0000;
 }

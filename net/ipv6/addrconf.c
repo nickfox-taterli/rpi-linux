@@ -3754,7 +3754,11 @@ static void addrconf_dad_begin(struct inet6_ifaddr *ifp)
 {
 	struct inet6_dev *idev = ifp->idev;
 	struct net_device *dev = idev->dev;
+<<<<<<< HEAD
 	bool bump_id, notify = false;
+=======
+	bool notify = false;
+>>>>>>> upstream/rpi-4.4.y
 
 	addrconf_join_solict(dev, &ifp->addr);
 

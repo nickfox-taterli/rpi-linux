@@ -74,6 +74,13 @@ amdgpu_gem_prime_import_sg_table(struct drm_device *dev,
 	if (ret)
 		return ERR_PTR(ret);
 
+<<<<<<< HEAD
+=======
+	mutex_lock(&adev->gem.mutex);
+	list_add_tail(&bo->list, &adev->gem.objects);
+	mutex_unlock(&adev->gem.mutex);
+
+>>>>>>> upstream/rpi-4.4.y
 	bo->prime_shared_count = 1;
 	return &bo->gem_base;
 }

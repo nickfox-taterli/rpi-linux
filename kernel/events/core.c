@@ -1772,6 +1772,34 @@ static inline int pmu_filter_match(struct perf_event *event)
 			return 0;
 	}
 
+<<<<<<< HEAD
+	return 1;
+=======
+static inline int __pmu_filter_match(struct perf_event *event)
+{
+	struct pmu *pmu = event->pmu;
+	return pmu->filter_match ? pmu->filter_match(event) : 1;
+>>>>>>> upstream/rpi-4.4.y
+}
+
+/*
+ * Check whether we should attempt to schedule an event group based on
+ * PMU-specific filtering. An event group can consist of HW and SW events,
+ * potentially with a SW leader, so we must check all the filters, to
+ * determine whether a group is schedulable:
+ */
+static inline int pmu_filter_match(struct perf_event *event)
+{
+	struct perf_event *child;
+
+	if (!__pmu_filter_match(event))
+		return 0;
+
+	list_for_each_entry(child, &event->sibling_list, group_entry) {
+		if (!__pmu_filter_match(child))
+			return 0;
+	}
+
 	return 1;
 }
 
@@ -7861,7 +7889,7 @@ static void perf_event_free_bpf_prog(struct perf_event *event)
 	prog = event->tp_event->prog;
 	if (prog) {
 		event->tp_event->prog = NULL;
-		bpf_prog_put(prog);
+		bpf_prog_put_rcu(prog);
 	}
 }
 
@@ -9938,6 +9966,11 @@ SYSCALL_DEFINE5(perf_event_open,
 		mutex_unlock(&task->signal->cred_guard_mutex);
 		put_task_struct(task);
 	}
+<<<<<<< HEAD
+=======
+
+	put_online_cpus();
+>>>>>>> upstream/rpi-4.4.y
 
 	put_online_cpus();
 
@@ -10015,7 +10048,11 @@ perf_event_create_kernel_counter(struct perf_event_attr *attr, int cpu,
 	}
 
 	/* Mark owner so we could distinguish it from user events. */
+<<<<<<< HEAD
 	event->owner = TASK_TOMBSTONE;
+=======
+	event->owner = EVENT_OWNER_KERNEL;
+>>>>>>> upstream/rpi-4.4.y
 
 	ctx = find_get_context(event->pmu, task, event);
 	if (IS_ERR(ctx)) {

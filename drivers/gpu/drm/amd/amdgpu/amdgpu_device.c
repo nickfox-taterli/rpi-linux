@@ -2001,11 +2001,16 @@ int amdgpu_device_resume(struct drm_device *dev, bool resume, bool fbcon)
 	amdgpu_atombios_scratch_regs_restore(adev);
 
 	/* post card */
+<<<<<<< HEAD
 	if (!amdgpu_card_posted(adev) || !resume) {
 		r = amdgpu_atom_asic_init(adev->mode_info.atom_context);
 		if (r)
 			DRM_ERROR("amdgpu asic init failed\n");
 	}
+=======
+	if (!amdgpu_card_posted(adev))
+		amdgpu_atom_asic_init(adev->mode_info.atom_context);
+>>>>>>> upstream/rpi-4.4.y
 
 	r = amdgpu_resume(adev);
 	if (r)

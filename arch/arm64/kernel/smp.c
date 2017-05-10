@@ -431,6 +431,7 @@ void __init smp_cpus_done(unsigned int max_cpus)
 void __init smp_prepare_boot_cpu(void)
 {
 	set_my_cpu_offset(per_cpu_offset(smp_processor_id()));
+<<<<<<< HEAD
 	/*
 	 * Initialise the static keys early as they may be enabled by the
 	 * cpufeature code.
@@ -444,6 +445,9 @@ void __init smp_prepare_boot_cpu(void)
 	 * cpuinfo_store_boot_cpu() above.
 	 */
 	update_cpu_errata_workarounds();
+=======
+	cpuinfo_store_boot_cpu();
+>>>>>>> upstream/rpi-4.4.y
 }
 
 static u64 __init of_get_cpu_mpidr(struct device_node *dn)

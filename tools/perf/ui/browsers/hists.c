@@ -3031,7 +3031,11 @@ skip_annotation:
 			 *
 			 * See hist_browser__show_entry.
 			 */
+<<<<<<< HEAD
 			if (hists__has(hists, sym) && browser->selection->sym) {
+=======
+			if (sort__has_sym && browser->selection->sym) {
+>>>>>>> upstream/rpi-4.4.y
 				nr_options += add_script_opt(browser,
 							     &actions[nr_options],
 							     &options[nr_options],

@@ -299,6 +299,7 @@ OPAL_CALL(opal_prd_msg,				OPAL_PRD_MSG);
 OPAL_CALL(opal_leds_get_ind,			OPAL_LEDS_GET_INDICATOR);
 OPAL_CALL(opal_leds_set_ind,			OPAL_LEDS_SET_INDICATOR);
 OPAL_CALL(opal_console_flush,			OPAL_CONSOLE_FLUSH);
+<<<<<<< HEAD
 OPAL_CALL(opal_get_device_tree,			OPAL_GET_DEVICE_TREE);
 OPAL_CALL(opal_pci_get_presence_state,		OPAL_PCI_GET_PRESENCE_STATE);
 OPAL_CALL(opal_pci_get_power_state,		OPAL_PCI_GET_POWER_STATE);
@@ -309,3 +310,5 @@ OPAL_CALL(opal_int_eoi,				OPAL_INT_EOI);
 OPAL_CALL(opal_int_set_mfrr,			OPAL_INT_SET_MFRR);
 OPAL_CALL(opal_pci_tce_kill,			OPAL_PCI_TCE_KILL);
 OPAL_CALL_REAL(opal_rm_pci_tce_kill,		OPAL_PCI_TCE_KILL);
+=======
+>>>>>>> upstream/rpi-4.4.y

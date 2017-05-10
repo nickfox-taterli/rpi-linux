@@ -144,7 +144,11 @@ static struct list_head *vc4_get_cache_list_for_size(struct drm_device *dev,
 	return &vc4->bo_cache.size_list[page_index];
 }
 
+<<<<<<< HEAD
 static void vc4_bo_cache_purge(struct drm_device *dev)
+=======
+void vc4_bo_cache_purge(struct drm_device *dev)
+>>>>>>> upstream/rpi-4.4.y
 {
 	struct vc4_dev *vc4 = to_vc4_dev(dev);
 
@@ -213,10 +217,15 @@ struct vc4_bo *vc4_bo_create(struct drm_device *dev, size_t unaligned_size,
 	size_t size = roundup(unaligned_size, PAGE_SIZE);
 	struct vc4_dev *vc4 = to_vc4_dev(dev);
 	struct drm_gem_cma_object *cma_obj;
+<<<<<<< HEAD
+=======
+	int pass, ret;
+>>>>>>> upstream/rpi-4.4.y
 	struct vc4_bo *bo;
 
 	if (size == 0)
 		return ERR_PTR(-EINVAL);
+<<<<<<< HEAD
 
 	/* First, try to get a vc4_bo from the kernel BO cache. */
 	bo = vc4_bo_get_from_cache(dev, size);
@@ -236,6 +245,46 @@ struct vc4_bo *vc4_bo_create(struct drm_device *dev, size_t unaligned_size,
 
 		cma_obj = drm_gem_cma_create(dev, size);
 		if (IS_ERR(cma_obj)) {
+=======
+
+	/* First, try to get a vc4_bo from the kernel BO cache. */
+	bo = vc4_bo_get_from_cache(dev, size);
+	if (bo) {
+		if (!allow_unzeroed)
+			memset(bo->base.vaddr, 0, bo->base.base.size);
+		return bo;
+	}
+
+	/* Otherwise, make a new BO. */
+	for (pass = 0; ; pass++) {
+		cma_obj = drm_gem_cma_create(dev, size);
+		if (!IS_ERR(cma_obj))
+			break;
+
+		switch (pass) {
+		case 0:
+			/*
+			 * If we've run out of CMA memory, kill the cache of
+			 * CMA allocations we've got laying around and try again.
+			 */
+			vc4_bo_cache_purge(dev);
+			break;
+		case 1:
+			/*
+			 * Getting desperate, so try to wait for any
+			 * previous rendering to finish, free its
+			 * unreferenced BOs to the cache, and then
+			 * free the cache.
+			 */
+			ret = vc4_wait_for_seqno(dev, vc4->emit_seqno, ~0ull,
+						 true);
+			if (ret)
+				return ERR_PTR(ret);
+			vc4_job_handle_completed(vc4);
+			vc4_bo_cache_purge(dev);
+			break;
+		case 3:
+>>>>>>> upstream/rpi-4.4.y
 			DRM_ERROR("Failed to allocate from CMA:\n");
 			vc4_bo_stats_dump(vc4);
 			return ERR_PTR(-ENOMEM);
@@ -405,8 +454,14 @@ int vc4_mmap(struct file *filp, struct vm_area_struct *vma)
 	vma->vm_flags &= ~VM_PFNMAP;
 	vma->vm_pgoff = 0;
 
+<<<<<<< HEAD
 	ret = dma_mmap_wc(bo->base.base.dev->dev, vma, bo->base.vaddr,
 			  bo->base.paddr, vma->vm_end - vma->vm_start);
+=======
+	ret = dma_mmap_writecombine(bo->base.base.dev->dev, vma,
+				    bo->base.vaddr, bo->base.paddr,
+				    vma->vm_end - vma->vm_start);
+>>>>>>> upstream/rpi-4.4.y
 	if (ret)
 		drm_gem_vm_close(vma);
 
@@ -464,7 +519,11 @@ int vc4_mmap_bo_ioctl(struct drm_device *dev, void *data,
 	struct drm_vc4_mmap_bo *args = data;
 	struct drm_gem_object *gem_obj;
 
+<<<<<<< HEAD
 	gem_obj = drm_gem_object_lookup(file_priv, args->handle);
+=======
+	gem_obj = drm_gem_object_lookup(dev, file_priv, args->handle);
+>>>>>>> upstream/rpi-4.4.y
 	if (!gem_obj) {
 		DRM_ERROR("Failed to look up GEM BO %d\n", args->handle);
 		return -EINVAL;

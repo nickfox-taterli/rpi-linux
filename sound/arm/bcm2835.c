@@ -103,7 +103,11 @@ static int snd_bcm2835_alsa_probe_dt(struct platform_device *pdev)
 			 numchans);
 	}
 
+<<<<<<< HEAD
 	err = snd_card_new(&pdev->dev, -1, NULL, THIS_MODULE, 0, &card);
+=======
+	err = snd_card_new(NULL, -1, NULL, THIS_MODULE, 0, &card);
+>>>>>>> upstream/rpi-4.4.y
 	if (err) {
 		dev_err(dev, "Failed to create soundcard structure\n");
 		return err;
@@ -183,7 +187,11 @@ static int snd_bcm2835_alsa_probe(struct platform_device *pdev)
 	if (dev > 0)
 		goto add_register_map;
 
+<<<<<<< HEAD
 	err = snd_card_new(&pdev->dev, index[dev], id[dev], THIS_MODULE, 0, &g_card);
+=======
+	err = snd_card_new(NULL, index[dev], id[dev], THIS_MODULE, 0, &g_card);
+>>>>>>> upstream/rpi-4.4.y
 	if (err < 0)
 		goto out;
 

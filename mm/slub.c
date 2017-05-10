@@ -3019,6 +3019,7 @@ int build_detached_freelist(struct kmem_cache *s, size_t size,
 	if (!object)
 		return 0;
 
+<<<<<<< HEAD
 	page = virt_to_head_page(object);
 	if (!s) {
 		/* Handle kalloc'ed objects */
@@ -3038,6 +3039,14 @@ int build_detached_freelist(struct kmem_cache *s, size_t size,
 	/* Start new detached freelist */
 	df->page = page;
 	set_freepointer(df->s, object, NULL);
+=======
+	/* Support for memcg, compiler can optimize this out */
+	df->s = cache_from_obj(s, object);
+
+	/* Start new detached freelist */
+	set_freepointer(df->s, object, NULL);
+	df->page = virt_to_head_page(object);
+>>>>>>> upstream/rpi-4.4.y
 	df->tail = object;
 	df->freelist = object;
 	p[size] = NULL; /* mark object processed */

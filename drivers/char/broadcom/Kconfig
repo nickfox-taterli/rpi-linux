@@ -49,7 +49,11 @@ config BCM2835_DEVGPIOMEM
 
 config BCM2835_SMI_DEV
 	tristate "Character device driver for BCM2835 Secondary Memory Interface"
+<<<<<<< HEAD
 	depends on BCM2835_SMI
+=======
+	depends on (MACH_BCM2708 || MACH_BCM2709 || ARCH_BCM2835) && BCM2835_SMI
+>>>>>>> upstream/rpi-4.4.y
 	default m
 	help
 		This driver provides a character device interface (ioctl + read/write) to

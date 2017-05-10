@@ -656,8 +656,26 @@ extern int tty_ldisc_setup(struct tty_struct *tty, struct tty_struct *o_tty);
 extern void tty_ldisc_release(struct tty_struct *tty);
 extern void tty_ldisc_init(struct tty_struct *tty);
 extern void tty_ldisc_deinit(struct tty_struct *tty);
+<<<<<<< HEAD
 extern int tty_ldisc_receive_buf(struct tty_ldisc *ld, unsigned char *p,
 				 char *f, int count);
+=======
+extern void tty_ldisc_begin(void);
+
+static inline int tty_ldisc_receive_buf(struct tty_ldisc *ld, unsigned char *p,
+					char *f, int count)
+{
+	if (ld->ops->receive_buf2)
+		count = ld->ops->receive_buf2(ld->tty, p, f, count);
+	else {
+		count = min_t(int, count, ld->tty->receive_room);
+		if (count && ld->ops->receive_buf)
+			ld->ops->receive_buf(ld->tty, p, f, count);
+	}
+	return count;
+}
+
+>>>>>>> upstream/rpi-4.4.y
 
 /* n_tty.c */
 extern void n_tty_inherit_ops(struct tty_ldisc_ops *ops);
@@ -707,11 +725,19 @@ extern long vt_compat_ioctl(struct tty_struct *tty,
 
 /* tty_mutex.c */
 /* functions for preparation of BKL removal */
+<<<<<<< HEAD
 extern void tty_lock(struct tty_struct *tty);
 extern int  tty_lock_interruptible(struct tty_struct *tty);
 extern void tty_unlock(struct tty_struct *tty);
 extern void tty_lock_slave(struct tty_struct *tty);
 extern void tty_unlock_slave(struct tty_struct *tty);
+=======
+extern void __lockfunc tty_lock(struct tty_struct *tty);
+extern int  tty_lock_interruptible(struct tty_struct *tty);
+extern void __lockfunc tty_unlock(struct tty_struct *tty);
+extern void __lockfunc tty_lock_slave(struct tty_struct *tty);
+extern void __lockfunc tty_unlock_slave(struct tty_struct *tty);
+>>>>>>> upstream/rpi-4.4.y
 extern void tty_set_lock_subclass(struct tty_struct *tty);
 
 #ifdef CONFIG_PROC_FS

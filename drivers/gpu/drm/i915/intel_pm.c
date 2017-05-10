@@ -1828,7 +1828,11 @@ static uint32_t ilk_compute_cur_wm(const struct intel_crtc_state *cstate,
 	 * this is necessary to avoid flickering.
 	 */
 	int cpp = 4;
+<<<<<<< HEAD
 	int width = pstate->base.visible ? pstate->base.crtc_w : 64;
+=======
+	int width = pstate->visible ? pstate->base.crtc_w : 64;
+>>>>>>> upstream/rpi-4.4.y
 
 	if (!cstate->base.active)
 		return 0;
@@ -7273,8 +7277,25 @@ static void broadwell_init_clock_gating(struct drm_device *dev)
 	I915_WRITE(GEN8_UCGCTL6, I915_READ(GEN8_UCGCTL6) |
 		   GEN8_SDEUNIT_CLOCK_GATE_DISABLE);
 
+<<<<<<< HEAD
 	/* WaProgramL3SqcReg1Default:bdw */
 	gen8_set_l3sqc_credits(dev_priv, 30, 2);
+=======
+	/*
+	 * WaProgramL3SqcReg1Default:bdw
+	 * WaTempDisableDOPClkGating:bdw
+	 */
+	misccpctl = I915_READ(GEN7_MISCCPCTL);
+	I915_WRITE(GEN7_MISCCPCTL, misccpctl & ~GEN7_DOP_CLOCK_GATE_ENABLE);
+	I915_WRITE(GEN8_L3SQCREG1, BDW_WA_L3SQCREG1_DEFAULT);
+	/*
+	 * Wait at least 100 clocks before re-enabling clock gating. See
+	 * the definition of L3SQCREG1 in BSpec.
+	 */
+	POSTING_READ(GEN8_L3SQCREG1);
+	udelay(1);
+	I915_WRITE(GEN7_MISCCPCTL, misccpctl);
+>>>>>>> upstream/rpi-4.4.y
 
 	/*
 	 * WaGttCachingOffByDefault:bdw

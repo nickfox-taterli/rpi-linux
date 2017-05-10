@@ -580,11 +580,16 @@ static ssize_t usb3_hardware_lpm_u2_show(struct device *dev,
 {
 	struct usb_device *udev = to_usb_device(dev);
 	const char *p;
+<<<<<<< HEAD
 	int rc;
 
 	rc = usb_lock_device_interruptible(udev);
 	if (rc < 0)
 		return -EINTR;
+=======
+
+	usb_lock_device(udev);
+>>>>>>> upstream/rpi-4.4.y
 
 	if (udev->usb3_lpm_u2_enabled)
 		p = "enabled";

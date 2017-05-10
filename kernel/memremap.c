@@ -244,6 +244,7 @@ static void devm_memremap_pages_release(struct device *dev, void *data)
 	}
 
 	/* pages are dead and unused, undo the arch mapping */
+<<<<<<< HEAD
 	align_start = res->start & ~(SECTION_SIZE - 1);
 	align_size = ALIGN(resource_size(res), SECTION_SIZE);
 
@@ -257,6 +258,11 @@ static void devm_memremap_pages_release(struct device *dev, void *data)
 	pgmap_radix_release(res);
 	dev_WARN_ONCE(dev, pgmap->altmap && pgmap->altmap->alloc,
 			"%s: failed to free all reserved pages\n", __func__);
+=======
+	mem_hotplug_begin();
+	arch_remove_memory(page_map->res.start, resource_size(&page_map->res));
+	mem_hotplug_done();
+>>>>>>> upstream/rpi-4.4.y
 }
 
 /* assumes rcu_read_lock() held at entry */
@@ -359,6 +365,7 @@ void *devm_memremap_pages(struct device *dev, struct resource *res,
 	if (nid < 0)
 		nid = numa_mem_id();
 
+<<<<<<< HEAD
 	error = track_pfn_remap(NULL, &pgprot, PHYS_PFN(align_start), 0,
 			align_size);
 	if (error)
@@ -371,6 +378,15 @@ void *devm_memremap_pages(struct device *dev, struct resource *res,
 	unlock_device_hotplug();
 	if (error)
 		goto err_add_memory;
+=======
+	mem_hotplug_begin();
+	error = arch_add_memory(nid, res->start, resource_size(res), true);
+	mem_hotplug_done();
+	if (error) {
+		devres_free(page_map);
+		return ERR_PTR(error);
+	}
+>>>>>>> upstream/rpi-4.4.y
 
 	for_each_device_pfn(pfn, page_map) {
 		struct page *page = pfn_to_page(pfn);

@@ -915,7 +915,11 @@ static struct intel_iommu *device_to_iommu(struct device *dev, u8 *bus, u8 *devf
 				 * which we used for the IOMMU lookup. Strictly speaking
 				 * we could do this for all PCI devices; we only need to
 				 * get the BDF# from the scope table for ACPI matches. */
+<<<<<<< HEAD
 				if (pdev && pdev->is_virtfn)
+=======
+				if (pdev->is_virtfn)
+>>>>>>> upstream/rpi-4.4.y
 					goto got_pdev;
 
 				*bus = drhd->devices[i].bus;
@@ -1535,8 +1539,11 @@ static void iommu_disable_dev_iotlb(struct device_domain_info *info)
 {
 	struct pci_dev *pdev;
 
+<<<<<<< HEAD
 	assert_spin_locked(&device_domain_lock);
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 	if (!dev_is_pci(info->dev))
 		return;
 

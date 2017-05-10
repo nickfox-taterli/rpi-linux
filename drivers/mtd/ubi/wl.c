@@ -947,6 +947,12 @@ out_not_moved:
 			goto out_ro;
 	}
 
+	if (erase) {
+		err = do_sync_erase(ubi, e1, vol_id, lnum, 1);
+		if (err)
+			goto out_ro;
+	}
+
 	mutex_unlock(&ubi->move_mutex);
 	up_read(&ubi->fm_eba_sem);
 	return 0;

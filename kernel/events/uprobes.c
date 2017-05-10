@@ -171,9 +171,15 @@ static int __replace_page(struct vm_area_struct *vma, unsigned long addr,
 
 	mmu_notifier_invalidate_range_start(mm, mmun_start, mmun_end);
 	err = -EAGAIN;
+<<<<<<< HEAD
 	ptep = page_check_address(old_page, mm, addr, &ptl, 0);
 	if (!ptep) {
 		mem_cgroup_cancel_charge(new_page, memcg, false);
+=======
+	ptep = page_check_address(page, mm, addr, &ptl, 0);
+	if (!ptep) {
+		mem_cgroup_cancel_charge(kpage, memcg);
+>>>>>>> upstream/rpi-4.4.y
 		goto unlock;
 	}
 

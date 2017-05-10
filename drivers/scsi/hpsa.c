@@ -4328,11 +4328,14 @@ static void hpsa_update_scsi_devices(struct ctlr_info *h)
 		lunaddrbytes = figure_lunaddrbytes(h, raid_ctlr_position,
 			i, nphysicals, nlogicals, physdev_list, logdev_list);
 
+<<<<<<< HEAD
 		/* Determine if this is a lun from an external target array */
 		tmpdevice->external =
 			figure_external_status(h, raid_ctlr_position, i,
 						nphysicals, nlocal_logicals);
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 		/*
 		 * Skip over some devices such as a spare.
 		 */

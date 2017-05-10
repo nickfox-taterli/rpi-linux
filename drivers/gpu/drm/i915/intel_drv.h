@@ -940,9 +940,12 @@ struct intel_dp {
 				     bool has_aux_irq,
 				     int send_bytes,
 				     uint32_t aux_clock_divider);
+<<<<<<< HEAD
 
 	/* This is called before a link training is starterd */
 	void (*prepare_link_retrain)(struct intel_dp *intel_dp);
+=======
+>>>>>>> upstream/rpi-4.4.y
 
 	/* Displayport compliance testing */
 	unsigned long compliance_test_type;
@@ -1363,7 +1366,13 @@ void intel_mode_from_pipe_config(struct drm_display_mode *mode,
 int skl_update_scaler_crtc(struct intel_crtc_state *crtc_state);
 int skl_max_scale(struct intel_crtc *crtc, struct intel_crtc_state *crtc_state);
 
+<<<<<<< HEAD
 u32 intel_fb_gtt_offset(struct drm_framebuffer *fb, unsigned int rotation);
+=======
+u32 intel_plane_obj_offset(struct intel_plane *intel_plane,
+			   struct drm_i915_gem_object *obj,
+			   unsigned int plane);
+>>>>>>> upstream/rpi-4.4.y
 
 u32 skl_plane_ctl_format(uint32_t pixel_format);
 u32 skl_plane_ctl_tiling(uint64_t fb_modifier);
@@ -1380,7 +1389,11 @@ void intel_csr_ucode_suspend(struct drm_i915_private *);
 void intel_csr_ucode_resume(struct drm_i915_private *);
 
 /* intel_dp.c */
+<<<<<<< HEAD
 bool intel_dp_init(struct drm_device *dev, i915_reg_t output_reg, enum port port);
+=======
+bool intel_dp_init(struct drm_device *dev, int output_reg, enum port port);
+>>>>>>> upstream/rpi-4.4.y
 bool intel_dp_init_connector(struct intel_digital_port *intel_dig_port,
 			     struct intel_connector *intel_connector);
 void intel_dp_set_link_params(struct intel_dp *intel_dp,
@@ -1413,6 +1426,7 @@ void intel_dp_hot_plug(struct intel_encoder *intel_encoder);
 void intel_power_sequencer_reset(struct drm_i915_private *dev_priv);
 uint32_t intel_dp_pack_aux(const uint8_t *src, int src_bytes);
 void intel_plane_destroy(struct drm_plane *plane);
+<<<<<<< HEAD
 void intel_edp_drrs_enable(struct intel_dp *intel_dp,
 			   struct intel_crtc_state *crtc_state);
 void intel_edp_drrs_disable(struct intel_dp *intel_dp,
@@ -1445,6 +1459,14 @@ static inline unsigned int intel_dp_unused_lane_mask(int lane_count)
 
 /* intel_dp_aux_backlight.c */
 int intel_dp_aux_init_backlight_funcs(struct intel_connector *intel_connector);
+=======
+void intel_edp_drrs_enable(struct intel_dp *intel_dp);
+void intel_edp_drrs_disable(struct intel_dp *intel_dp);
+void intel_edp_drrs_invalidate(struct drm_device *dev,
+		unsigned frontbuffer_bits);
+void intel_edp_drrs_flush(struct drm_device *dev, unsigned frontbuffer_bits);
+void hsw_dp_set_ddi_pll_sel(struct intel_crtc_state *pipe_config);
+>>>>>>> upstream/rpi-4.4.y
 
 /* intel_dp_mst.c */
 int intel_dp_mst_encoder_init(struct intel_digital_port *intel_dig_port, int conn_id);

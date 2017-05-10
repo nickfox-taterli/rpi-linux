@@ -4038,6 +4038,7 @@ void usb_enable_lpm(struct usb_device *udev)
 	if (udev->lpm_disable_count > 0)
 		return;
 
+<<<<<<< HEAD
 	hub = usb_hub_to_struct_hub(udev->parent);
 	if (!hub)
 		return;
@@ -4049,6 +4050,10 @@ void usb_enable_lpm(struct usb_device *udev)
 
 	if (port_dev->usb3_lpm_u2_permit)
 		usb_enable_link_state(hcd, udev, USB3_LPM_U2);
+=======
+	usb_enable_link_state(hcd, udev, USB3_LPM_U1);
+	usb_enable_link_state(hcd, udev, USB3_LPM_U2);
+>>>>>>> upstream/rpi-4.4.y
 }
 EXPORT_SYMBOL_GPL(usb_enable_lpm);
 

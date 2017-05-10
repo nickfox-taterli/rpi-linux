@@ -64,5 +64,9 @@
 #define BCM2835_CLOCK_CAM1		46
 #define BCM2835_CLOCK_DSI0E		47
 #define BCM2835_CLOCK_DSI1E		48
+<<<<<<< HEAD
 #define BCM2835_CLOCK_DSI0P		49
 #define BCM2835_CLOCK_DSI1P		50
+=======
+#define BCM2835_CLOCK_DSI1P		49
+>>>>>>> upstream/rpi-4.4.y

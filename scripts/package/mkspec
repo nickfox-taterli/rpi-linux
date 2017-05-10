@@ -136,6 +136,7 @@ echo "cp /boot/System.map-$KERNELRELEASE /boot/.System.map-$KERNELRELEASE-rpm"
 echo "rm -f /boot/vmlinuz-$KERNELRELEASE /boot/System.map-$KERNELRELEASE"
 echo "/sbin/installkernel $KERNELRELEASE /boot/.vmlinuz-$KERNELRELEASE-rpm /boot/.System.map-$KERNELRELEASE-rpm"
 echo "rm -f /boot/.vmlinuz-$KERNELRELEASE-rpm /boot/.System.map-$KERNELRELEASE-rpm"
+<<<<<<< HEAD
 echo "fi"
 echo ""
 echo "%preun"
@@ -146,6 +147,8 @@ echo ""
 echo "%postun"
 echo "if [ -x /sbin/update-bootloader ]; then"
 echo "/sbin/update-bootloader --remove $KERNELRELEASE"
+=======
+>>>>>>> upstream/rpi-4.4.y
 echo "fi"
 echo ""
 echo "%files"

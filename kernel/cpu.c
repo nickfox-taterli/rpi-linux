@@ -383,6 +383,7 @@ static int cpu_notify(unsigned long val, unsigned int cpu)
 	return __cpu_notify(val, cpu, -1, NULL);
 }
 
+<<<<<<< HEAD
 static void cpu_notify_nofail(unsigned long val, unsigned int cpu)
 {
 	BUG_ON(cpu_notify(val, cpu));
@@ -659,6 +660,8 @@ void __init cpuhp_threads_init(void)
 	kthread_unpark(this_cpu_read(cpuhp_state.thread));
 }
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 EXPORT_SYMBOL(register_cpu_notifier);
 EXPORT_SYMBOL(__register_cpu_notifier);
 void unregister_cpu_notifier(struct notifier_block *nb)
@@ -676,6 +679,14 @@ void __unregister_cpu_notifier(struct notifier_block *nb)
 EXPORT_SYMBOL(__unregister_cpu_notifier);
 
 #ifdef CONFIG_HOTPLUG_CPU
+<<<<<<< HEAD
+=======
+static void cpu_notify_nofail(unsigned long val, void *v)
+{
+	BUG_ON(cpu_notify(val, v));
+}
+
+>>>>>>> upstream/rpi-4.4.y
 /**
  * clear_tasks_mm_cpumask - Safely clear tasks' mm_cpumask for a CPU
  * @cpu: a CPU id

@@ -60,6 +60,19 @@ int ovl_setattr(struct dentry *dentry, struct iattr *attr)
 	if (err)
 		return err;
 
+	/*
+	 * Check for permissions before trying to copy-up.  This is redundant
+	 * since it will be rechecked later by ->setattr() on upper dentry.  But
+	 * without this, copy-up can be triggered by just about anybody.
+	 *
+	 * We don't initialize inode->size, which just means that
+	 * inode_newsize_ok() will always check against MAX_LFS_FILESIZE and not
+	 * check for a swapfile (which this won't be anyway).
+	 */
+	err = inode_change_ok(dentry->d_inode, attr);
+	if (err)
+		return err;
+
 	err = ovl_want_write(dentry);
 	if (err)
 		goto out;
@@ -78,6 +91,7 @@ int ovl_setattr(struct dentry *dentry, struct iattr *attr)
 
 		upperdentry = ovl_dentry_upper(dentry);
 
+<<<<<<< HEAD
 		if (attr->ia_valid & ATTR_SIZE) {
 			winode = d_inode(upperdentry);
 			err = get_write_access(winode);
@@ -98,6 +112,16 @@ int ovl_setattr(struct dentry *dentry, struct iattr *attr)
 
 		if (winode)
 			put_write_access(winode);
+=======
+		if (attr->ia_valid & (ATTR_KILL_SUID|ATTR_KILL_SGID))
+			attr->ia_valid &= ~ATTR_MODE;
+
+		mutex_lock(&upperdentry->d_inode->i_mutex);
+		err = notify_change(upperdentry, attr, NULL);
+		if (!err)
+			ovl_copyattr(upperdentry->d_inode, dentry->d_inode);
+		mutex_unlock(&upperdentry->d_inode->i_mutex);
+>>>>>>> upstream/rpi-4.4.y
 	}
 out_drop_write:
 	ovl_drop_write(dentry);
@@ -168,6 +192,10 @@ static const char *ovl_get_link(struct dentry *dentry,
 	return p;
 }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> upstream/rpi-4.4.y
 bool ovl_is_private_xattr(const char *name)
 {
 	return strncmp(name, OVL_XATTR_PREFIX,
@@ -233,7 +261,10 @@ ssize_t ovl_listxattr(struct dentry *dentry, char *list, size_t size)
 	ssize_t res;
 	size_t len;
 	char *s;
+<<<<<<< HEAD
 	const struct cred *old_cred;
+=======
+>>>>>>> upstream/rpi-4.4.y
 
 	old_cred = ovl_override_creds(dentry->d_sb);
 	res = vfs_listxattr(realdentry, list, size);
@@ -356,6 +387,15 @@ static const struct inode_operations ovl_symlink_inode_operations = {
 
 static void ovl_fill_inode(struct inode *inode, umode_t mode)
 {
+<<<<<<< HEAD
+=======
+	struct inode *inode;
+
+	inode = new_inode(sb);
+	if (!inode)
+		return NULL;
+
+>>>>>>> upstream/rpi-4.4.y
 	inode->i_ino = get_next_ino();
 	inode->i_mode = mode;
 	inode->i_flags |= S_NOCMTIME;

@@ -1224,7 +1224,11 @@ static int bond_master_upper_dev_link(struct bonding *bond, struct slave *slave)
 					   &lag_upper_info);
 	if (err)
 		return err;
+<<<<<<< HEAD
 	rtmsg_ifinfo(RTM_NEWLINK, slave->dev, IFF_SLAVE, GFP_KERNEL);
+=======
+	rtmsg_ifinfo(RTM_NEWLINK, slave_dev, IFF_SLAVE, GFP_KERNEL);
+>>>>>>> upstream/rpi-4.4.y
 	return 0;
 }
 

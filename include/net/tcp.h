@@ -1219,7 +1219,10 @@ static inline void tcp_prequeue_init(struct tcp_sock *tp)
 }
 
 bool tcp_prequeue(struct sock *sk, struct sk_buff *skb);
+<<<<<<< HEAD
 bool tcp_add_backlog(struct sock *sk, struct sk_buff *skb);
+=======
+>>>>>>> upstream/rpi-4.4.y
 int tcp_filter(struct sock *sk, struct sk_buff *skb);
 
 #undef STATE_TRACE

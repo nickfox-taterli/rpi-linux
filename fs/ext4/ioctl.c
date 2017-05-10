@@ -772,11 +772,23 @@ resizefs_out:
 		if (!ext4_has_feature_encrypt(sb))
 			return -EOPNOTSUPP;
 
+<<<<<<< HEAD
 		if (copy_from_user(&policy,
 				   (struct fscrypt_policy __user *)arg,
 				   sizeof(policy)))
 			return -EFAULT;
 		return fscrypt_process_policy(filp, &policy);
+=======
+		err = mnt_want_write_file(filp);
+		if (err)
+			goto encryption_policy_out;
+
+		err = ext4_process_policy(&policy, inode);
+
+		mnt_drop_write_file(filp);
+encryption_policy_out:
+		return err;
+>>>>>>> upstream/rpi-4.4.y
 #else
 		return -EOPNOTSUPP;
 #endif

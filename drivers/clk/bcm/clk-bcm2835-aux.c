@@ -17,14 +17,18 @@
 #include <linux/clk/bcm2835.h>
 #include <linux/module.h>
 #include <linux/platform_device.h>
+<<<<<<< HEAD
 #include <linux/interrupt.h>
 #include <linux/irqdomain.h>
 #include <linux/of_irq.h>
+=======
+>>>>>>> upstream/rpi-4.4.y
 #include <dt-bindings/clock/bcm2835-aux.h>
 
 #define BCM2835_AUXIRQ		0x00
 #define BCM2835_AUXENB		0x04
 
+<<<<<<< HEAD
 #define BCM2835_AUXIRQ_NUM_IRQS  3
 
 #define BCM2835_AUXIRQ_UART_IRQ  0
@@ -118,6 +122,14 @@ static int bcm2835_aux_clk_probe(struct platform_device *pdev)
 	const char *parent;
 	struct clk *parent_clk;
 	int parent_irq;
+=======
+static int bcm2835_aux_clk_probe(struct platform_device *pdev)
+{
+	struct device *dev = &pdev->dev;
+	struct clk_onecell_data *onecell;
+	const char *parent;
+	struct clk *parent_clk;
+>>>>>>> upstream/rpi-4.4.y
 	struct resource *res;
 	void __iomem *reg, *gate;
 
@@ -131,6 +143,7 @@ static int bcm2835_aux_clk_probe(struct platform_device *pdev)
 	if (IS_ERR(reg))
 		return PTR_ERR(reg);
 
+<<<<<<< HEAD
 	parent_irq = irq_of_parse_and_map(node, 0);
 	if (parent_irq) {
 		int ret;
@@ -179,6 +192,30 @@ static int bcm2835_aux_clk_probe(struct platform_device *pdev)
 
 	return of_clk_add_hw_provider(pdev->dev.of_node, of_clk_hw_onecell_get,
 				      onecell);
+=======
+	onecell = devm_kmalloc(dev, sizeof(*onecell), GFP_KERNEL);
+	if (!onecell)
+		return -ENOMEM;
+	onecell->clk_num = BCM2835_AUX_CLOCK_COUNT;
+	onecell->clks = devm_kcalloc(dev, BCM2835_AUX_CLOCK_COUNT,
+				     sizeof(*onecell->clks), GFP_KERNEL);
+	if (!onecell->clks)
+		return -ENOMEM;
+
+	gate = reg + BCM2835_AUXENB;
+	onecell->clks[BCM2835_AUX_CLOCK_UART] =
+		clk_register_gate(dev, "aux_uart", parent, 0, gate, 0, 0, NULL);
+
+	onecell->clks[BCM2835_AUX_CLOCK_SPI1] =
+		clk_register_gate(dev, "aux_spi1", parent, 0, gate, 1, 0, NULL);
+
+	onecell->clks[BCM2835_AUX_CLOCK_SPI2] =
+		clk_register_gate(dev, "aux_spi2", parent, 0, gate, 2, 0, NULL);
+
+	of_clk_add_provider(pdev->dev.of_node, of_clk_src_onecell_get, onecell);
+
+	return 0;
+>>>>>>> upstream/rpi-4.4.y
 }
 
 static const struct of_device_id bcm2835_aux_clk_of_match[] = {

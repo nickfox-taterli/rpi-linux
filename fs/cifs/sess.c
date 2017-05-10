@@ -710,8 +710,11 @@ sess_auth_lanman(struct sess_data *sess_data)
 		rc = calc_lanman_hash(ses->password, ses->server->cryptkey,
 				      ses->server->sec_mode & SECMODE_PW_ENCRYPT ?
 				      true : false, lnm_session_key);
+<<<<<<< HEAD
 		if (rc)
 			goto out;
+=======
+>>>>>>> upstream/rpi-4.4.y
 
 		memcpy(bcc_ptr, (char *)lnm_session_key, CIFS_AUTH_RESP_SIZE);
 		bcc_ptr += CIFS_AUTH_RESP_SIZE;

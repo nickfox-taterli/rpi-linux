@@ -804,4 +804,23 @@ void aer_isr(struct work_struct *work)
 	while (get_e_source(rpc, &e_src))
 		aer_isr_one_error(p_device, &e_src);
 	mutex_unlock(&rpc->rpc_mutex);
+<<<<<<< HEAD
+=======
+}
+
+/**
+ * aer_init - provide AER initialization
+ * @dev: pointer to AER pcie device
+ *
+ * Invoked when AER service driver is loaded.
+ */
+int aer_init(struct pcie_device *dev)
+{
+	if (forceload) {
+		dev_printk(KERN_DEBUG, &dev->device,
+			   "aerdrv forceload requested.\n");
+		pcie_aer_force_firmware_first(dev->port, 0);
+	}
+	return 0;
+>>>>>>> upstream/rpi-4.4.y
 }

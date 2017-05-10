@@ -2766,12 +2766,15 @@ SYSCALL_DEFINE5(remap_file_pages, unsigned long, start, unsigned long, size,
 		/* drop PG_Mlocked flag for over-mapped range */
 		for (tmp = vma; tmp->vm_start >= start + size;
 				tmp = tmp->vm_next) {
+<<<<<<< HEAD
 			/*
 			 * Split pmd and munlock page on the border
 			 * of the range.
 			 */
 			vma_adjust_trans_huge(tmp, start, start + size, 0);
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 			munlock_vma_pages_range(tmp,
 					max(tmp->vm_start, start),
 					min(tmp->vm_end, start + size));

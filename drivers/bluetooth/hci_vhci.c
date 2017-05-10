@@ -97,7 +97,11 @@ static int __vhci_create_device(struct vhci_data *data, __u8 opcode)
 	if (data->hdev)
 		return -EBADFD;
 
+<<<<<<< HEAD
 	/* bits 0-1 are dev_type (Primary or AMP) */
+=======
+	/* bits 0-1 are dev_type (BR/EDR or AMP) */
+>>>>>>> upstream/rpi-4.4.y
 	dev_type = opcode & 0x03;
 
 	if (dev_type != HCI_PRIMARY && dev_type != HCI_AMP)

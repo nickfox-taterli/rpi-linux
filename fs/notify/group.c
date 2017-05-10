@@ -45,9 +45,15 @@ static void fsnotify_final_destroy_group(struct fsnotify_group *group)
  */
 void fsnotify_group_stop_queueing(struct fsnotify_group *group)
 {
+<<<<<<< HEAD
 	spin_lock(&group->notification_lock);
 	group->shutdown = true;
 	spin_unlock(&group->notification_lock);
+=======
+	mutex_lock(&group->notification_mutex);
+	group->shutdown = true;
+	mutex_unlock(&group->notification_mutex);
+>>>>>>> upstream/rpi-4.4.y
 }
 
 /*
@@ -66,8 +72,13 @@ void fsnotify_destroy_group(struct fsnotify_group *group)
 	 */
 	fsnotify_group_stop_queueing(group);
 
+<<<<<<< HEAD
 	/* clear all inode marks for this group, attach them to destroy_list */
 	fsnotify_detach_group_marks(group);
+=======
+	/* clear all inode marks for this group */
+	fsnotify_clear_marks_by_group(group);
+>>>>>>> upstream/rpi-4.4.y
 
 	/*
 	 * Wait for fsnotify_mark_srcu period to end and free all marks in

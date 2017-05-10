@@ -49,7 +49,10 @@
 
 #define BCM2835_DMA_MAX_DMA_CHAN_SUPPORTED 14
 #define BCM2835_DMA_CHAN_NAME_SIZE 8
+<<<<<<< HEAD
 #define BCM2835_DMA_BULK_MASK  BIT(0)
+=======
+>>>>>>> upstream/rpi-4.4.y
 
 struct bcm2835_dmadev {
 	struct dma_device ddev;
@@ -254,6 +257,23 @@ static void bcm2835_dma_create_cb_set_length(
 
 	/* have we filled in period_length yet? */
 	if (*total_len + control_block->length < period_len) {
+<<<<<<< HEAD
+=======
+		/*
+		 * If the next control block is the last in the period
+		 * and it's length would be less than half of max_len
+		 * change it so that both control blocks are (almost)
+		 * equally long. This avoids generating very short
+		 * control blocks (worst case would be 4 bytes) which
+		 * might be problematic. We also have to make sure the
+		 * new length is a multiple of 4 bytes.
+		 */
+		if (*total_len + control_block->length + max_len / 2 >
+		    period_len) {
+			control_block->length =
+				DIV_ROUND_UP(period_len - *total_len, 8) * 4;
+		}
+>>>>>>> upstream/rpi-4.4.y
 		/* update number of bytes in this period so far */
 		*total_len += control_block->length;
 		return;
@@ -398,12 +418,20 @@ static void bcm2835_dma_fill_cb_chain_with_sg(
 	unsigned int sg_len)
 {
 	struct bcm2835_chan *c = to_bcm2835_dma_chan(chan);
+<<<<<<< HEAD
 	size_t len, max_len;
 	unsigned int i;
 	dma_addr_t addr;
 	struct scatterlist *sgent;
 
 	max_len = bcm2835_dma_max_frame_length(c);
+=======
+	size_t max_len = bcm2835_dma_max_frame_length(c);
+	unsigned int i, len;
+	dma_addr_t addr;
+	struct scatterlist *sgent;
+
+>>>>>>> upstream/rpi-4.4.y
 	for_each_sg(sgl, sgent, sg_len, i) {
 		for (addr = sg_dma_address(sgent), len = sg_dma_len(sgent);
 		     len > 0;
@@ -576,16 +604,16 @@ static enum dma_status bcm2835_dma_tx_status(struct dma_chan *chan,
 	struct virt_dma_desc *vd;
 	enum dma_status ret;
 	unsigned long flags;
+	u32 residue;
 
 	ret = dma_cookie_status(chan, cookie, txstate);
-	if (ret == DMA_COMPLETE || !txstate)
+	if (ret == DMA_COMPLETE)
 		return ret;
 
 	spin_lock_irqsave(&c->vc.lock, flags);
 	vd = vchan_find_desc(&c->vc, cookie);
 	if (vd) {
-		txstate->residue =
-			bcm2835_dma_desc_size(to_bcm2835_dma_desc(&vd->tx));
+		residue = bcm2835_dma_desc_size(to_bcm2835_dma_desc(&vd->tx));
 	} else if (c->desc && c->desc->vd.tx.cookie == cookie) {
 		struct bcm2835_desc *d = c->desc;
 		dma_addr_t pos;
@@ -597,10 +625,24 @@ static enum dma_status bcm2835_dma_tx_status(struct dma_chan *chan,
 		else
 			pos = 0;
 
-		txstate->residue = bcm2835_dma_desc_size_pos(d, pos);
+		residue = bcm2835_dma_desc_size_pos(d, pos);
+
+		/*
+		 * If our non-cyclic transfer is done, then report
+		 * complete and trigger the next tx now.  This lets
+		 * the dmaengine API be used synchronously from an IRQ
+		 * handler.
+		 */
+		if (!d->cyclic && residue == 0) {
+			vchan_cookie_complete(&c->desc->vd);
+			bcm2835_dma_start_desc(c);
+			ret = dma_cookie_status(chan, cookie, txstate);
+		}
 	} else {
-		txstate->residue = 0;
+		residue = 0;
 	}
+
+	dma_set_residue(txstate, residue);
 
 	spin_unlock_irqrestore(&c->vc.lock, flags);
 
@@ -619,7 +661,11 @@ static void bcm2835_dma_issue_pending(struct dma_chan *chan)
 	spin_unlock_irqrestore(&c->vc.lock, flags);
 }
 
+<<<<<<< HEAD
 static struct dma_async_tx_descriptor *bcm2835_dma_prep_dma_memcpy(
+=======
+struct dma_async_tx_descriptor *bcm2835_dma_prep_dma_memcpy(
+>>>>>>> upstream/rpi-4.4.y
 	struct dma_chan *chan, dma_addr_t dst, dma_addr_t src,
 	size_t len, unsigned long flags)
 {
@@ -698,6 +744,7 @@ static struct dma_async_tx_descriptor *bcm2835_dma_prep_slave_sg(
 
 	return vchan_tx_prep(&c->vc, &d->vd, flags);
 }
+<<<<<<< HEAD
 
 static struct dma_async_tx_descriptor *bcm2835_dma_prep_dma_cyclic(
 	struct dma_chan *chan, dma_addr_t buf_addr, size_t buf_len,
@@ -712,6 +759,22 @@ static struct dma_async_tx_descriptor *bcm2835_dma_prep_dma_cyclic(
 	size_t max_len = bcm2835_dma_max_frame_length(c);
 	size_t frames;
 
+=======
+
+static struct dma_async_tx_descriptor *bcm2835_dma_prep_dma_cyclic(
+	struct dma_chan *chan, dma_addr_t buf_addr, size_t buf_len,
+	size_t period_len, enum dma_transfer_direction direction,
+	unsigned long flags)
+{
+	struct bcm2835_chan *c = to_bcm2835_dma_chan(chan);
+	struct bcm2835_desc *d;
+	dma_addr_t src, dst;
+	u32 info = BCM2835_DMA_WAIT_RESP;
+	u32 extra = BCM2835_DMA_INT_EN;
+	size_t max_len = bcm2835_dma_max_frame_length(c);
+	size_t frames;
+
+>>>>>>> upstream/rpi-4.4.y
 	/* Grab configuration */
 	if (!is_slave_direction(direction)) {
 		dev_err(chan->device->dev, "%s: bad direction?\n", __func__);
@@ -967,6 +1030,7 @@ static int bcm2835_dma_probe(struct platform_device *pdev)
 		goto err_no_dma;
 	}
 
+<<<<<<< HEAD
 	/* Channel 0 is used by the legacy API */
 	chans_available &= ~BCM2835_DMA_BULK_MASK;
 
@@ -987,6 +1051,25 @@ static int bcm2835_dma_probe(struct platform_device *pdev)
 		/* legacy device tree case handling */
 		dev_warn_once(&pdev->dev,
 			      "missing interrupt-names property in device tree - legacy interpretation is used\n");
+=======
+	/* get irqs for each channel that we support */
+	for (i = 0; i <= BCM2835_DMA_MAX_DMA_CHAN_SUPPORTED; i++) {
+		/* skip masked out channels */
+		if (!(chans_available & (1 << i))) {
+			irq[i] = -1;
+			continue;
+		}
+
+		/* get the named irq */
+		snprintf(chan_name, sizeof(chan_name), "dma%i", i);
+		irq[i] = platform_get_irq_byname(pdev, chan_name);
+		if (irq[i] >= 0)
+			continue;
+
+		/* legacy device tree case handling */
+		dev_warn_once(&pdev->dev,
+			      "missing interrupts-names property in device tree - legacy interpretation is used");
+>>>>>>> upstream/rpi-4.4.y
 		/*
 		 * in case of channel >= 11
 		 * use the 11th interrupt and that is shared
@@ -1032,6 +1115,14 @@ static int bcm2835_dma_probe(struct platform_device *pdev)
 	}
 
 	dev_dbg(&pdev->dev, "Load BCM2835 DMA engine driver\n");
+
+	/* load the legacy api if bit 0 in the mask is cleared */
+	if ((chans_available & BIT(0)) == 0) {
+		rc = bcm_dmaman_probe(pdev, base, BIT(0));
+		if (rc)
+			dev_err(&pdev->dev,
+				"Failed to initialize the legacy API\n");
+	}
 
 	return 0;
 

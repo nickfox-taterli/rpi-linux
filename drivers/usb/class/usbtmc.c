@@ -1380,7 +1380,11 @@ static int usbtmc_probe(struct usb_interface *intf,
 
 	dev_dbg(&intf->dev, "%s called\n", __func__);
 
+<<<<<<< HEAD
 	data = kzalloc(sizeof(*data), GFP_KERNEL);
+=======
+	data = kmalloc(sizeof(*data), GFP_KERNEL);
+>>>>>>> upstream/rpi-4.4.y
 	if (!data)
 		return -ENOMEM;
 

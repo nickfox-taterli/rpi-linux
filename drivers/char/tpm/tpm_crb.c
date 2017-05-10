@@ -147,9 +147,17 @@ static int crb_send(struct tpm_chip *chip, u8 *buf, size_t len)
 	 */
 	iowrite32(0, &priv->cca->cancel);
 
+<<<<<<< HEAD
 	if (len > priv->cmd_size) {
 		dev_err(&chip->dev, "invalid command count value %zd %d\n",
 			len, priv->cmd_size);
+=======
+	if (len > le32_to_cpu(ioread32(&priv->cca->cmd_size))) {
+		dev_err(&chip->dev,
+			"invalid command count value %x %zx\n",
+			(unsigned int) len,
+			(size_t) le32_to_cpu(ioread32(&priv->cca->cmd_size)));
+>>>>>>> upstream/rpi-4.4.y
 		return -E2BIG;
 	}
 
@@ -354,6 +362,12 @@ static int crb_acpi_remove(struct acpi_device *device)
 	struct device *dev = &device->dev;
 	struct tpm_chip *chip = dev_get_drvdata(dev);
 
+<<<<<<< HEAD
+=======
+	if (chip->flags & TPM_CHIP_FLAG_TPM2)
+		tpm2_shutdown(chip, TPM2_SU_CLEAR);
+
+>>>>>>> upstream/rpi-4.4.y
 	tpm_chip_unregister(chip);
 
 	return 0;

@@ -426,7 +426,11 @@ const struct clk_ops clk_divider_ro_ops = {
 };
 EXPORT_SYMBOL_GPL(clk_divider_ro_ops);
 
+<<<<<<< HEAD
 static struct clk_hw *_register_divider(struct device *dev, const char *name,
+=======
+static struct clk *_register_divider(struct device *dev, const char *name,
+>>>>>>> upstream/rpi-4.4.y
 		const char *parent_name, unsigned long flags,
 		void __iomem *reg, u8 shift, u8 width,
 		u8 clk_divider_flags, const struct clk_div_table *table,

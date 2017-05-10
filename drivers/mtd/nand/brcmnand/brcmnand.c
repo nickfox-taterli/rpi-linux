@@ -340,6 +340,7 @@ static const u16 brcmnand_regs_v71[] = {
 	[BRCMNAND_FC_BASE]		= 0x400,
 };
 
+<<<<<<< HEAD
 /* BRCMNAND v7.2 */
 static const u16 brcmnand_regs_v72[] = {
 	[BRCMNAND_CMD_START]		=  0x04,
@@ -370,6 +371,8 @@ static const u16 brcmnand_regs_v72[] = {
 	[BRCMNAND_FC_BASE]		= 0x600,
 };
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 enum brcmnand_cs_reg {
 	BRCMNAND_CS_CFG_EXT = 0,
 	BRCMNAND_CS_CFG,
@@ -465,9 +468,13 @@ static int brcmnand_revision_init(struct brcmnand_controller *ctrl)
 	}
 
 	/* Register offsets */
+<<<<<<< HEAD
 	if (ctrl->nand_version >= 0x0702)
 		ctrl->reg_offsets = brcmnand_regs_v72;
 	else if (ctrl->nand_version >= 0x0701)
+=======
+	if (ctrl->nand_version >= 0x0701)
+>>>>>>> upstream/rpi-4.4.y
 		ctrl->reg_offsets = brcmnand_regs_v71;
 	else if (ctrl->nand_version >= 0x0600)
 		ctrl->reg_offsets = brcmnand_regs_v60;

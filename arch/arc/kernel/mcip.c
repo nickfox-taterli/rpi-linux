@@ -15,6 +15,14 @@
 #include <asm/mcip.h>
 #include <asm/setup.h>
 
+<<<<<<< HEAD
+=======
+#define SOFTIRQ_IRQ	21
+
+static char smp_cpuinfo_buf[128];
+static int idu_detected;
+
+>>>>>>> upstream/rpi-4.4.y
 static DEFINE_RAW_SPINLOCK(mcip_lock);
 
 #ifdef CONFIG_SMP
@@ -38,8 +46,11 @@ static void mcip_ipi_send(int cpu)
 		return;
 	}
 
+<<<<<<< HEAD
 	raw_spin_lock_irqsave(&mcip_lock, flags);
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 	/*
 	 * If receiver already has a pending interrupt, elide sending this one.
 	 * Linux cross core calling works well with concurrent IPIs
@@ -58,6 +69,11 @@ static void mcip_ipi_clear(int irq)
 {
 	unsigned int cpu, c;
 	unsigned long flags;
+
+	if (unlikely(irq == SOFTIRQ_IRQ)) {
+		arc_softirq_clear(irq);
+		return;
+	}
 
 	if (unlikely(irq == SOFTIRQ_IRQ)) {
 		arc_softirq_clear(irq);

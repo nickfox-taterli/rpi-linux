@@ -737,8 +737,13 @@ int pnv_tce_xchg(struct iommu_table *tbl, long index,
 	if (newtce & TCE_PCI_WRITE)
 		newtce |= TCE_PCI_READ;
 
+<<<<<<< HEAD
 	oldtce = be64_to_cpu(xchg(pnv_tce(tbl, idx), cpu_to_be64(newtce)));
 	*hpa = oldtce & ~(TCE_PCI_READ | TCE_PCI_WRITE);
+=======
+	oldtce = xchg(pnv_tce(tbl, idx), cpu_to_be64(newtce));
+	*hpa = be64_to_cpu(oldtce) & ~(TCE_PCI_READ | TCE_PCI_WRITE);
+>>>>>>> upstream/rpi-4.4.y
 	*direction = iommu_tce_direction(oldtce);
 
 	return 0;

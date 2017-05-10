@@ -89,6 +89,7 @@ void kvm_mips_dump_guest_tlbs(struct kvm_vcpu *vcpu)
 			 (tlb.tlb_lo[0] | tlb.tlb_lo[1]) & ENTRYLO_V
 							? ' ' : '*',
 			 i, tlb.tlb_hi);
+<<<<<<< HEAD
 		kvm_info("Lo0=0x%09llx %c%c attr %lx ",
 			 (u64) mips3_tlbpfn_to_paddr(tlb.tlb_lo[0]),
 			 (tlb.tlb_lo[0] & ENTRYLO_D) ? 'D' : ' ',
@@ -100,6 +101,37 @@ void kvm_mips_dump_guest_tlbs(struct kvm_vcpu *vcpu)
 			 (tlb.tlb_lo[1] & ENTRYLO_G) ? 'G' : ' ',
 			 (tlb.tlb_lo[1] & ENTRYLO_C) >> ENTRYLO_C_SHIFT,
 			 tlb.tlb_mask);
+=======
+		kvm_info("Lo0=0x%09" PRIx64 " %c%c attr %lx ",
+			 (uint64_t) mips3_tlbpfn_to_paddr(tlb.tlb_lo0),
+			 (tlb.tlb_lo0 & MIPS3_PG_D) ? 'D' : ' ',
+			 (tlb.tlb_lo0 & MIPS3_PG_G) ? 'G' : ' ',
+			 (tlb.tlb_lo0 >> 3) & 7);
+		kvm_info("Lo1=0x%09" PRIx64 " %c%c attr %lx sz=%lx\n",
+			 (uint64_t) mips3_tlbpfn_to_paddr(tlb.tlb_lo1),
+			 (tlb.tlb_lo1 & MIPS3_PG_D) ? 'D' : ' ',
+			 (tlb.tlb_lo1 & MIPS3_PG_G) ? 'G' : ' ',
+			 (tlb.tlb_lo1 >> 3) & 7, tlb.tlb_mask);
+	}
+}
+EXPORT_SYMBOL(kvm_mips_dump_guest_tlbs);
+
+static int kvm_mips_map_page(struct kvm *kvm, gfn_t gfn)
+{
+	int srcu_idx, err = 0;
+	pfn_t pfn;
+
+	if (kvm->arch.guest_pmap[gfn] != KVM_INVALID_PAGE)
+		return 0;
+
+	srcu_idx = srcu_read_lock(&kvm->srcu);
+	pfn = kvm_mips_gfn_to_pfn(kvm, gfn);
+
+	if (is_error_noslot_pfn(pfn)) {
+		kvm_err("Couldn't get pfn for gfn %#" PRIx64 "!\n", gfn);
+		err = -EFAULT;
+		goto out;
+>>>>>>> upstream/rpi-4.4.y
 	}
 }
 EXPORT_SYMBOL_GPL(kvm_mips_dump_guest_tlbs);
@@ -166,7 +198,63 @@ int kvm_mips_host_tlb_write(struct kvm_vcpu *vcpu, unsigned long entryhi,
 	local_irq_restore(flags);
 	return 0;
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL_GPL(kvm_mips_host_tlb_write);
+=======
+
+/* XXXKYMA: Must be called with interrupts disabled */
+int kvm_mips_handle_kseg0_tlb_fault(unsigned long badvaddr,
+				    struct kvm_vcpu *vcpu)
+{
+	gfn_t gfn;
+	pfn_t pfn0, pfn1;
+	unsigned long vaddr = 0;
+	unsigned long entryhi = 0, entrylo0 = 0, entrylo1 = 0;
+	int even;
+	struct kvm *kvm = vcpu->kvm;
+	const int flush_dcache_mask = 0;
+
+	if (KVM_GUEST_KSEGX(badvaddr) != KVM_GUEST_KSEG0) {
+		kvm_err("%s: Invalid BadVaddr: %#lx\n", __func__, badvaddr);
+		kvm_mips_dump_host_tlbs();
+		return -1;
+	}
+
+	gfn = (KVM_GUEST_CPHYSADDR(badvaddr) >> PAGE_SHIFT);
+	if ((gfn | 1) >= kvm->arch.guest_pmap_npages) {
+		kvm_err("%s: Invalid gfn: %#llx, BadVaddr: %#lx\n", __func__,
+			gfn, badvaddr);
+		kvm_mips_dump_host_tlbs();
+		return -1;
+	}
+	even = !(gfn & 0x1);
+	vaddr = badvaddr & (PAGE_MASK << 1);
+
+	if (kvm_mips_map_page(vcpu->kvm, gfn) < 0)
+		return -1;
+
+	if (kvm_mips_map_page(vcpu->kvm, gfn ^ 0x1) < 0)
+		return -1;
+
+	if (even) {
+		pfn0 = kvm->arch.guest_pmap[gfn];
+		pfn1 = kvm->arch.guest_pmap[gfn ^ 0x1];
+	} else {
+		pfn0 = kvm->arch.guest_pmap[gfn ^ 0x1];
+		pfn1 = kvm->arch.guest_pmap[gfn];
+	}
+
+	entryhi = (vaddr | kvm_mips_get_kernel_asid(vcpu));
+	entrylo0 = mips3_paddr_to_tlbpfn(pfn0 << PAGE_SHIFT) | (0x3 << 3) |
+		   (1 << 2) | (0x1 << 1);
+	entrylo1 = mips3_paddr_to_tlbpfn(pfn1 << PAGE_SHIFT) | (0x3 << 3) |
+		   (1 << 2) | (0x1 << 1);
+
+	return kvm_mips_host_tlb_write(vcpu, entryhi, entrylo0, entrylo1,
+				       flush_dcache_mask);
+}
+EXPORT_SYMBOL(kvm_mips_handle_kseg0_tlb_fault);
+>>>>>>> upstream/rpi-4.4.y
 
 int kvm_mips_handle_commpage_tlb_fault(unsigned long badvaddr,
 	struct kvm_vcpu *vcpu)
@@ -205,7 +293,75 @@ int kvm_mips_handle_commpage_tlb_fault(unsigned long badvaddr,
 
 	return 0;
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL_GPL(kvm_mips_handle_commpage_tlb_fault);
+=======
+EXPORT_SYMBOL(kvm_mips_handle_commpage_tlb_fault);
+
+int kvm_mips_handle_mapped_seg_tlb_fault(struct kvm_vcpu *vcpu,
+					 struct kvm_mips_tlb *tlb,
+					 unsigned long *hpa0,
+					 unsigned long *hpa1)
+{
+	unsigned long entryhi = 0, entrylo0 = 0, entrylo1 = 0;
+	struct kvm *kvm = vcpu->kvm;
+	pfn_t pfn0, pfn1;
+	gfn_t gfn0, gfn1;
+	long tlb_lo[2];
+
+	tlb_lo[0] = tlb->tlb_lo0;
+	tlb_lo[1] = tlb->tlb_lo1;
+
+	/*
+	 * The commpage address must not be mapped to anything else if the guest
+	 * TLB contains entries nearby, or commpage accesses will break.
+	 */
+	if (!((tlb->tlb_hi ^ KVM_GUEST_COMMPAGE_ADDR) &
+			VPN2_MASK & (PAGE_MASK << 1)))
+		tlb_lo[(KVM_GUEST_COMMPAGE_ADDR >> PAGE_SHIFT) & 1] = 0;
+
+	gfn0 = mips3_tlbpfn_to_paddr(tlb_lo[0]) >> PAGE_SHIFT;
+	gfn1 = mips3_tlbpfn_to_paddr(tlb_lo[1]) >> PAGE_SHIFT;
+	if (gfn0 >= kvm->arch.guest_pmap_npages ||
+	    gfn1 >= kvm->arch.guest_pmap_npages) {
+		kvm_err("%s: Invalid gfn: [%#llx, %#llx], EHi: %#lx\n",
+			__func__, gfn0, gfn1, tlb->tlb_hi);
+		kvm_mips_dump_guest_tlbs(vcpu);
+		return -1;
+	}
+
+	if (kvm_mips_map_page(kvm, gfn0) < 0)
+		return -1;
+
+	if (kvm_mips_map_page(kvm, gfn1) < 0)
+		return -1;
+
+	pfn0 = kvm->arch.guest_pmap[gfn0];
+	pfn1 = kvm->arch.guest_pmap[gfn1];
+
+	if (hpa0)
+		*hpa0 = pfn0 << PAGE_SHIFT;
+
+	if (hpa1)
+		*hpa1 = pfn1 << PAGE_SHIFT;
+
+	/* Get attributes from the Guest TLB */
+	entryhi = (tlb->tlb_hi & VPN2_MASK) | (KVM_GUEST_KERNEL_MODE(vcpu) ?
+					       kvm_mips_get_kernel_asid(vcpu) :
+					       kvm_mips_get_user_asid(vcpu));
+	entrylo0 = mips3_paddr_to_tlbpfn(pfn0 << PAGE_SHIFT) | (0x3 << 3) |
+		   (tlb_lo[0] & MIPS3_PG_D) | (tlb_lo[0] & MIPS3_PG_V);
+	entrylo1 = mips3_paddr_to_tlbpfn(pfn1 << PAGE_SHIFT) | (0x3 << 3) |
+		   (tlb_lo[1] & MIPS3_PG_D) | (tlb_lo[1] & MIPS3_PG_V);
+
+	kvm_debug("@ %#lx tlb_lo0: 0x%08lx tlb_lo1: 0x%08lx\n", vcpu->arch.pc,
+		  tlb->tlb_lo0, tlb->tlb_lo1);
+
+	return kvm_mips_host_tlb_write(vcpu, entryhi, entrylo0, entrylo1,
+				       tlb->tlb_mask);
+}
+EXPORT_SYMBOL(kvm_mips_handle_mapped_seg_tlb_fault);
+>>>>>>> upstream/rpi-4.4.y
 
 int kvm_mips_guest_tlb_lookup(struct kvm_vcpu *vcpu, unsigned long entryhi)
 {
@@ -381,4 +537,185 @@ void kvm_local_flush_tlb_all(void)
 
 	local_irq_restore(flags);
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL_GPL(kvm_local_flush_tlb_all);
+=======
+EXPORT_SYMBOL(kvm_local_flush_tlb_all);
+
+/**
+ * kvm_mips_migrate_count() - Migrate timer.
+ * @vcpu:	Virtual CPU.
+ *
+ * Migrate CP0_Count hrtimer to the current CPU by cancelling and restarting it
+ * if it was running prior to being cancelled.
+ *
+ * Must be called when the VCPU is migrated to a different CPU to ensure that
+ * timer expiry during guest execution interrupts the guest and causes the
+ * interrupt to be delivered in a timely manner.
+ */
+static void kvm_mips_migrate_count(struct kvm_vcpu *vcpu)
+{
+	if (hrtimer_cancel(&vcpu->arch.comparecount_timer))
+		hrtimer_restart(&vcpu->arch.comparecount_timer);
+}
+
+/* Restore ASID once we are scheduled back after preemption */
+void kvm_arch_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
+{
+	unsigned long flags;
+	int newasid = 0;
+
+	kvm_debug("%s: vcpu %p, cpu: %d\n", __func__, vcpu, cpu);
+
+	/* Alocate new kernel and user ASIDs if needed */
+
+	local_irq_save(flags);
+
+	if (((vcpu->arch.
+	      guest_kernel_asid[cpu] ^ asid_cache(cpu)) & ASID_VERSION_MASK)) {
+		kvm_get_new_mmu_context(&vcpu->arch.guest_kernel_mm, cpu, vcpu);
+		vcpu->arch.guest_kernel_asid[cpu] =
+		    vcpu->arch.guest_kernel_mm.context.asid[cpu];
+		kvm_get_new_mmu_context(&vcpu->arch.guest_user_mm, cpu, vcpu);
+		vcpu->arch.guest_user_asid[cpu] =
+		    vcpu->arch.guest_user_mm.context.asid[cpu];
+		newasid++;
+
+		kvm_debug("[%d]: cpu_context: %#lx\n", cpu,
+			  cpu_context(cpu, current->mm));
+		kvm_debug("[%d]: Allocated new ASID for Guest Kernel: %#x\n",
+			  cpu, vcpu->arch.guest_kernel_asid[cpu]);
+		kvm_debug("[%d]: Allocated new ASID for Guest User: %#x\n", cpu,
+			  vcpu->arch.guest_user_asid[cpu]);
+	}
+
+	if (vcpu->arch.last_sched_cpu != cpu) {
+		kvm_debug("[%d->%d]KVM VCPU[%d] switch\n",
+			  vcpu->arch.last_sched_cpu, cpu, vcpu->vcpu_id);
+		/*
+		 * Migrate the timer interrupt to the current CPU so that it
+		 * always interrupts the guest and synchronously triggers a
+		 * guest timer interrupt.
+		 */
+		kvm_mips_migrate_count(vcpu);
+	}
+
+	if (!newasid) {
+		/*
+		 * If we preempted while the guest was executing, then reload
+		 * the pre-empted ASID
+		 */
+		if (current->flags & PF_VCPU) {
+			write_c0_entryhi(vcpu->arch.
+					 preempt_entryhi & ASID_MASK);
+			ehb();
+		}
+	} else {
+		/* New ASIDs were allocated for the VM */
+
+		/*
+		 * Were we in guest context? If so then the pre-empted ASID is
+		 * no longer valid, we need to set it to what it should be based
+		 * on the mode of the Guest (Kernel/User)
+		 */
+		if (current->flags & PF_VCPU) {
+			if (KVM_GUEST_KERNEL_MODE(vcpu))
+				write_c0_entryhi(vcpu->arch.
+						 guest_kernel_asid[cpu] &
+						 ASID_MASK);
+			else
+				write_c0_entryhi(vcpu->arch.
+						 guest_user_asid[cpu] &
+						 ASID_MASK);
+			ehb();
+		}
+	}
+
+	/* restore guest state to registers */
+	kvm_mips_callbacks->vcpu_set_regs(vcpu);
+
+	local_irq_restore(flags);
+
+}
+EXPORT_SYMBOL(kvm_arch_vcpu_load);
+
+/* ASID can change if another task is scheduled during preemption */
+void kvm_arch_vcpu_put(struct kvm_vcpu *vcpu)
+{
+	unsigned long flags;
+	uint32_t cpu;
+
+	local_irq_save(flags);
+
+	cpu = smp_processor_id();
+
+	vcpu->arch.preempt_entryhi = read_c0_entryhi();
+	vcpu->arch.last_sched_cpu = cpu;
+
+	/* save guest state in registers */
+	kvm_mips_callbacks->vcpu_get_regs(vcpu);
+
+	if (((cpu_context(cpu, current->mm) ^ asid_cache(cpu)) &
+	     ASID_VERSION_MASK)) {
+		kvm_debug("%s: Dropping MMU Context:  %#lx\n", __func__,
+			  cpu_context(cpu, current->mm));
+		drop_mmu_context(current->mm, cpu);
+	}
+	write_c0_entryhi(cpu_asid(cpu, current->mm));
+	ehb();
+
+	local_irq_restore(flags);
+}
+EXPORT_SYMBOL(kvm_arch_vcpu_put);
+
+uint32_t kvm_get_inst(uint32_t *opc, struct kvm_vcpu *vcpu)
+{
+	struct mips_coproc *cop0 = vcpu->arch.cop0;
+	unsigned long paddr, flags, vpn2, asid;
+	uint32_t inst;
+	int index;
+
+	if (KVM_GUEST_KSEGX((unsigned long) opc) < KVM_GUEST_KSEG0 ||
+	    KVM_GUEST_KSEGX((unsigned long) opc) == KVM_GUEST_KSEG23) {
+		local_irq_save(flags);
+		index = kvm_mips_host_tlb_lookup(vcpu, (unsigned long) opc);
+		if (index >= 0) {
+			inst = *(opc);
+		} else {
+			vpn2 = (unsigned long) opc & VPN2_MASK;
+			asid = kvm_read_c0_guest_entryhi(cop0) & ASID_MASK;
+			index = kvm_mips_guest_tlb_lookup(vcpu, vpn2 | asid);
+			if (index < 0) {
+				kvm_err("%s: get_user_failed for %p, vcpu: %p, ASID: %#lx\n",
+					__func__, opc, vcpu, read_c0_entryhi());
+				kvm_mips_dump_host_tlbs();
+				local_irq_restore(flags);
+				return KVM_INVALID_INST;
+			}
+			if (kvm_mips_handle_mapped_seg_tlb_fault(vcpu,
+						&vcpu->arch.guest_tlb[index],
+						NULL, NULL)) {
+				kvm_err("%s: handling mapped seg tlb fault failed for %p, index: %u, vcpu: %p, ASID: %#lx\n",
+					__func__, opc, index, vcpu,
+					read_c0_entryhi());
+				kvm_mips_dump_guest_tlbs(vcpu);
+				local_irq_restore(flags);
+				return KVM_INVALID_INST;
+			}
+			inst = *(opc);
+		}
+		local_irq_restore(flags);
+	} else if (KVM_GUEST_KSEGX(opc) == KVM_GUEST_KSEG0) {
+		paddr =
+		    kvm_mips_translate_guest_kseg0_to_hpa(vcpu,
+							  (unsigned long) opc);
+		inst = *(uint32_t *) CKSEG0ADDR(paddr);
+	} else {
+		kvm_err("%s: illegal address: %p\n", __func__, opc);
+		return KVM_INVALID_INST;
+	}
+
+	return inst;
+}
+EXPORT_SYMBOL(kvm_get_inst);
+>>>>>>> upstream/rpi-4.4.y

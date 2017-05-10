@@ -1266,8 +1266,13 @@ static int mlx5e_open_cq(struct mlx5e_channel *c,
 
 	if (MLX5_CAP_GEN(mdev, cq_moderation))
 		mlx5_core_modify_cq_moderation(mdev, &cq->mcq,
+<<<<<<< HEAD
 					       moderation.usec,
 					       moderation.pkts);
+=======
+					       moderation_usecs,
+					       moderation_frames);
+>>>>>>> upstream/rpi-4.4.y
 	return 0;
 
 err_destroy_cq:
@@ -2167,7 +2172,12 @@ static void mlx5e_query_mtu(struct mlx5e_priv *priv, u16 *mtu)
 static int mlx5e_set_dev_port_mtu(struct net_device *netdev)
 {
 	struct mlx5e_priv *priv = netdev_priv(netdev);
+<<<<<<< HEAD
 	u16 mtu;
+=======
+	struct mlx5_core_dev *mdev = priv->mdev;
+	u16 hw_mtu;
+>>>>>>> upstream/rpi-4.4.y
 	int err;
 
 	err = mlx5e_set_mtu(priv, netdev->mtu);
@@ -2861,6 +2871,9 @@ static int mlx5e_set_features(struct net_device *netdev,
 #define MXL5_HW_MIN_MTU 64
 #define MXL5E_MIN_MTU (MXL5_HW_MIN_MTU + ETH_FCS_LEN)
 
+#define MXL5_HW_MIN_MTU 64
+#define MXL5E_MIN_MTU (MXL5_HW_MIN_MTU + ETH_FCS_LEN)
+
 static int mlx5e_change_mtu(struct net_device *netdev, int new_mtu)
 {
 	struct mlx5e_priv *priv = netdev_priv(netdev);
@@ -3290,6 +3303,7 @@ static int mlx5e_check_required_hca_cap(struct mlx5_core_dev *mdev)
 		mlx5_core_warn(mdev, "Self loop back prevention is not supported\n");
 	if (!MLX5_CAP_GEN(mdev, cq_moderation))
 		mlx5_core_warn(mdev, "CQ modiration is not supported\n");
+<<<<<<< HEAD
 
 	return 0;
 }
@@ -3367,6 +3381,8 @@ static int mlx5e_get_pci_bw(struct mlx5_core_dev *mdev, u32 *pci_bw)
 	default:
 		return -EINVAL;
 	}
+=======
+>>>>>>> upstream/rpi-4.4.y
 
 	return 0;
 }

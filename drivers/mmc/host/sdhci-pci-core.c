@@ -346,6 +346,11 @@ static int bxt_get_cd(struct mmc_host *mmc)
 	if (!gpio_cd)
 		return 0;
 
+<<<<<<< HEAD
+=======
+	pm_runtime_get_sync(mmc->parent);
+
+>>>>>>> upstream/rpi-4.4.y
 	spin_lock_irqsave(&host->lock, flags);
 
 	if (host->flags & SDHCI_DEVICE_DEAD)
@@ -355,6 +360,12 @@ static int bxt_get_cd(struct mmc_host *mmc)
 out:
 	spin_unlock_irqrestore(&host->lock, flags);
 
+<<<<<<< HEAD
+=======
+	pm_runtime_mark_last_busy(mmc->parent);
+	pm_runtime_put_autosuspend(mmc->parent);
+
+>>>>>>> upstream/rpi-4.4.y
 	return ret;
 }
 
@@ -362,7 +373,10 @@ static int byt_emmc_probe_slot(struct sdhci_pci_slot *slot)
 {
 	slot->host->mmc->caps |= MMC_CAP_8_BIT_DATA | MMC_CAP_NONREMOVABLE |
 				 MMC_CAP_HW_RESET | MMC_CAP_1_8V_DDR |
+<<<<<<< HEAD
 				 MMC_CAP_CMD_DURING_TFR |
+=======
+>>>>>>> upstream/rpi-4.4.y
 				 MMC_CAP_WAIT_WHILE_BUSY;
 	slot->host->mmc->caps2 |= MMC_CAP2_HC_ERASE_SZ;
 	slot->hw_reset = sdhci_pci_int_hw_reset;
@@ -390,10 +404,15 @@ static int byt_sd_probe_slot(struct sdhci_pci_slot *slot)
 	slot->cd_override_level = true;
 	if (slot->chip->pdev->device == PCI_DEVICE_ID_INTEL_BXT_SD ||
 	    slot->chip->pdev->device == PCI_DEVICE_ID_INTEL_BXTM_SD ||
+<<<<<<< HEAD
 	    slot->chip->pdev->device == PCI_DEVICE_ID_INTEL_APL_SD) {
 		slot->host->mmc_host_ops.get_cd = bxt_get_cd;
 		slot->host->mmc->caps |= MMC_CAP_AGGRESSIVE_PM;
 	}
+=======
+	    slot->chip->pdev->device == PCI_DEVICE_ID_INTEL_APL_SD)
+		slot->host->mmc_host_ops.get_cd = bxt_get_cd;
+>>>>>>> upstream/rpi-4.4.y
 
 	return 0;
 }

@@ -100,6 +100,7 @@ int __ip_local_out(struct net *net, struct sock *sk, struct sk_buff *skb)
 	iph->tot_len = htons(skb->len);
 	ip_send_check(iph);
 
+<<<<<<< HEAD
 	/* if egress device is enslaved to an L3 master device pass the
 	 * skb to its handler for processing
 	 */
@@ -107,6 +108,8 @@ int __ip_local_out(struct net *net, struct sock *sk, struct sk_buff *skb)
 	if (unlikely(!skb))
 		return 0;
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 	skb->protocol = htons(ETH_P_IP);
 
 	return nf_hook(NFPROTO_IPV4, NF_INET_LOCAL_OUT,

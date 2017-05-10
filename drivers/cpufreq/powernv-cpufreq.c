@@ -655,6 +655,7 @@ static int powernv_cpufreq_target_index(struct cpufreq_policy *policy,
 		powernv_cpufreq_throttle_check(NULL);
 		preempt_enable();
 	}
+<<<<<<< HEAD
 
 	cur_msec = jiffies_to_msecs(get_jiffies_64());
 
@@ -691,6 +692,8 @@ static int powernv_cpufreq_target_index(struct cpufreq_policy *policy,
 		gpstates->highest_lpstate_idx = new_index;
 		gpstate_idx = new_index;
 	}
+=======
+>>>>>>> upstream/rpi-4.4.y
 
 	/*
 	 * If local pstate is equal to global pstate, rampdown is over

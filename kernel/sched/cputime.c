@@ -263,15 +263,32 @@ static __always_inline cputime_t steal_account_process_time(cputime_t maxtime)
 	if (static_key_false(&paravirt_steal_enabled)) {
 		cputime_t steal_cputime;
 		u64 steal;
+<<<<<<< HEAD
+=======
+		unsigned long steal_jiffies;
+>>>>>>> upstream/rpi-4.4.y
 
 		steal = paravirt_steal_clock(smp_processor_id());
 		steal -= this_rq()->prev_steal_time;
 
+<<<<<<< HEAD
 		steal_cputime = min(nsecs_to_cputime(steal), maxtime);
 		account_steal_time(steal_cputime);
 		this_rq()->prev_steal_time += cputime_to_nsecs(steal_cputime);
 
 		return steal_cputime;
+=======
+		/*
+		 * steal is in nsecs but our caller is expecting steal
+		 * time in jiffies. Lets cast the result to jiffies
+		 * granularity and account the rest on the next rounds.
+		 */
+		steal_jiffies = nsecs_to_jiffies(steal);
+		this_rq()->prev_steal_time += jiffies_to_nsecs(steal_jiffies);
+
+		account_steal_time(jiffies_to_cputime(steal_jiffies));
+		return steal_jiffies;
+>>>>>>> upstream/rpi-4.4.y
 	}
 #endif
 	return 0;

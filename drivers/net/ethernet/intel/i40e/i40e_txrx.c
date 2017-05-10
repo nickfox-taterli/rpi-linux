@@ -546,10 +546,14 @@ static void i40e_unmap_and_free_tx_resource(struct i40e_ring *ring,
 					    struct i40e_tx_buffer *tx_buffer)
 {
 	if (tx_buffer->skb) {
+<<<<<<< HEAD
 		if (tx_buffer->tx_flags & I40E_TX_FLAGS_FD_SB)
 			kfree(tx_buffer->raw_buf);
 		else
 			dev_kfree_skb_any(tx_buffer->skb);
+=======
+		dev_kfree_skb_any(tx_buffer->skb);
+>>>>>>> upstream/rpi-4.4.y
 		if (dma_unmap_len(tx_buffer, len))
 			dma_unmap_single(ring->dev,
 					 dma_unmap_addr(tx_buffer, dma),
@@ -562,6 +566,12 @@ static void i40e_unmap_and_free_tx_resource(struct i40e_ring *ring,
 			       DMA_TO_DEVICE);
 	}
 
+<<<<<<< HEAD
+=======
+	if (tx_buffer->tx_flags & I40E_TX_FLAGS_FD_SB)
+		kfree(tx_buffer->raw_buf);
+
+>>>>>>> upstream/rpi-4.4.y
 	tx_buffer->next_to_watch = NULL;
 	tx_buffer->skb = NULL;
 	dma_unmap_len_set(tx_buffer, len, 0);
@@ -1377,7 +1387,11 @@ checksum_fail:
  *
  * Returns a hash type to be used by skb_set_hash
  **/
+<<<<<<< HEAD
 static inline int i40e_ptype_to_htype(u8 ptype)
+=======
+static inline enum pkt_hash_types i40e_ptype_to_htype(u8 ptype)
+>>>>>>> upstream/rpi-4.4.y
 {
 	struct i40e_rx_ptype_decoded decoded = decode_rx_desc_ptype(ptype);
 
@@ -1398,6 +1412,35 @@ static inline int i40e_ptype_to_htype(u8 ptype)
  * i40e_rx_hash - set the hash value in the skb
  * @ring: descriptor ring
  * @rx_desc: specific descriptor
+<<<<<<< HEAD
+=======
+ **/
+static inline void i40e_rx_hash(struct i40e_ring *ring,
+				union i40e_rx_desc *rx_desc,
+				struct sk_buff *skb,
+				u8 rx_ptype)
+{
+	u32 hash;
+	const __le64 rss_mask  =
+		cpu_to_le64((u64)I40E_RX_DESC_FLTSTAT_RSS_HASH <<
+			    I40E_RX_DESC_STATUS_FLTSTAT_SHIFT);
+
+	if (ring->netdev->features & NETIF_F_RXHASH)
+		return;
+
+	if ((rx_desc->wb.qword1.status_error_len & rss_mask) == rss_mask) {
+		hash = le32_to_cpu(rx_desc->wb.qword0.hi_dword.rss);
+		skb_set_hash(skb, hash, i40e_ptype_to_htype(rx_ptype));
+	}
+}
+
+/**
+ * i40e_clean_rx_irq_ps - Reclaim resources after receive; packet split
+ * @rx_ring:  rx ring to clean
+ * @budget:   how many cleans we're allowed
+ *
+ * Returns true if there's any budget left (e.g. the clean is finished)
+>>>>>>> upstream/rpi-4.4.y
  **/
 static inline void i40e_rx_hash(struct i40e_ring *ring,
 				union i40e_rx_desc *rx_desc,
@@ -1517,8 +1560,19 @@ static bool i40e_cleanup_headers(struct i40e_ring *rx_ring, struct sk_buff *skb)
 	if (eth_skb_pad(skb))
 		return true;
 
+<<<<<<< HEAD
 	return false;
 }
+=======
+		i40e_rx_hash(rx_ring, rx_desc, skb, rx_ptype);
+
+		if (unlikely(rx_status & I40E_RXD_QW1_STATUS_TSYNVALID_MASK)) {
+			i40e_ptp_rx_hwtstamp(vsi->back, skb, (rx_status &
+					   I40E_RXD_QW1_STATUS_TSYNINDX_MASK) >>
+					   I40E_RXD_QW1_STATUS_TSYNINDX_SHIFT);
+			rx_ring->last_rx_timestamp = jiffies;
+		}
+>>>>>>> upstream/rpi-4.4.y
 
 /**
  * i40e_reuse_rx_page - page flip buffer and store it back on the ring
@@ -1823,8 +1877,18 @@ static int i40e_clean_rx_irq(struct i40e_ring *rx_ring, int budget)
 			continue;
 		}
 
+<<<<<<< HEAD
 		if (i40e_cleanup_headers(rx_ring, skb))
 			continue;
+=======
+		i40e_rx_hash(rx_ring, rx_desc, skb, rx_ptype);
+		if (unlikely(rx_status & I40E_RXD_QW1_STATUS_TSYNVALID_MASK)) {
+			i40e_ptp_rx_hwtstamp(vsi->back, skb, (rx_status &
+					   I40E_RXD_QW1_STATUS_TSYNINDX_MASK) >>
+					   I40E_RXD_QW1_STATUS_TSYNINDX_SHIFT);
+			rx_ring->last_rx_timestamp = jiffies;
+		}
+>>>>>>> upstream/rpi-4.4.y
 
 		/* probably a little skewed due to removing CRC */
 		total_rx_bytes += skb->len;

@@ -39,6 +39,7 @@
 #include <linux/elf.h>
 
 #include <asm/compat.h>
+#include <asm/cpufeature.h>
 #include <asm/debug-monitors.h>
 #include <asm/pgtable.h>
 #include <asm/syscall.h>

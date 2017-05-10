@@ -289,6 +289,7 @@ static const struct dmi_system_id video_detect_dmi_table[] = {
 		},
 	},
 	{
+<<<<<<< HEAD
 	 .callback = video_detect_force_native,
 	 .ident = "Dell Vostro V131",
 	 .matches = {
@@ -297,6 +298,8 @@ static const struct dmi_system_id video_detect_dmi_table[] = {
 		},
 	},
 	{
+=======
+>>>>>>> upstream/rpi-4.4.y
 	 /* https://bugzilla.redhat.com/show_bug.cgi?id=1123661 */
 	 .callback = video_detect_force_native,
 	 .ident = "Dell XPS 17 L702X",

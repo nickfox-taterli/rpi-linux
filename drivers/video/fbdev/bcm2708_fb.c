@@ -96,7 +96,10 @@ struct bcm2708_fb {
 	wait_queue_head_t dma_waitq;
 	struct bcm2708_fb_stats stats;
 	unsigned long fb_bus_address;
+<<<<<<< HEAD
 	struct { u32 base, length; } gpu;
+=======
+>>>>>>> upstream/rpi-4.4.y
 };
 
 #define to_bcm2708(info)	container_of(info, struct bcm2708_fb, fb)
@@ -221,6 +224,12 @@ static int bcm2708_fb_check_var(struct fb_var_screeninfo *var,
 				struct fb_info *info)
 {
 	/* info input, var output */
+<<<<<<< HEAD
+=======
+	int yres;
+
+	/* info input, var output */
+>>>>>>> upstream/rpi-4.4.y
 	print_debug("bcm2708_fb_check_var info(%p) %dx%d (%dx%d), %d, %d\n", info,
 		info->var.xres, info->var.yres, info->var.xres_virtual,
 		info->var.yres_virtual, (int)info->screen_size,
@@ -473,6 +482,10 @@ static long vc_mem_copy(struct bcm2708_fb *fb, unsigned long arg)
 	dma_addr_t bus_addr;
 	long rc = 0;
 	size_t offset;
+<<<<<<< HEAD
+=======
+	struct { u32 base, length; } gpu = {};
+>>>>>>> upstream/rpi-4.4.y
 
 	/* restrict this to root user */
 	if (!uid_eq(current_euid(), GLOBAL_ROOT_UID))
@@ -491,6 +504,7 @@ static long vc_mem_copy(struct bcm2708_fb *fb, unsigned long arg)
 		goto out;
 	}
 
+<<<<<<< HEAD
 	if (fb->gpu.base == 0 || fb->gpu.length == 0) {
 		pr_err("[%s]: Unable to determine gpu memory (%x,%x)\n", __func__, fb->gpu.base, fb->gpu.length);
 		return -EFAULT;
@@ -498,6 +512,18 @@ static long vc_mem_copy(struct bcm2708_fb *fb, unsigned long arg)
 
 	if (INTALIAS_NORMAL(ioparam.src) < fb->gpu.base || INTALIAS_NORMAL(ioparam.src) >= fb->gpu.base + fb->gpu.length) {
 		pr_err("[%s]: Invalid memory access %x (%x-%x)", __func__, INTALIAS_NORMAL(ioparam.src), fb->gpu.base, fb->gpu.base + fb->gpu.length);
+=======
+	rc = rpi_firmware_property(fb->fw,
+				    RPI_FIRMWARE_GET_VC_MEMORY,
+				    &gpu, sizeof(gpu));
+	if (rc != 0 || gpu.base == 0 || gpu.length == 0) {
+		pr_err("[%s]: Unable to determine gpu memory %ld,%x,%x)\n", __func__, rc, gpu.base, gpu.length);
+		return -EFAULT;
+	}
+
+	if (INTALIAS_NORMAL(ioparam.src) < gpu.base || INTALIAS_NORMAL(ioparam.src) >= gpu.base + gpu.length) {
+		pr_err("[%s]: Invalid memory access %x (%x-%x)", __func__, INTALIAS_NORMAL(ioparam.src), gpu.base, gpu.base + gpu.length);
+>>>>>>> upstream/rpi-4.4.y
 		return -EFAULT;
 	}
 
@@ -866,11 +892,14 @@ static int bcm2708_fb_probe(struct platform_device *dev)
 	fb->dev = dev;
 	fb->fb.device = &dev->dev;
 
+<<<<<<< HEAD
 	// failure here isn't fatal, but we'll fail in vc_mem_copy if fb->gpu is not valid
 	rpi_firmware_property(fb->fw,
 				    RPI_FIRMWARE_GET_VC_MEMORY,
 				    &fb->gpu, sizeof(fb->gpu));
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 	ret = bcm2708_fb_register(fb);
 	if (ret == 0) {
 		platform_set_drvdata(dev, fb);

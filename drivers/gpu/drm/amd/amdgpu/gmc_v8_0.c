@@ -44,8 +44,11 @@ static void gmc_v8_0_set_irq_funcs(struct amdgpu_device *adev);
 static int gmc_v8_0_wait_for_idle(void *handle);
 
 MODULE_FIRMWARE("amdgpu/tonga_mc.bin");
+<<<<<<< HEAD
 MODULE_FIRMWARE("amdgpu/polaris11_mc.bin");
 MODULE_FIRMWARE("amdgpu/polaris10_mc.bin");
+=======
+>>>>>>> upstream/rpi-4.4.y
 
 static const u32 golden_settings_tonga_a11[] =
 {
@@ -76,6 +79,7 @@ static const u32 fiji_mgcg_cgcg_init[] =
 	mmMC_MEM_POWER_LS, 0xffffffff, 0x00000104
 };
 
+<<<<<<< HEAD
 static const u32 golden_settings_polaris11_a11[] =
 {
 	mmVM_PRT_APERTURE0_LOW_ADDR, 0x0fffffff, 0x0fffffff,
@@ -93,6 +97,8 @@ static const u32 golden_settings_polaris10_a11[] =
 	mmVM_PRT_APERTURE3_LOW_ADDR, 0x0fffffff, 0x0fffffff
 };
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 static const u32 cz_mgcg_cgcg_init[] =
 {
 	mmMC_MEM_POWER_LS, 0xffffffff, 0x00000104
@@ -219,12 +225,15 @@ static int gmc_v8_0_init_microcode(struct amdgpu_device *adev)
 	case CHIP_TONGA:
 		chip_name = "tonga";
 		break;
+<<<<<<< HEAD
 	case CHIP_POLARIS11:
 		chip_name = "polaris11";
 		break;
 	case CHIP_POLARIS10:
 		chip_name = "polaris10";
 		break;
+=======
+>>>>>>> upstream/rpi-4.4.y
 	case CHIP_FIJI:
 	case CHIP_CARRIZO:
 	case CHIP_STONEY:
@@ -893,6 +902,19 @@ static int gmc_v8_0_sw_init(void *handle)
 	int r;
 	int dma_bits;
 	struct amdgpu_device *adev = (struct amdgpu_device *)handle;
+
+	if (adev->flags & AMD_IS_APU) {
+		adev->mc.vram_type = AMDGPU_VRAM_TYPE_UNKNOWN;
+	} else {
+		u32 tmp;
+
+		if (adev->asic_type == CHIP_FIJI)
+			tmp = RREG32(mmMC_SEQ_MISC0_FIJI);
+		else
+			tmp = RREG32(mmMC_SEQ_MISC0);
+		tmp &= MC_SEQ_MISC0__MT__MASK;
+		adev->mc.vram_type = gmc_v8_0_convert_vram_type(tmp);
+	}
 
 	if (adev->flags & AMD_IS_APU) {
 		adev->mc.vram_type = AMDGPU_VRAM_TYPE_UNKNOWN;

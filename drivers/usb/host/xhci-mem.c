@@ -1157,9 +1157,12 @@ int xhci_setup_addressable_virt_dev(struct xhci_hcd *xhci, struct usb_device *ud
 	slot_ctx->dev_info |= cpu_to_le32(LAST_CTX(1) | udev->route);
 	switch (udev->speed) {
 	case USB_SPEED_SUPER_PLUS:
+<<<<<<< HEAD
 		slot_ctx->dev_info |= cpu_to_le32(SLOT_SPEED_SSP);
 		max_packets = MAX_PACKET(512);
 		break;
+=======
+>>>>>>> upstream/rpi-4.4.y
 	case USB_SPEED_SUPER:
 		slot_ctx->dev_info |= cpu_to_le32(SLOT_SPEED_SS);
 		max_packets = MAX_PACKET(512);
@@ -1441,12 +1444,16 @@ static u32 xhci_get_max_esit_payload(struct usb_device *udev,
 			usb_endpoint_xfer_bulk(&ep->desc))
 		return 0;
 
+<<<<<<< HEAD
 	/* SuperSpeedPlus Isoc ep sending over 48k per esit */
 	if ((udev->speed >= USB_SPEED_SUPER_PLUS) &&
 	    USB_SS_SSP_ISOC_COMP(ep->ss_ep_comp.bmAttributes))
 		return le32_to_cpu(ep->ssp_isoc_ep_comp.dwBytesPerInterval);
 	/* SuperSpeed or SuperSpeedPlus Isoc ep with less than 48k per esit */
 	else if (udev->speed >= USB_SPEED_SUPER)
+=======
+	if (udev->speed >= USB_SPEED_SUPER)
+>>>>>>> upstream/rpi-4.4.y
 		return le16_to_cpu(ep->ss_ep_comp.wBytesPerInterval);
 
 	max_packet = GET_MAX_PACKET(usb_endpoint_maxp(&ep->desc));
@@ -1542,8 +1549,77 @@ int xhci_endpoint_init(struct xhci_hcd *xhci,
 	ep_ctx->deq = cpu_to_le64(ep_ring->first_seg->dma |
 				  ep_ring->cycle_state);
 
+<<<<<<< HEAD
 	ep_ctx->tx_info = cpu_to_le32(EP_MAX_ESIT_PAYLOAD_LO(max_esit_payload) |
 				      EP_AVG_TRB_LENGTH(avg_trb_len));
+=======
+	/* FIXME dig Mult and streams info out of ep companion desc */
+
+	/* Allow 3 retries for everything but isoc;
+	 * CErr shall be set to 0 for Isoch endpoints.
+	 */
+	if (!usb_endpoint_xfer_isoc(&ep->desc))
+		ep_ctx->ep_info2 |= cpu_to_le32(ERROR_COUNT(3));
+	else
+		ep_ctx->ep_info2 |= cpu_to_le32(ERROR_COUNT(0));
+
+	/* Set the max packet size and max burst */
+	max_packet = GET_MAX_PACKET(usb_endpoint_maxp(&ep->desc));
+	max_burst = 0;
+	switch (udev->speed) {
+	case USB_SPEED_SUPER_PLUS:
+	case USB_SPEED_SUPER:
+		/* dig out max burst from ep companion desc */
+		max_burst = ep->ss_ep_comp.bMaxBurst;
+		break;
+	case USB_SPEED_HIGH:
+		/* Some devices get this wrong */
+		if (usb_endpoint_xfer_bulk(&ep->desc))
+			max_packet = 512;
+		/* bits 11:12 specify the number of additional transaction
+		 * opportunities per microframe (USB 2.0, section 9.6.6)
+		 */
+		if (usb_endpoint_xfer_isoc(&ep->desc) ||
+				usb_endpoint_xfer_int(&ep->desc)) {
+			max_burst = (usb_endpoint_maxp(&ep->desc)
+				     & 0x1800) >> 11;
+		}
+		break;
+	case USB_SPEED_FULL:
+	case USB_SPEED_LOW:
+		break;
+	default:
+		BUG();
+	}
+	ep_ctx->ep_info2 |= cpu_to_le32(MAX_PACKET(max_packet) |
+			MAX_BURST(max_burst));
+	max_esit_payload = xhci_get_max_esit_payload(udev, ep);
+	ep_ctx->tx_info = cpu_to_le32(MAX_ESIT_PAYLOAD_FOR_EP(max_esit_payload));
+
+	/*
+	 * XXX no idea how to calculate the average TRB buffer length for bulk
+	 * endpoints, as the driver gives us no clue how big each scatter gather
+	 * list entry (or buffer) is going to be.
+	 *
+	 * For isochronous and interrupt endpoints, we set it to the max
+	 * available, until we have new API in the USB core to allow drivers to
+	 * declare how much bandwidth they actually need.
+	 *
+	 * Normally, it would be calculated by taking the total of the buffer
+	 * lengths in the TD and then dividing by the number of TRBs in a TD,
+	 * including link TRBs, No-op TRBs, and Event data TRBs.  Since we don't
+	 * use Event Data TRBs, and we don't chain in a link TRB on short
+	 * transfers, we're basically dividing by 1.
+	 *
+	 * xHCI 1.0 and 1.1 specification indicates that the Average TRB Length
+	 * should be set to 8 for control endpoints.
+	 */
+	if (usb_endpoint_xfer_control(&ep->desc) && xhci->hci_version >= 0x100)
+		ep_ctx->tx_info |= cpu_to_le32(AVG_TRB_LENGTH_FOR_EP(8));
+	else
+		ep_ctx->tx_info |=
+			 cpu_to_le32(AVG_TRB_LENGTH_FOR_EP(max_esit_payload));
+>>>>>>> upstream/rpi-4.4.y
 
 	/* FIXME Debug endpoint context */
 	return 0;

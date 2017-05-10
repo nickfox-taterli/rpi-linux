@@ -1567,8 +1567,12 @@ __thermal_cooling_device_register(struct device_node *np,
 	mutex_lock(&thermal_list_lock);
 	list_for_each_entry(pos, &thermal_tz_list, node)
 		if (atomic_cmpxchg(&pos->need_update, 1, 0))
+<<<<<<< HEAD
 			thermal_zone_device_update(pos,
 						   THERMAL_EVENT_UNSPECIFIED);
+=======
+			thermal_zone_device_update(pos);
+>>>>>>> upstream/rpi-4.4.y
 	mutex_unlock(&thermal_list_lock);
 
 	return cdev;
@@ -2011,7 +2015,11 @@ struct thermal_zone_device *thermal_zone_device_register(const char *type,
 	thermal_zone_device_reset(tz);
 	/* Update the new thermal zone and mark it as already updated. */
 	if (atomic_cmpxchg(&tz->need_update, 1, 0))
+<<<<<<< HEAD
 		thermal_zone_device_update(tz, THERMAL_EVENT_UNSPECIFIED);
+=======
+		thermal_zone_device_update(tz);
+>>>>>>> upstream/rpi-4.4.y
 
 	return tz;
 
@@ -2298,8 +2306,12 @@ static int thermal_pm_notify(struct notifier_block *nb,
 		atomic_set(&in_suspend, 0);
 		list_for_each_entry(tz, &thermal_tz_list, node) {
 			thermal_zone_device_reset(tz);
+<<<<<<< HEAD
 			thermal_zone_device_update(tz,
 						   THERMAL_EVENT_UNSPECIFIED);
+=======
+			thermal_zone_device_update(tz);
+>>>>>>> upstream/rpi-4.4.y
 		}
 		break;
 	default:

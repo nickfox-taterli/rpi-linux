@@ -41,7 +41,10 @@
 #include <linux/ptrace.h>
 #include <linux/screen_info.h>
 #include <linux/kdebug.h>
+<<<<<<< HEAD
 #include <linux/efi.h>
+=======
+>>>>>>> upstream/rpi-4.4.y
 #include <linux/random.h>
 #include "hyperv_vmbus.h"
 
@@ -103,10 +106,15 @@ static struct notifier_block hyperv_panic_block = {
 	.notifier_call = hyperv_panic_event,
 };
 
+<<<<<<< HEAD
 static const char *fb_mmio_name = "fb_range";
 static struct resource *fb_mmio;
 static struct resource *hyperv_mmio;
 static DEFINE_SEMAPHORE(hyperv_mmio_lock);
+=======
+struct resource *hyperv_mmio;
+DEFINE_SEMAPHORE(hyperv_mmio_lock);
+>>>>>>> upstream/rpi-4.4.y
 
 static int vmbus_exists(void)
 {
@@ -1168,6 +1176,7 @@ int vmbus_allocate_mmio(struct resource **new, struct hv_device *device_obj,
 	struct resource *iter, *shadow;
 	resource_size_t range_min, range_max, start;
 	const char *dev_n = dev_name(&device_obj->device);
+<<<<<<< HEAD
 	int retval;
 
 	retval = -ENXIO;
@@ -1192,6 +1201,13 @@ int vmbus_allocate_mmio(struct resource **new, struct hv_device *device_obj,
 			}
 		}
 	}
+=======
+	u32 fb_end = screen_info.lfb_base + (screen_info.lfb_size << 1);
+	int i, retval;
+
+	retval = -ENXIO;
+	down(&hyperv_mmio_lock);
+>>>>>>> upstream/rpi-4.4.y
 
 	for (iter = hyperv_mmio; iter; iter = iter->sibling) {
 		if ((iter->start >= max) || (iter->end <= min))
@@ -1213,7 +1229,19 @@ int vmbus_allocate_mmio(struct resource **new, struct hv_device *device_obj,
 				goto exit;
 			}
 
+<<<<<<< HEAD
 			__release_region(iter, start, size);
+=======
+			start = (local_min + align - 1) & ~(align - 1);
+			for (; start + size - 1 <= local_max; start += align) {
+				*new = request_mem_region_exclusive(start, size,
+								    dev_n);
+				if (*new) {
+					retval = 0;
+					goto exit;
+				}
+			}
+>>>>>>> upstream/rpi-4.4.y
 		}
 	}
 

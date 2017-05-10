@@ -277,9 +277,16 @@ static int __init dra7xx_add_pcie_port(struct dra7xx_pcie *dra7xx,
 		return -EINVAL;
 	}
 
+<<<<<<< HEAD
 	ret = devm_request_irq(dev, pp->irq, dra7xx_pcie_msi_irq_handler,
 			       IRQF_SHARED | IRQF_NO_THREAD,
 			       "dra7-pcie-msi",	dra7xx);
+=======
+	ret = devm_request_irq(&pdev->dev, pp->irq,
+			       dra7xx_pcie_msi_irq_handler,
+			       IRQF_SHARED | IRQF_NO_THREAD,
+			       "dra7-pcie-msi",	pp);
+>>>>>>> upstream/rpi-4.4.y
 	if (ret) {
 		dev_err(dev, "failed to request irq\n");
 		return ret;

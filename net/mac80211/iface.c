@@ -1003,9 +1003,17 @@ static void ieee80211_do_stop(struct ieee80211_sub_if_data *sdata,
 	if (sdata->vif.txq) {
 		struct txq_info *txqi = to_txq_info(sdata->vif.txq);
 
+<<<<<<< HEAD
 		spin_lock_bh(&fq->lock);
 		ieee80211_txq_purge(local, txqi);
 		spin_unlock_bh(&fq->lock);
+=======
+		spin_lock_bh(&txqi->queue.lock);
+		ieee80211_purge_tx_queue(&local->hw, &txqi->queue);
+		spin_unlock_bh(&txqi->queue.lock);
+
+		atomic_set(&sdata->txqs_len[txqi->txq.ac], 0);
+>>>>>>> upstream/rpi-4.4.y
 	}
 
 	if (local->open_count == 0)

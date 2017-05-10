@@ -190,7 +190,11 @@ static const char * const reg_type_str[] = {
 	[PTR_TO_PACKET_END]	= "pkt_end",
 };
 
+<<<<<<< HEAD
 static void print_verifier_state(struct bpf_verifier_state *state)
+=======
+static void print_verifier_state(struct verifier_env *env)
+>>>>>>> upstream/rpi-4.4.y
 {
 	struct bpf_reg_state *reg;
 	enum bpf_reg_type t;
@@ -1080,6 +1084,7 @@ static int check_map_func_compatibility(struct bpf_map *map, int func_id)
 		    func_id != BPF_FUNC_perf_event_output)
 			goto error;
 		break;
+<<<<<<< HEAD
 	case BPF_MAP_TYPE_STACK_TRACE:
 		if (func_id != BPF_FUNC_get_stackid)
 			goto error;
@@ -1089,6 +1094,8 @@ static int check_map_func_compatibility(struct bpf_map *map, int func_id)
 		    func_id != BPF_FUNC_current_task_under_cgroup)
 			goto error;
 		break;
+=======
+>>>>>>> upstream/rpi-4.4.y
 	default:
 		break;
 	}
@@ -1104,6 +1111,7 @@ static int check_map_func_compatibility(struct bpf_map *map, int func_id)
 		if (map->map_type != BPF_MAP_TYPE_PERF_EVENT_ARRAY)
 			goto error;
 		break;
+<<<<<<< HEAD
 	case BPF_FUNC_get_stackid:
 		if (map->map_type != BPF_MAP_TYPE_STACK_TRACE)
 			goto error;
@@ -1113,6 +1121,8 @@ static int check_map_func_compatibility(struct bpf_map *map, int func_id)
 		if (map->map_type != BPF_MAP_TYPE_CGROUP_ARRAY)
 			goto error;
 		break;
+=======
+>>>>>>> upstream/rpi-4.4.y
 	default:
 		break;
 	}
@@ -1122,6 +1132,7 @@ error:
 	verbose("cannot pass map_type %d into func %d\n",
 		map->map_type, func_id);
 	return -EINVAL;
+<<<<<<< HEAD
 }
 
 static int check_raw_mode(const struct bpf_func_proto *fn)
@@ -1163,6 +1174,8 @@ static void clear_all_pkt_pointers(struct bpf_verifier_env *env)
 		reg->type = UNKNOWN_VALUE;
 		reg->imm = 0;
 	}
+=======
+>>>>>>> upstream/rpi-4.4.y
 }
 
 static int check_call(struct bpf_verifier_env *env, int func_id)
@@ -1731,6 +1744,7 @@ static int check_alu_op(struct bpf_verifier_env *env, struct bpf_insn *insn)
 			}
 		}
 
+<<<<<<< HEAD
 		/* check dest operand */
 		err = check_reg_arg(regs, insn->dst_reg, DST_OP_NO_MARK);
 		if (err)
@@ -1741,6 +1755,8 @@ static int check_alu_op(struct bpf_verifier_env *env, struct bpf_insn *insn)
 		/* first we want to adjust our ranges. */
 		adjust_reg_min_max_vals(env, insn);
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 		/* pattern match 'bpf_add Rx, imm' instruction */
 		if (opcode == BPF_ADD && BPF_CLASS(insn->code) == BPF_ALU64 &&
 		    dst_reg->type == FRAME_PTR && BPF_SRC(insn->code) == BPF_K) {
@@ -3018,6 +3034,29 @@ static void convert_pseudo_ld_imm64(struct bpf_verifier_env *env)
 			insn->src_reg = 0;
 }
 
+<<<<<<< HEAD
+=======
+static void adjust_branches(struct bpf_prog *prog, int pos, int delta)
+{
+	struct bpf_insn *insn = prog->insnsi;
+	int insn_cnt = prog->len;
+	int i;
+
+	for (i = 0; i < insn_cnt; i++, insn++) {
+		if (BPF_CLASS(insn->code) != BPF_JMP ||
+		    BPF_OP(insn->code) == BPF_CALL ||
+		    BPF_OP(insn->code) == BPF_EXIT)
+			continue;
+
+		/* adjust offset of jmps if necessary */
+		if (i < pos && i + insn->off + 1 > pos)
+			insn->off += delta;
+		else if (i > pos + delta && i + insn->off + 1 <= pos + delta)
+			insn->off -= delta;
+	}
+}
+
+>>>>>>> upstream/rpi-4.4.y
 /* convert load instructions that access fields of 'struct __sk_buff'
  * into sequence of instructions that access fields of 'struct sk_buff'
  */

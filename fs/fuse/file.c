@@ -422,6 +422,15 @@ static int fuse_flush(struct file *file, fl_owner_t id)
 	if (err)
 		return err;
 
+	if (test_bit(AS_ENOSPC, &file->f_mapping->flags) &&
+	    test_and_clear_bit(AS_ENOSPC, &file->f_mapping->flags))
+		err = -ENOSPC;
+	if (test_bit(AS_EIO, &file->f_mapping->flags) &&
+	    test_and_clear_bit(AS_EIO, &file->f_mapping->flags))
+		err = -EIO;
+	if (err)
+		return err;
+
 	req = fuse_get_req_nofail_nopages(fc, file);
 	memset(&inarg, 0, sizeof(inarg));
 	inarg.fh = ff->fh;
@@ -473,7 +482,16 @@ int fuse_fsync_common(struct file *file, loff_t start, loff_t end,
 	 * filemap_write_and_wait_range() does not catch errors.
 	 * We have to do this directly after fuse_sync_writes()
 	 */
+<<<<<<< HEAD
 	err = filemap_check_errors(file->f_mapping);
+=======
+	if (test_bit(AS_ENOSPC, &file->f_mapping->flags) &&
+	    test_and_clear_bit(AS_ENOSPC, &file->f_mapping->flags))
+		err = -ENOSPC;
+	if (test_bit(AS_EIO, &file->f_mapping->flags) &&
+	    test_and_clear_bit(AS_EIO, &file->f_mapping->flags))
+		err = -EIO;
+>>>>>>> upstream/rpi-4.4.y
 	if (err)
 		goto out;
 
@@ -2839,6 +2857,7 @@ fuse_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
 	size_t count = iov_iter_count(iter);
 	loff_t offset = iocb->ki_pos;
 	struct fuse_io_priv *io;
+	bool is_sync = is_sync_kiocb(iocb);
 
 	pos = offset;
 	inode = file->f_mapping->host;
@@ -2879,10 +2898,18 @@ fuse_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
 	 * We cannot asynchronously extend the size of a file.
 	 * In such case the aio will behave exactly like sync io.
 	 */
+<<<<<<< HEAD
 	if ((offset + count > i_size) && iov_iter_rw(iter) == WRITE)
 		io->blocking = true;
 
 	if (io->async && io->blocking) {
+=======
+	if (!is_sync && (offset + count > i_size) &&
+	    iov_iter_rw(iter) == WRITE)
+		io->async = false;
+
+	if (io->async && is_sync) {
+>>>>>>> upstream/rpi-4.4.y
 		/*
 		 * Additional reference to keep io around after
 		 * calling fuse_aio_complete()
@@ -2902,7 +2929,11 @@ fuse_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
 		fuse_aio_complete(io, ret < 0 ? ret : 0, -1);
 
 		/* we have a non-extending, async request, so return */
+<<<<<<< HEAD
 		if (!io->blocking)
+=======
+		if (!is_sync)
+>>>>>>> upstream/rpi-4.4.y
 			return -EIOCBQUEUED;
 
 		wait_for_completion(&wait);

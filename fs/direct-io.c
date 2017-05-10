@@ -483,7 +483,11 @@ static int dio_bio_complete(struct dio *dio, struct bio *bio)
 	if (bio->bi_error)
 		dio->io_error = -EIO;
 
+<<<<<<< HEAD
 	if (dio->is_async && dio->op == REQ_OP_READ && dio->should_dirty) {
+=======
+	if (dio->is_async && dio->rw == READ && dio->should_dirty) {
+>>>>>>> upstream/rpi-4.4.y
 		err = bio->bi_error;
 		bio_check_pages_dirty(bio);	/* transfers ownership */
 	} else {

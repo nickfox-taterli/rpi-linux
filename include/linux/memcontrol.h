@@ -158,10 +158,16 @@ struct mem_cgroup_thresholds {
 	struct mem_cgroup_threshold_ary *spare;
 };
 
+<<<<<<< HEAD
 enum memcg_kmem_state {
 	KMEM_NONE,
 	KMEM_ALLOCATED,
 	KMEM_ONLINE,
+=======
+struct mem_cgroup_id {
+	int id;
+	atomic_t ref;
+>>>>>>> upstream/rpi-4.4.y
 };
 
 /*

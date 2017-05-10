@@ -551,6 +551,7 @@ out:
 /* Reset all properties of an NBD device */
 static void nbd_reset(struct nbd_device *nbd)
 {
+<<<<<<< HEAD
 	nbd->runtime_flags = 0;
 	nbd->blksize = 1024;
 	nbd->bytesize = 0;
@@ -559,6 +560,36 @@ static void nbd_reset(struct nbd_device *nbd)
 	nbd->tag_set.timeout = 0;
 	queue_flag_clear_unlocked(QUEUE_FLAG_DISCARD, nbd->disk->queue);
 }
+=======
+	struct request *req;
+	
+	while ((req = blk_fetch_request(q)) != NULL) {
+		struct nbd_device *nbd;
+
+		spin_unlock_irq(q->queue_lock);
+
+		nbd = req->rq_disk->private_data;
+
+		BUG_ON(nbd->magic != NBD_MAGIC);
+
+		dev_dbg(nbd_to_dev(nbd), "request %p: dequeued (flags=%x)\n",
+			req, req->cmd_type);
+
+		if (unlikely(!nbd->sock)) {
+			dev_err_ratelimited(disk_to_dev(nbd->disk),
+					    "Attempted send on closed socket\n");
+			req->errors++;
+			nbd_end_request(nbd, req);
+			spin_lock_irq(q->queue_lock);
+			continue;
+		}
+
+		spin_lock_irq(&nbd->queue_lock);
+		list_add_tail(&req->queuelist, &nbd->waiting_queue);
+		spin_unlock_irq(&nbd->queue_lock);
+
+		wake_up(&nbd->waiting_wq);
+>>>>>>> upstream/rpi-4.4.y
 
 static void nbd_bdev_reset(struct block_device *bdev)
 {

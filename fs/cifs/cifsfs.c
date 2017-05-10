@@ -694,11 +694,23 @@ cifs_do_mount(struct file_system_type *fs_type,
 		goto out_free;
 	}
 
+<<<<<<< HEAD
 	rc = cifs_setup_cifs_sb(volume_info, cifs_sb);
 	if (rc) {
 		root = ERR_PTR(rc);
 		goto out_free;
 	}
+=======
+	if (volume_info->prepath) {
+		cifs_sb->prepath = kstrdup(volume_info->prepath, GFP_KERNEL);
+		if (cifs_sb->prepath == NULL) {
+			root = ERR_PTR(-ENOMEM);
+			goto out_cifs_sb;
+		}
+	}
+
+	cifs_setup_cifs_sb(volume_info, cifs_sb);
+>>>>>>> upstream/rpi-4.4.y
 
 	rc = cifs_mount(cifs_sb, volume_info);
 	if (rc) {
@@ -736,7 +748,11 @@ cifs_do_mount(struct file_system_type *fs_type,
 		sb->s_flags |= MS_ACTIVE;
 	}
 
-	root = cifs_get_root(volume_info, sb);
+	if (cifs_sb->mnt_cifs_flags & CIFS_MOUNT_USE_PREFIX_PATH)
+		root = dget(sb->s_root);
+	else
+		root = cifs_get_root(volume_info, sb);
+
 	if (IS_ERR(root))
 		goto out_super;
 

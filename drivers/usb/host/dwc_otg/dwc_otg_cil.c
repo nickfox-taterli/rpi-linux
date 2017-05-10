@@ -3158,10 +3158,17 @@ uint32_t calc_frame_interval(dwc_otg_core_if_t * core_if)
 		clock = 48;
 	if (hprt0.b.prtspd == 0)
 		/* High speed case */
+<<<<<<< HEAD
 		return 125 * clock - 1;
 	else
 		/* FS/LS case */
 		return 1000 * clock - 1;
+=======
+		return 125 * clock;
+	else
+		/* FS/LS case */
+		return 1000 * clock;
+>>>>>>> upstream/rpi-4.4.y
 }
 
 /**

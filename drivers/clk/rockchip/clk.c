@@ -111,6 +111,7 @@ err_div:
 err_gate:
 	kfree(mux);
 	return ERR_PTR(-ENOMEM);
+<<<<<<< HEAD
 }
 
 struct rockchip_clk_frac {
@@ -162,6 +163,8 @@ static int rockchip_clk_frac_notifier_cb(struct notifier_block *nb,
 	}
 
 	return notifier_from_errno(ret);
+=======
+>>>>>>> upstream/rpi-4.4.y
 }
 
 static struct clk *rockchip_clk_register_frac_branch(

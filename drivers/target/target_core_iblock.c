@@ -697,7 +697,11 @@ iblock_execute_rw(struct se_cmd *cmd, struct scatterlist *sgl, u32 sgl_nents,
 				op_flags = WRITE_FUA;
 		}
 	} else {
+<<<<<<< HEAD
 		op = REQ_OP_READ;
+=======
+		rw = READ;
+>>>>>>> upstream/rpi-4.4.y
 	}
 
 	ibr = kzalloc(sizeof(struct iblock_req), GFP_KERNEL);

@@ -327,10 +327,17 @@ static int i2c_hid_set_or_send_report(struct i2c_client *client, u8 reportType,
 	int index = 0;
 
 	i2c_hid_dbg(ihid, "%s\n", __func__);
+<<<<<<< HEAD
 
 	if (data_len > ihid->bufsize)
 		return -EINVAL;
 
+=======
+
+	if (data_len > ihid->bufsize)
+		return -EINVAL;
+
+>>>>>>> upstream/rpi-4.4.y
 	size =		2			/* size */ +
 			(reportID ? 1 : 0)	/* reportID */ +
 			data_len		/* buf */;

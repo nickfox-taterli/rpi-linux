@@ -727,6 +727,34 @@ static int do_pcmcia_entry(const char *filename,
 }
 ADD_TO_DEVTABLE("pcmcia", pcmcia_device_id, do_pcmcia_entry);
 
+<<<<<<< HEAD
+=======
+static int do_of_entry (const char *filename, void *symval, char *alias)
+{
+	int len;
+	char *tmp;
+	DEF_FIELD_ADDR(symval, of_device_id, name);
+	DEF_FIELD_ADDR(symval, of_device_id, type);
+	DEF_FIELD_ADDR(symval, of_device_id, compatible);
+
+	len = sprintf(alias, "of:N%sT%s", (*name)[0] ? *name : "*",
+		      (*type)[0] ? *type : "*");
+
+	if ((*compatible)[0])
+		sprintf(&alias[len], "%sC%s", (*type)[0] ? "*" : "",
+			*compatible);
+
+	/* Replace all whitespace with underscores */
+	for (tmp = alias; tmp && *tmp; tmp++)
+		if (isspace (*tmp))
+			*tmp = '_';
+
+	add_wildcard(alias);
+	return 1;
+}
+ADD_TO_DEVTABLE("of", of_device_id, do_of_entry);
+
+>>>>>>> upstream/rpi-4.4.y
 static int do_vio_entry(const char *filename, void *symval,
 		char *alias)
 {

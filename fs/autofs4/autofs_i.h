@@ -68,7 +68,11 @@ struct autofs_info {
 	kgid_t gid;
 };
 
+<<<<<<< HEAD
 #define AUTOFS_INF_EXPIRING	(1<<0) /* dentry in the process of expiring */
+=======
+#define AUTOFS_INF_EXPIRING	(1<<0) /* dentry is in the process of expiring */
+>>>>>>> upstream/rpi-4.4.y
 #define AUTOFS_INF_WANT_EXPIRE	(1<<1) /* the dentry is being considered
 					* for expiry, so RCU_walk is
 					* not permitted.  If it progresses to

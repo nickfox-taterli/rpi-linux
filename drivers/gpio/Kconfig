@@ -143,7 +143,11 @@ config GPIO_BCM_KONA
 
 config GPIO_BCM_VIRT
 	bool "Broadcom Virt GPIO"
+<<<<<<< HEAD
 	depends on OF_GPIO && RASPBERRYPI_FIRMWARE && (ARCH_BCM2835 || COMPILE_TEST)
+=======
+	depends on OF_GPIO && RASPBERRYPI_FIRMWARE && (ARCH_BCM2835 || ARCH_BCM2708 || ARCH_BCM2709 || COMPILE_TEST)
+>>>>>>> upstream/rpi-4.4.y
 	help
 	  Turn on virtual GPIO support for Broadcom BCM283X chips.
 

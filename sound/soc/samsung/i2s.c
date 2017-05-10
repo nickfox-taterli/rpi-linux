@@ -1263,9 +1263,14 @@ static int samsung_i2s_probe(struct platform_device *pdev)
 			return -EINVAL;
 		}
 
+<<<<<<< HEAD
 		pri_dai->dma_playback.filter_data = i2s_pdata->dma_playback;
 		pri_dai->dma_capture.filter_data = i2s_pdata->dma_capture;
 		pri_dai->filter = i2s_pdata->dma_filter;
+=======
+		pri_dai->dma_playback.slave = i2s_pdata->dma_playback;
+		pri_dai->dma_capture.slave = i2s_pdata->dma_capture;
+>>>>>>> upstream/rpi-4.4.y
 
 		if (&i2s_pdata->type)
 			i2s_cfg = &i2s_pdata->type.i2s;
@@ -1333,10 +1338,15 @@ static int samsung_i2s_probe(struct platform_device *pdev)
 		sec_dai->dma_playback.addr = regs_base + I2STXDS;
 		sec_dai->dma_playback.chan_name = "tx-sec";
 
+<<<<<<< HEAD
 		if (!np) {
 			sec_dai->dma_playback.filter_data = i2s_pdata->dma_play_sec;
 			sec_dai->filter = i2s_pdata->dma_filter;
 		}
+=======
+		if (!np)
+			sec_dai->dma_playback.slave = i2s_pdata->dma_play_sec;
+>>>>>>> upstream/rpi-4.4.y
 
 		sec_dai->dma_playback.addr_width = 4;
 		sec_dai->addr = pri_dai->addr;

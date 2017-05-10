@@ -2880,12 +2880,20 @@ static struct page *extent_same_get_page(struct inode *inode, pgoff_t index)
 		lock_page(page);
 		if (!PageUptodate(page)) {
 			unlock_page(page);
+<<<<<<< HEAD
 			put_page(page);
+=======
+			page_cache_release(page);
+>>>>>>> upstream/rpi-4.4.y
 			return ERR_PTR(-EIO);
 		}
 		if (page->mapping != inode->i_mapping) {
 			unlock_page(page);
+<<<<<<< HEAD
 			put_page(page);
+=======
+			page_cache_release(page);
+>>>>>>> upstream/rpi-4.4.y
 			return ERR_PTR(-EAGAIN);
 		}
 	}
@@ -3006,12 +3014,20 @@ static void btrfs_cmp_data_free(struct cmp_pages *cmp)
 		pg = cmp->src_pages[i];
 		if (pg) {
 			unlock_page(pg);
+<<<<<<< HEAD
 			put_page(pg);
+=======
+			page_cache_release(pg);
+>>>>>>> upstream/rpi-4.4.y
 		}
 		pg = cmp->dst_pages[i];
 		if (pg) {
 			unlock_page(pg);
+<<<<<<< HEAD
 			put_page(pg);
+=======
+			page_cache_release(pg);
+>>>>>>> upstream/rpi-4.4.y
 		}
 	}
 	kfree(cmp->src_pages);

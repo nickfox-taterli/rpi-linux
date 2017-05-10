@@ -399,12 +399,21 @@ static int pptp_bind(struct socket *sock, struct sockaddr *uservaddr,
 		error = -EBUSY;
 		goto out;
 	}
+<<<<<<< HEAD
 
 	if (add_chan(po, &sp->sa_addr.pptp))
 		error = -EBUSY;
 	else
 		sk->sk_state |= PPPOX_BOUND;
 
+=======
+
+	if (add_chan(po, &sp->sa_addr.pptp))
+		error = -EBUSY;
+	else
+		sk->sk_state |= PPPOX_BOUND;
+
+>>>>>>> upstream/rpi-4.4.y
 out:
 	release_sock(sk);
 	return error;

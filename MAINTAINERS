@@ -669,9 +669,15 @@ F:	drivers/crypto/ccp/
 F:	include/linux/ccp.h
 
 AMD FAM15H PROCESSOR POWER MONITORING DRIVER
+<<<<<<< HEAD
 M:	Huang Rui <ray.huang@amd.com>
 L:	linux-hwmon@vger.kernel.org
 S:	Supported
+=======
+M:	Andreas Herrmann <herrmann.der.user@googlemail.com>
+L:	linux-hwmon@vger.kernel.org
+S:	Maintained
+>>>>>>> upstream/rpi-4.4.y
 F:	Documentation/hwmon/fam15h_power
 F:	drivers/hwmon/fam15h_power.c
 
@@ -7646,8 +7652,14 @@ F:	Documentation/hwmon/max20751
 F:	drivers/hwmon/max20751.c
 
 MAX6650 HARDWARE MONITOR AND FAN CONTROLLER DRIVER
+<<<<<<< HEAD
 L:	linux-hwmon@vger.kernel.org
 S:	Orphan
+=======
+M:	"Hans J. Koch" <hjk@hansjkoch.de>
+L:	linux-hwmon@vger.kernel.org
+S:	Maintained
+>>>>>>> upstream/rpi-4.4.y
 F:	Documentation/hwmon/max6650
 F:	drivers/hwmon/max6650.c
 
@@ -9808,8 +9820,12 @@ S:	Odd Fixes
 F:	drivers/media/usb/pwc/*
 
 PWM FAN DRIVER
+<<<<<<< HEAD
 M:	Kamil Debski <kamil@wypas.org>
 M:	Lukasz Majewski <l.majewski@samsung.com>
+=======
+M:	Kamil Debski <k.debski@samsung.com>
+>>>>>>> upstream/rpi-4.4.y
 L:	linux-hwmon@vger.kernel.org
 S:	Supported
 F:	Documentation/devicetree/bindings/hwmon/pwm-fan.txt

@@ -405,6 +405,22 @@ struct drm_dp_payload {
 
 /**
  * struct drm_dp_mst_topology_mgr - DisplayPort MST manager
+<<<<<<< HEAD
+=======
+ * @dev: device pointer for adding i2c devices etc.
+ * @cbs: callbacks for connector addition and destruction.
+ * @max_dpcd_transaction_bytes - maximum number of bytes to read/write in one go.
+ * @aux: aux channel for the DP connector.
+ * @max_payloads: maximum number of payloads the GPU can generate.
+ * @conn_base_id: DRM connector ID this mgr is connected to.
+ * @down_rep_recv: msg receiver state for down replies.
+ * @up_req_recv: msg receiver state for up requests.
+ * @lock: protects mst state, primary, dpcd.
+ * @mst_state: if this manager is enabled for an MST capable port.
+ * @mst_primary: pointer to the primary branch device.
+ * @dpcd: cache of DPCD for primary port.
+ * @pbn_div: PBN to slots divisor.
+>>>>>>> upstream/rpi-4.4.y
  *
  * This struct represents the toplevel displayport MST topology manager.
  * There should be one instance of this for every MST capable DP connector
@@ -452,10 +468,15 @@ struct drm_dp_mst_topology_mgr {
 	 */
 	struct drm_dp_sideband_msg_rx up_req_recv;
 
+<<<<<<< HEAD
 	/**
 	 * @lock: protects mst state, primary, dpcd.
 	 */
 	struct mutex lock;
+=======
+	/* pointer to info about the initial MST device */
+	struct mutex lock; /* protects mst_state + primary + dpcd */
+>>>>>>> upstream/rpi-4.4.y
 
 	/**
 	 * @mst_state: If this manager is enabled for an MST capable port. False
@@ -467,9 +488,12 @@ struct drm_dp_mst_topology_mgr {
 	 */
 	struct drm_dp_mst_branch *mst_primary;
 
+<<<<<<< HEAD
 	/**
 	 * @dpcd: Cache of DPCD for primary port.
 	 */
+=======
+>>>>>>> upstream/rpi-4.4.y
 	u8 dpcd[DP_RECEIVER_CAP_SIZE];
 	/**
 	 * @sink_count: Sink count from DEVICE_SERVICE_IRQ_VECTOR_ESI0.
@@ -501,6 +525,10 @@ struct drm_dp_mst_topology_mgr {
 	 * @tx_msg_downq: List of pending down replies.
 	 */
 	struct list_head tx_msg_downq;
+<<<<<<< HEAD
+=======
+	bool tx_down_in_progress;
+>>>>>>> upstream/rpi-4.4.y
 
 	/**
 	 * @payload_lock: Protect payload information.

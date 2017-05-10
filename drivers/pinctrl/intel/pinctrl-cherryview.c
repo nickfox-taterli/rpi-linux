@@ -1120,6 +1120,7 @@ static int chv_config_set_pull(struct chv_pinctrl *pctrl, unsigned pin,
 
 	chv_writel(ctrl0, reg);
 	raw_spin_unlock_irqrestore(&chv_lock, flags);
+<<<<<<< HEAD
 
 	return 0;
 }
@@ -1141,6 +1142,8 @@ static int chv_config_set_oden(struct chv_pinctrl *pctrl, unsigned int pin,
 
 	chv_writel(ctrl1, reg);
 	raw_spin_unlock_irqrestore(&chv_lock, flags);
+=======
+>>>>>>> upstream/rpi-4.4.y
 
 	return 0;
 }

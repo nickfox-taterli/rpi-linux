@@ -584,7 +584,10 @@ static struct sk_buff **vxlan_gro_receive(struct sock *sk,
 	}
 
 	pp = call_gro_receive(eth_gro_receive, head, skb);
+<<<<<<< HEAD
 	flush = 0;
+=======
+>>>>>>> upstream/rpi-4.4.y
 
 out:
 	skb_gro_remcsum_cleanup(skb, &grc);
@@ -1272,6 +1275,20 @@ static int vxlan_rcv(struct sock *sk, struct sk_buff *skb)
 	/* Need UDP and VXLAN header to be present */
 	if (!pskb_may_pull(skb, VXLAN_HLEN))
 		goto drop;
+<<<<<<< HEAD
+=======
+
+	vxh = (struct vxlanhdr *)(udp_hdr(skb) + 1);
+	flags = ntohl(vxh->vx_flags);
+	vni = ntohl(vxh->vx_vni);
+
+	if (flags & VXLAN_HF_VNI) {
+		flags &= ~VXLAN_HF_VNI;
+	} else {
+		/* VNI flag always required to be set */
+		goto bad_flags;
+	}
+>>>>>>> upstream/rpi-4.4.y
 
 	unparsed = *vxlan_hdr(skb);
 	/* VNI flag always required to be set */
@@ -1332,7 +1349,28 @@ static int vxlan_rcv(struct sock *sk, struct sk_buff *skb)
 	 * ensured in vxlan_dev_configure.
 	 */
 
+<<<<<<< HEAD
 	if (unparsed.vx_flags || unparsed.vx_vni) {
+=======
+		gbp = (struct vxlanhdr_gbp *)vxh;
+		md->gbp = ntohs(gbp->policy_id);
+
+		if (tun_dst) {
+			tun_dst->u.tun_info.key.tun_flags |= TUNNEL_VXLAN_OPT;
+			tun_dst->u.tun_info.options_len = sizeof(*md);
+		}
+
+		if (gbp->dont_learn)
+			md->gbp |= VXLAN_GBP_DONT_LEARN;
+
+		if (gbp->policy_applied)
+			md->gbp |= VXLAN_GBP_POLICY_APPLIED;
+
+		flags &= ~VXLAN_GBP_USED_BITS;
+	}
+
+	if (flags || vni & ~VXLAN_VNI_MASK) {
+>>>>>>> upstream/rpi-4.4.y
 		/* If there are any unprocessed flags remaining treat
 		 * this as a malformed packet. This behavior diverges from
 		 * VXLAN RFC (RFC7348) which stipulates that bits in reserved
@@ -1375,6 +1413,14 @@ drop:
 	/* Consume bad packet */
 	kfree_skb(skb);
 	return 0;
+<<<<<<< HEAD
+=======
+
+bad_flags:
+	netdev_dbg(skb->dev, "invalid vxlan flags=%#x vni=%#x\n",
+		   ntohl(vxh->vx_flags), ntohl(vxh->vx_vni));
+	goto drop;
+>>>>>>> upstream/rpi-4.4.y
 }
 
 static int arp_reduce(struct net_device *dev, struct sk_buff *skb)
@@ -2020,9 +2066,29 @@ static void vxlan_xmit_one(struct sk_buff *skb, struct net_device *dev,
 	if (dst->sa.sa_family == AF_INET) {
 		struct vxlan_sock *sock4 = rcu_dereference(vxlan->vn4_sock);
 
+<<<<<<< HEAD
 		if (!sock4)
 			goto drop;
 		sk = sock4->sock->sk;
+=======
+		if (info) {
+			if (info->key.tun_flags & TUNNEL_DONT_FRAGMENT)
+				df = htons(IP_DF);
+
+			if (info->key.tun_flags & TUNNEL_CSUM)
+				flags |= VXLAN_F_UDP_CSUM;
+			else
+				flags &= ~VXLAN_F_UDP_CSUM;
+		}
+
+		memset(&fl4, 0, sizeof(fl4));
+		fl4.flowi4_oif = rdst ? rdst->remote_ifindex : 0;
+		fl4.flowi4_tos = RT_TOS(tos);
+		fl4.flowi4_mark = skb->mark;
+		fl4.flowi4_proto = IPPROTO_UDP;
+		fl4.daddr = dst->sin.sin_addr.s_addr;
+		fl4.saddr = vxlan->cfg.saddr.sin.sin_addr.s_addr;
+>>>>>>> upstream/rpi-4.4.y
 
 		rt = vxlan_get_route(vxlan, skb,
 				     rdst ? rdst->remote_ifindex : 0, tos,
@@ -2119,10 +2185,20 @@ static void vxlan_xmit_one(struct sk_buff *skb, struct net_device *dev,
 			goto out_unlock;
 		}
 
+<<<<<<< HEAD
 		if (!info)
 			udp_sum = !(flags & VXLAN_F_UDP_ZERO_CSUM6_TX);
 
 		tos = ip_tunnel_ecn_encap(tos, old_iph, skb);
+=======
+		if (info) {
+			if (info->key.tun_flags & TUNNEL_CSUM)
+				flags &= ~VXLAN_F_UDP_ZERO_CSUM6_TX;
+			else
+				flags |= VXLAN_F_UDP_ZERO_CSUM6_TX;
+		}
+
+>>>>>>> upstream/rpi-4.4.y
 		ttl = ttl ? : ip6_dst_hoplimit(ndst);
 		skb_scrub_packet(skb, xnet);
 		err = vxlan_build_skb(skb, ndst, sizeof(struct ipv6hdr),
@@ -2424,6 +2500,20 @@ static int __vxlan_change_mtu(struct net_device *dev,
 }
 
 static int vxlan_change_mtu(struct net_device *dev, int new_mtu)
+<<<<<<< HEAD
+=======
+{
+	struct vxlan_dev *vxlan = netdev_priv(dev);
+	struct vxlan_rdst *dst = &vxlan->default_dst;
+	struct net_device *lowerdev = __dev_get_by_index(vxlan->net,
+							 dst->remote_ifindex);
+	return __vxlan_change_mtu(dev, lowerdev, dst, new_mtu, true);
+}
+
+static int egress_ipv4_tun_info(struct net_device *dev, struct sk_buff *skb,
+				struct ip_tunnel_info *info,
+				__be16 sport, __be16 dport)
+>>>>>>> upstream/rpi-4.4.y
 {
 	struct vxlan_dev *vxlan = netdev_priv(dev);
 	struct vxlan_rdst *dst = &vxlan->default_dst;
@@ -2807,6 +2897,7 @@ static int vxlan_dev_configure(struct net *src_net, struct net_device *dev,
 	bool use_ipv6 = false;
 	__be16 default_port = vxlan->cfg.dst_port;
 	struct net_device *lowerdev = NULL;
+<<<<<<< HEAD
 
 	if (conf->flags & VXLAN_F_GPE) {
 		/* For now, allow GPE only together with COLLECT_METADATA.
@@ -2823,6 +2914,8 @@ static int vxlan_dev_configure(struct net *src_net, struct net_device *dev,
 	} else {
 		vxlan_ether_setup(dev);
 	}
+=======
+>>>>>>> upstream/rpi-4.4.y
 
 	vxlan->net = src_net;
 
@@ -2842,11 +2935,14 @@ static int vxlan_dev_configure(struct net *src_net, struct net_device *dev,
 		vxlan->flags |= VXLAN_F_IPV6;
 	}
 
+<<<<<<< HEAD
 	if (conf->label && !use_ipv6) {
 		pr_info("label only supported in use with IPv6\n");
 		return -EINVAL;
 	}
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 	if (conf->remote_ifindex) {
 		lowerdev = __dev_get_by_index(src_net, conf->remote_ifindex);
 		dst->remote_ifindex = conf->remote_ifindex;
@@ -2881,6 +2977,12 @@ static int vxlan_dev_configure(struct net *src_net, struct net_device *dev,
 			return err;
 	}
 
+	if (conf->mtu) {
+		err = __vxlan_change_mtu(dev, lowerdev, dst, conf->mtu, false);
+		if (err)
+			return err;
+	}
+
 	if (use_ipv6 || conf->flags & VXLAN_F_COLLECT_METADATA)
 		needed_headroom += VXLAN6_HEADROOM;
 	else
@@ -2905,10 +3007,15 @@ static int vxlan_dev_configure(struct net *src_net, struct net_device *dev,
 		     tmp->cfg.saddr.sa.sa_family == AF_INET6) == use_ipv6 &&
 		    tmp->cfg.dst_port == vxlan->cfg.dst_port &&
 		    (tmp->flags & VXLAN_F_RCV_FLAGS) ==
+<<<<<<< HEAD
 		    (vxlan->flags & VXLAN_F_RCV_FLAGS)) {
 			pr_info("duplicate VNI %u\n", be32_to_cpu(conf->vni));
 			return -EEXIST;
 		}
+=======
+		    (vxlan->flags & VXLAN_F_RCV_FLAGS))
+		return -EEXIST;
+>>>>>>> upstream/rpi-4.4.y
 	}
 
 	dev->ethtool_ops = &vxlan_ethtool_ops;
@@ -3049,6 +3156,15 @@ static int vxlan_newlink(struct net *src_net, struct net_device *dev,
 
 	if (tb[IFLA_MTU])
 		conf.mtu = nla_get_u32(tb[IFLA_MTU]);
+<<<<<<< HEAD
+=======
+
+	err = vxlan_dev_configure(src_net, dev, &conf);
+	switch (err) {
+	case -ENODEV:
+		pr_info("ifindex %d does not exist\n", conf.remote_ifindex);
+		break;
+>>>>>>> upstream/rpi-4.4.y
 
 	return vxlan_dev_configure(src_net, dev, &conf);
 }

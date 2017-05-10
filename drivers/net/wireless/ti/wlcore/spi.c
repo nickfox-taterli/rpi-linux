@@ -79,6 +79,7 @@
 #define WSPI_MAX_NUM_OF_CHUNKS \
 	((SPI_AGGR_BUFFER_SIZE / WSPI_MAX_CHUNK_SIZE) + 1)
 
+<<<<<<< HEAD
 static const struct wilink_family_data wl127x_data = {
 	.name = "wl127x",
 	.nvs_name = "ti-connectivity/wl127x-nvs.bin",
@@ -93,6 +94,8 @@ static const struct wilink_family_data wl18xx_data = {
 	.name = "wl18xx",
 	.cfg_name = "ti-connectivity/wl18xx-conf.bin",
 };
+=======
+>>>>>>> upstream/rpi-4.4.y
 
 struct wl12xx_spi_glue {
 	struct device *dev;
@@ -312,7 +315,12 @@ static int __wl12xx_spi_raw_write(struct device *child, int addr,
 				  void *buf, size_t len, bool fixed)
 {
 	struct wl12xx_spi_glue *glue = dev_get_drvdata(child->parent);
+<<<<<<< HEAD
 	struct spi_transfer *t;
+=======
+	/* SPI write buffers - 2 for each chunk */
+	struct spi_transfer t[2 * WSPI_MAX_NUM_OF_CHUNKS];
+>>>>>>> upstream/rpi-4.4.y
 	struct spi_message m;
 	u32 commands[WSPI_MAX_NUM_OF_CHUNKS]; /* 1 command per chunk */
 	u32 *cmd;

@@ -2612,11 +2612,19 @@ static void layout_symtab(struct module *mod, struct load_info *info)
 	pr_debug("\t%s\n", info->secstrings + strsect->sh_name);
 
 	/* We'll tack temporary mod_kallsyms on the end. */
+<<<<<<< HEAD
 	mod->init_layout.size = ALIGN(mod->init_layout.size,
 				      __alignof__(struct mod_kallsyms));
 	info->mod_kallsyms_init_off = mod->init_layout.size;
 	mod->init_layout.size += sizeof(struct mod_kallsyms);
 	mod->init_layout.size = debug_align(mod->init_layout.size);
+=======
+	mod->init_size = ALIGN(mod->init_size,
+			       __alignof__(struct mod_kallsyms));
+	info->mod_kallsyms_init_off = mod->init_size;
+	mod->init_size += sizeof(struct mod_kallsyms);
+	mod->init_size = debug_align(mod->init_size);
+>>>>>>> upstream/rpi-4.4.y
 }
 
 /*
@@ -2633,7 +2641,11 @@ static void add_kallsyms(struct module *mod, const struct load_info *info)
 	Elf_Shdr *symsec = &info->sechdrs[info->index.sym];
 
 	/* Set up to point into init section. */
+<<<<<<< HEAD
 	mod->kallsyms = mod->init_layout.base + info->mod_kallsyms_init_off;
+=======
+	mod->kallsyms = mod->module_init + info->mod_kallsyms_init_off;
+>>>>>>> upstream/rpi-4.4.y
 
 	mod->kallsyms->symtab = (void *)symsec->sh_addr;
 	mod->kallsyms->num_symtab = symsec->sh_size / sizeof(Elf_Sym);
@@ -2646,6 +2658,7 @@ static void add_kallsyms(struct module *mod, const struct load_info *info)
 			= elf_type(&mod->kallsyms->symtab[i], info);
 
 	/* Now populate the cut down core kallsyms for after init. */
+<<<<<<< HEAD
 	mod->core_kallsyms.symtab = dst = mod->core_layout.base + info->symoffs;
 	mod->core_kallsyms.strtab = s = mod->core_layout.base + info->stroffs;
 	src = mod->kallsyms->symtab;
@@ -2653,6 +2666,14 @@ static void add_kallsyms(struct module *mod, const struct load_info *info)
 		if (i == 0 || is_livepatch_module(mod) ||
 		    is_core_symbol(src+i, info->sechdrs, info->hdr->e_shnum,
 				   info->index.pcpu)) {
+=======
+	mod->core_kallsyms.symtab = dst = mod->module_core + info->symoffs;
+	mod->core_kallsyms.strtab = s = mod->module_core + info->stroffs;
+	src = mod->kallsyms->symtab;
+	for (ndst = i = 0; i < mod->kallsyms->num_symtab; i++) {
+		if (i == 0 ||
+		    is_core_symbol(src+i, info->sechdrs, info->hdr->e_shnum)) {
+>>>>>>> upstream/rpi-4.4.y
 			dst[ndst] = src[i];
 			dst[ndst++].st_name = s - mod->core_kallsyms.strtab;
 			s += strlcpy(s, &mod->kallsyms->strtab[src[i].st_name],

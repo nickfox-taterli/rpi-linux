@@ -1268,7 +1268,11 @@ void snd_usb_set_interface_quirk(struct usb_device *dev)
 	 * "Playback Design" products need a 50ms delay after setting the
 	 * USB interface.
 	 */
+<<<<<<< HEAD
 	switch (USB_ID_VENDOR(chip->usb_id)) {
+=======
+	switch (le16_to_cpu(dev->descriptor.idVendor)) {
+>>>>>>> upstream/rpi-4.4.y
 	case 0x23ba: /* Playback Design */
 	case 0x0644: /* TEAC Corp. */
 		mdelay(50);
@@ -1298,6 +1302,14 @@ void snd_usb_ctl_msg_quirk(struct usb_device *dev, unsigned int pipe,
 	 * class compliant request
 	 */
 	if (USB_ID_VENDOR(chip->usb_id) == 0x0644 &&
+	    (requesttype & USB_TYPE_MASK) == USB_TYPE_CLASS)
+		mdelay(20);
+
+	/*
+	 * "TEAC Corp." products need a 20ms delay after each
+	 * class compliant request
+	 */
+	if ((le16_to_cpu(dev->descriptor.idVendor) == 0x0644) &&
 	    (requesttype & USB_TYPE_MASK) == USB_TYPE_CLASS)
 		mdelay(20);
 

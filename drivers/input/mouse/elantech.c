@@ -1525,6 +1525,7 @@ static const struct dmi_system_id elantech_dmi_force_crc_enabled[] = {
 		},
 	},
 	{
+<<<<<<< HEAD
 		/* Fujitsu LIFEBOOK E547 does not work with crc_enabled == 0 */
 		.matches = {
 			DMI_MATCH(DMI_SYS_VENDOR, "FUJITSU"),
@@ -1532,6 +1533,8 @@ static const struct dmi_system_id elantech_dmi_force_crc_enabled[] = {
 		},
 	},
 	{
+=======
+>>>>>>> upstream/rpi-4.4.y
 		/* Fujitsu LIFEBOOK E554  does not work with crc_enabled == 0 */
 		.matches = {
 			DMI_MATCH(DMI_SYS_VENDOR, "FUJITSU"),

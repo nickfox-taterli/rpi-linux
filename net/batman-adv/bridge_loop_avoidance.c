@@ -177,6 +177,7 @@ static void batadv_backbone_gw_put(struct batadv_bla_backbone_gw *backbone_gw)
 	kref_put(&backbone_gw->refcount, batadv_backbone_gw_release);
 }
 
+<<<<<<< HEAD
 /**
  * batadv_claim_release - release claim from lists and queue for free after rcu
  *  grace period
@@ -200,6 +201,12 @@ static void batadv_claim_release(struct kref *ref)
 
 	batadv_backbone_gw_put(old_backbone_gw);
 
+=======
+/* finally deinitialize the claim */
+static void batadv_claim_release(struct batadv_bla_claim *claim)
+{
+	batadv_backbone_gw_free_ref(claim->backbone_gw);
+>>>>>>> upstream/rpi-4.4.y
 	kfree_rcu(claim, rcu);
 }
 
@@ -210,7 +217,12 @@ static void batadv_claim_release(struct kref *ref)
  */
 static void batadv_claim_put(struct batadv_bla_claim *claim)
 {
+<<<<<<< HEAD
 	kref_put(&claim->refcount, batadv_claim_release);
+=======
+	if (atomic_dec_and_test(&claim->refcount))
+		batadv_claim_release(claim);
+>>>>>>> upstream/rpi-4.4.y
 }
 
 /**

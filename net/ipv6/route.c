@@ -1193,6 +1193,10 @@ static struct rt6_info *ip6_pol_route_output(struct net *net, struct fib6_table 
 struct dst_entry *ip6_route_output_flags(struct net *net, const struct sock *sk,
 					 struct flowi6 *fl6, int flags)
 {
+<<<<<<< HEAD
+=======
+	struct dst_entry *dst;
+>>>>>>> upstream/rpi-4.4.y
 	bool any_src;
 
 	if (rt6_need_strict(&fl6->daddr)) {

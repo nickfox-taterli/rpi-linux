@@ -175,7 +175,11 @@ static int tbf_segment(struct sk_buff *skb, struct Qdisc *sch,
 		segs->next = NULL;
 		qdisc_skb_cb(segs)->pkt_len = segs->len;
 		len += segs->len;
+<<<<<<< HEAD
 		ret = qdisc_enqueue(segs, q->qdisc, to_free);
+=======
+		ret = qdisc_enqueue(segs, q->qdisc);
+>>>>>>> upstream/rpi-4.4.y
 		if (ret != NET_XMIT_SUCCESS) {
 			if (net_xmit_drop_count(ret))
 				qdisc_qstats_drop(sch);

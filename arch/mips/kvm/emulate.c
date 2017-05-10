@@ -343,7 +343,11 @@ static u32 kvm_mips_read_count_running(struct kvm_vcpu *vcpu, ktime_t now)
 {
 	struct mips_coproc *cop0 = vcpu->arch.cop0;
 	ktime_t expires, threshold;
+<<<<<<< HEAD
 	u32 count, compare;
+=======
+	uint32_t count, compare;
+>>>>>>> upstream/rpi-4.4.y
 	int running;
 
 	/* Calculate the biased and scaled guest CP0_Count */
@@ -354,7 +358,11 @@ static u32 kvm_mips_read_count_running(struct kvm_vcpu *vcpu, ktime_t now)
 	 * Find whether CP0_Count has reached the closest timer interrupt. If
 	 * not, we shouldn't inject it.
 	 */
+<<<<<<< HEAD
 	if ((s32)(count - compare) < 0)
+=======
+	if ((int32_t)(count - compare) < 0)
+>>>>>>> upstream/rpi-4.4.y
 		return count;
 
 	/*
@@ -576,13 +584,21 @@ int kvm_mips_set_count_hz(struct kvm_vcpu *vcpu, s64 count_hz)
  * If @ack, atomically acknowledge any pending timer interrupt, otherwise ensure
  * any pending timer interrupt is preserved.
  */
+<<<<<<< HEAD
 void kvm_mips_write_compare(struct kvm_vcpu *vcpu, u32 compare, bool ack)
+=======
+void kvm_mips_write_compare(struct kvm_vcpu *vcpu, uint32_t compare, bool ack)
+>>>>>>> upstream/rpi-4.4.y
 {
 	struct mips_coproc *cop0 = vcpu->arch.cop0;
 	int dc;
 	u32 old_compare = kvm_read_c0_guest_compare(cop0);
 	ktime_t now;
+<<<<<<< HEAD
 	u32 count;
+=======
+	uint32_t count;
+>>>>>>> upstream/rpi-4.4.y
 
 	/* if unchanged, must just be an ack */
 	if (old_compare == compare) {
@@ -860,7 +876,11 @@ static void kvm_mips_invalidate_guest_tlb(struct kvm_vcpu *vcpu,
 	bool user;
 
 	/* No need to flush for entries which are already invalid */
+<<<<<<< HEAD
 	if (!((tlb->tlb_lo[0] | tlb->tlb_lo[1]) & ENTRYLO_V))
+=======
+	if (!((tlb->tlb_lo0 | tlb->tlb_lo1) & MIPS3_PG_V))
+>>>>>>> upstream/rpi-4.4.y
 		return;
 	/* User address space doesn't need flushing for KSeg2/3 changes */
 	user = tlb->tlb_hi < KVM_GUEST_KSEG0;
@@ -1165,6 +1185,7 @@ enum emulation_result kvm_mips_emulate_CP0(union mips_instruction inst,
 				      KVM_ENTRYHI_ASID) != nasid)) {
 					trace_kvm_asid_change(vcpu,
 						kvm_read_c0_guest_entryhi(cop0)
+<<<<<<< HEAD
 							& KVM_ENTRYHI_ASID,
 						nasid);
 
@@ -1185,6 +1206,21 @@ enum emulation_result kvm_mips_emulate_CP0(union mips_instruction inst,
 					for_each_possible_cpu(i)
 						if (i != cpu)
 							vcpu->arch.guest_kernel_asid[i] = 0;
+=======
+						& ASID_MASK,
+						vcpu->arch.gprs[rt]
+						& ASID_MASK);
+
+					preempt_disable();
+					/* Blow away the shadow host TLBs */
+					kvm_mips_flush_host_tlb(1);
+					cpu = smp_processor_id();
+					for_each_possible_cpu(i)
+						if (i != cpu) {
+							vcpu->arch.guest_user_asid[i] = 0;
+							vcpu->arch.guest_kernel_asid[i] = 0;
+						}
+>>>>>>> upstream/rpi-4.4.y
 					preempt_enable();
 				}
 				kvm_write_c0_guest_entryhi(cop0,
@@ -1529,8 +1565,13 @@ enum emulation_result kvm_mips_emulate_load(union mips_instruction inst,
 {
 	enum emulation_result er = EMULATE_DO_MMIO;
 	unsigned long curr_pc;
+<<<<<<< HEAD
 	u32 op, rt;
 	u32 bytes;
+=======
+	int32_t op, base, rt, offset;
+	uint32_t bytes;
+>>>>>>> upstream/rpi-4.4.y
 
 	rt = inst.i_format.rt;
 	op = inst.i_format.opcode;
@@ -1547,6 +1588,21 @@ enum emulation_result kvm_mips_emulate_load(union mips_instruction inst,
 	vcpu->arch.io_pc = vcpu->arch.pc;
 	vcpu->arch.pc = curr_pc;
 
+<<<<<<< HEAD
+=======
+	/*
+	 * Find the resume PC now while we have safe and easy access to the
+	 * prior branch instruction, and save it for
+	 * kvm_mips_complete_mmio_load() to restore later.
+	 */
+	curr_pc = vcpu->arch.pc;
+	er = update_pc(vcpu, cause);
+	if (er == EMULATE_FAIL)
+		return er;
+	vcpu->arch.io_pc = vcpu->arch.pc;
+	vcpu->arch.pc = curr_pc;
+
+>>>>>>> upstream/rpi-4.4.y
 	vcpu->arch.io_gpr = rt;
 
 	switch (op) {
@@ -1752,7 +1808,12 @@ enum emulation_result kvm_mips_emulate_cache(union mips_instruction inst,
 			 * We fault an entry from the guest tlb to the
 			 * shadow host TLB
 			 */
+<<<<<<< HEAD
 			if (kvm_mips_handle_mapped_seg_tlb_fault(vcpu, tlb)) {
+=======
+			if (kvm_mips_handle_mapped_seg_tlb_fault(vcpu, tlb,
+								 NULL, NULL)) {
+>>>>>>> upstream/rpi-4.4.y
 				kvm_err("%s: handling mapped seg tlb fault for %lx, index: %u, vcpu: %p, ASID: %#lx\n",
 					__func__, va, index, vcpu,
 					read_c0_entryhi());
@@ -2726,7 +2787,12 @@ enum emulation_result kvm_mips_handle_tlbmiss(u32 cause,
 			 * OK we have a Guest TLB entry, now inject it into the
 			 * shadow host TLB
 			 */
+<<<<<<< HEAD
 			if (kvm_mips_handle_mapped_seg_tlb_fault(vcpu, tlb)) {
+=======
+			if (kvm_mips_handle_mapped_seg_tlb_fault(vcpu, tlb,
+								 NULL, NULL)) {
+>>>>>>> upstream/rpi-4.4.y
 				kvm_err("%s: handling mapped seg tlb fault for %lx, index: %u, vcpu: %p, ASID: %#lx\n",
 					__func__, va, index, vcpu,
 					read_c0_entryhi());

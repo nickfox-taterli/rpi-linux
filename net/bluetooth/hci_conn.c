@@ -762,8 +762,11 @@ static void hci_req_add_le_create_conn(struct hci_request *req,
 				      &own_addr_type))
 		return;
 
+<<<<<<< HEAD
 	memset(&cp, 0, sizeof(cp));
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 	/* Set window to be the same value as the interval to enable
 	 * continuous scanning.
 	 */

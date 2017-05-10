@@ -896,7 +896,11 @@ __cpufreq_cooling_register(struct device_node *np,
 		 cpufreq_dev->id);
 
 	cool_dev = thermal_of_cooling_device_register(np, dev_name, cpufreq_dev,
+<<<<<<< HEAD
 						      cooling_ops);
+=======
+						      &cpufreq_cooling_ops);
+>>>>>>> upstream/rpi-4.4.y
 	if (IS_ERR(cool_dev))
 		goto remove_idr;
 

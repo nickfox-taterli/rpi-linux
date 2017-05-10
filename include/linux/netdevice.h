@@ -2165,6 +2165,7 @@ struct napi_gro_cb {
 	/* Used in foo-over-udp, set in udp[46]_gro_receive */
 	u8	is_ipv6:1;
 
+<<<<<<< HEAD
 	/* Used in GRE, set in fou/gue_gro_receive */
 	u8	is_fou:1;
 
@@ -2175,6 +2176,12 @@ struct napi_gro_cb {
 	u8 recursion_counter:4;
 
 	/* 1 bit hole */
+=======
+	/* Number of gro_receive callbacks this packet already went through */
+	u8 recursion_counter:4;
+
+	/* 3 bit hole */
+>>>>>>> upstream/rpi-4.4.y
 
 	/* used to support CHECKSUM_COMPLETE for tunneling protocols */
 	__wsum	csum;
@@ -2204,6 +2211,7 @@ static inline struct sk_buff **call_gro_receive(gro_receive_t cb,
 	return cb(head, skb);
 }
 
+<<<<<<< HEAD
 typedef struct sk_buff **(*gro_receive_sk_t)(struct sock *, struct sk_buff **,
 					     struct sk_buff *);
 static inline struct sk_buff **call_gro_receive_sk(gro_receive_sk_t cb,
@@ -2219,6 +2227,8 @@ static inline struct sk_buff **call_gro_receive_sk(gro_receive_sk_t cb,
 	return cb(sk, head, skb);
 }
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 struct packet_type {
 	__be16			type;	/* This is really htons(ether_type). */
 	struct net_device	*dev;	/* NULL is wildcarded here	     */
@@ -2247,7 +2257,44 @@ struct packet_offload {
 	struct list_head	 list;
 };
 
+<<<<<<< HEAD
 /* often modified stats are per-CPU, other are shared (netdev->stats) */
+=======
+struct udp_offload;
+
+struct udp_offload_callbacks {
+	struct sk_buff		**(*gro_receive)(struct sk_buff **head,
+						 struct sk_buff *skb,
+						 struct udp_offload *uoff);
+	int			(*gro_complete)(struct sk_buff *skb,
+						int nhoff,
+						struct udp_offload *uoff);
+};
+
+struct udp_offload {
+	__be16			 port;
+	u8			 ipproto;
+	struct udp_offload_callbacks callbacks;
+};
+
+typedef struct sk_buff **(*gro_receive_udp_t)(struct sk_buff **,
+					      struct sk_buff *,
+					      struct udp_offload *);
+static inline struct sk_buff **call_gro_receive_udp(gro_receive_udp_t cb,
+						    struct sk_buff **head,
+						    struct sk_buff *skb,
+						    struct udp_offload *uoff)
+{
+	if (unlikely(gro_recursion_inc_test(skb))) {
+		NAPI_GRO_CB(skb)->flush |= 1;
+		return NULL;
+	}
+
+	return cb(head, skb, uoff);
+}
+
+/* often modified stats are per cpu, other are shared (netdev->stats) */
+>>>>>>> upstream/rpi-4.4.y
 struct pcpu_sw_netstats {
 	u64     rx_packets;
 	u64     rx_bytes;

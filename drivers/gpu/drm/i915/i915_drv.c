@@ -202,6 +202,7 @@ static void intel_detect_pch(struct drm_device *dev)
 			} else if (id == INTEL_PCH_SPT_LP_DEVICE_ID_TYPE) {
 				dev_priv->pch_type = PCH_SPT;
 				DRM_DEBUG_KMS("Found SunrisePoint LP PCH\n");
+<<<<<<< HEAD
 				WARN_ON(!IS_SKYLAKE(dev) &&
 					!IS_KABYLAKE(dev));
 			} else if (id == INTEL_PCH_KBP_DEVICE_ID_TYPE) {
@@ -215,6 +216,13 @@ static void intel_detect_pch(struct drm_device *dev)
 					    PCI_SUBVENDOR_ID_REDHAT_QUMRANET &&
 				    pch->subsystem_device ==
 					    PCI_SUBDEVICE_ID_QEMU)) {
+=======
+				WARN_ON(!IS_SKYLAKE(dev));
+			} else if ((id == INTEL_PCH_P2X_DEVICE_ID_TYPE) ||
+				   ((id == INTEL_PCH_QEMU_DEVICE_ID_TYPE) &&
+				    pch->subsystem_vendor == 0x1af4 &&
+				    pch->subsystem_device == 0x1100)) {
+>>>>>>> upstream/rpi-4.4.y
 				dev_priv->pch_type = intel_virt_detect_pch(dev);
 			} else
 				continue;

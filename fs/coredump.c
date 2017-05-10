@@ -36,7 +36,10 @@
 #include <linux/sched.h>
 #include <linux/fs.h>
 #include <linux/path.h>
+<<<<<<< HEAD
 #include <linux/timekeeping.h>
+=======
+>>>>>>> upstream/rpi-4.4.y
 
 #include <asm/uaccess.h>
 #include <asm/mmu_context.h>

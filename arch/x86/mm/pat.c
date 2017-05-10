@@ -289,6 +289,7 @@ static void init_cache_modes(void)
 
 	init_cm_done = 1;
 }
+<<<<<<< HEAD
 
 /**
  * pat_init - Initialize PAT MSR and PAT table
@@ -310,6 +311,29 @@ void pat_init(void)
 		return;
 	}
 
+=======
+
+/**
+ * pat_init - Initialize PAT MSR and PAT table
+ *
+ * This function initializes PAT MSR and PAT table with an OS-defined value
+ * to enable additional cache attributes, WC and WT.
+ *
+ * This function must be called on all CPUs using the specific sequence of
+ * operations defined in Intel SDM. mtrr_rendezvous_handler() provides this
+ * procedure for PAT.
+ */
+void pat_init(void)
+{
+	u64 pat;
+	struct cpuinfo_x86 *c = &boot_cpu_data;
+
+	if (!pat_enabled()) {
+		init_cache_modes();
+		return;
+	}
+
+>>>>>>> upstream/rpi-4.4.y
 	if ((c->x86_vendor == X86_VENDOR_INTEL) &&
 	    (((c->x86 == 0x6) && (c->x86_model <= 0xd)) ||
 	     ((c->x86 == 0xf) && (c->x86_model <= 0x6)))) {

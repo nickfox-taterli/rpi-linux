@@ -3376,18 +3376,31 @@ int stmmac_dvr_probe(struct device *device,
 
 	ret = register_netdev(ndev);
 	if (ret) {
+<<<<<<< HEAD
 		pr_err("%s: ERROR %i registering the device\n", __func__, ret);
+=======
+		netdev_err(priv->dev, "%s: ERROR %i registering the device\n",
+			   __func__, ret);
+>>>>>>> upstream/rpi-4.4.y
 		goto error_netdev_register;
 	}
 
 	return ret;
 
 error_netdev_register:
+<<<<<<< HEAD
 	if (priv->hw->pcs != STMMAC_PCS_RGMII &&
 	    priv->hw->pcs != STMMAC_PCS_TBI &&
 	    priv->hw->pcs != STMMAC_PCS_RTBI)
 		stmmac_mdio_unregister(ndev);
 error_napi_register:
+=======
+	if (priv->pcs != STMMAC_PCS_RGMII &&
+	    priv->pcs != STMMAC_PCS_TBI &&
+	    priv->pcs != STMMAC_PCS_RTBI)
+		stmmac_mdio_unregister(ndev);
+error_mdio_register:
+>>>>>>> upstream/rpi-4.4.y
 	netif_napi_del(&priv->napi);
 error_hw_init:
 	clk_disable_unprepare(priv->pclk);

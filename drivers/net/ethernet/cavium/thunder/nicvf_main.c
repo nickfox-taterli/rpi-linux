@@ -1394,6 +1394,7 @@ void nicvf_update_stats(struct nicvf *nic)
 	stats->tx_mcast_frames = GET_TX_STATS(TX_MCAST);
 	stats->tx_drops = GET_TX_STATS(TX_DROP);
 
+<<<<<<< HEAD
 	/* On T88 pass 2.0, the dummy SQE added for TSO notification
 	 * via CQE has 'dont_send' set. Hence HW drops the pkt pointed
 	 * pointed by dummy SQE and results in tx_drops counter being
@@ -1415,6 +1416,17 @@ void nicvf_update_stats(struct nicvf *nic)
 			   stats->rx_mcast_frames;
 	stats->rx_drops = stats->rx_drop_red +
 			  stats->rx_drop_overrun;
+=======
+	drv_stats->tx_frames_ok = stats->tx_ucast_frames_ok +
+				  stats->tx_bcast_frames_ok +
+				  stats->tx_mcast_frames_ok;
+	drv_stats->rx_frames_ok = stats->rx_ucast_frames +
+				  stats->rx_bcast_frames +
+				  stats->rx_mcast_frames;
+	drv_stats->rx_drops = stats->rx_drop_red +
+			      stats->rx_drop_overrun;
+	drv_stats->tx_drops = stats->tx_drops;
+>>>>>>> upstream/rpi-4.4.y
 
 	/* Update RQ and SQ stats */
 	for (qidx = 0; qidx < qs->rq_cnt; qidx++)

@@ -1976,10 +1976,14 @@ int ath10k_core_start(struct ath10k *ar, enum ath10k_firmware_mode mode,
 		goto err_hif_stop;
 	}
 
+<<<<<<< HEAD
 	if (ar->max_num_vdevs >= 64)
 		ar->free_vdev_map = 0xFFFFFFFFFFFFFFFFLL;
 	else
 		ar->free_vdev_map = (1LL << ar->max_num_vdevs) - 1;
+=======
+	ar->free_vdev_map = (1LL << ar->max_num_vdevs) - 1;
+>>>>>>> upstream/rpi-4.4.y
 
 	INIT_LIST_HEAD(&ar->arvifs);
 

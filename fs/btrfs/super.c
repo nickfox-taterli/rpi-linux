@@ -2068,6 +2068,12 @@ static int btrfs_calc_avail_data_space(struct btrfs_root *root, u64 *free_bytes)
  * chunk).
  *
  * If metadata is exhausted, f_bavail will be 0.
+<<<<<<< HEAD
+=======
+ *
+ * FIXME: not accurate for mixed block groups, total and free/used are ok,
+ * available appears slightly larger.
+>>>>>>> upstream/rpi-4.4.y
  */
 static int btrfs_statfs(struct dentry *dentry, struct kstatfs *buf)
 {
@@ -2084,7 +2090,10 @@ static int btrfs_statfs(struct dentry *dentry, struct kstatfs *buf)
 	struct btrfs_block_rsv *block_rsv = &fs_info->global_block_rsv;
 	int ret;
 	u64 thresh = 0;
+<<<<<<< HEAD
 	int mixed = 0;
+=======
+>>>>>>> upstream/rpi-4.4.y
 
 	/*
 	 * holding chunk_mutex to avoid allocating new chunks, holding
@@ -2110,6 +2119,8 @@ static int btrfs_statfs(struct dentry *dentry, struct kstatfs *buf)
 				}
 			}
 		}
+		if (found->flags & BTRFS_BLOCK_GROUP_METADATA)
+			total_free_meta += found->disk_total - found->disk_used;
 
 		/*
 		 * Metadata in mixed block goup profiles are accounted in data
@@ -2162,7 +2173,11 @@ static int btrfs_statfs(struct dentry *dentry, struct kstatfs *buf)
 	 */
 	thresh = 4 * 1024 * 1024;
 
+<<<<<<< HEAD
 	if (!mixed && total_free_meta - thresh < block_rsv->size)
+=======
+	if (total_free_meta - thresh < block_rsv->size)
+>>>>>>> upstream/rpi-4.4.y
 		buf->f_bavail = 0;
 
 	buf->f_type = BTRFS_SUPER_MAGIC;

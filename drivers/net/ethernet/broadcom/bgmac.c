@@ -311,7 +311,11 @@ static void bgmac_dma_rx_enable(struct bgmac *bgmac,
 	/* preserve ONLY bits 16-17 from current hardware value */
 	ctl &= BGMAC_DMA_RX_ADDREXT_MASK;
 
+<<<<<<< HEAD
 	if (bgmac->feature_flags & BGMAC_FEAT_RX_MASK_SETUP) {
+=======
+	if (bgmac->core->id.rev >= 4) {
+>>>>>>> upstream/rpi-4.4.y
 		ctl &= ~BGMAC_DMA_RX_BL_MASK;
 		ctl |= BGMAC_DMA_RX_BL_128 << BGMAC_DMA_RX_BL_SHIFT;
 

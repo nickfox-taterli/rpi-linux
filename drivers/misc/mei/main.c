@@ -194,9 +194,17 @@ again:
 	}
 	mutex_lock(&dev->device_lock);
 
+<<<<<<< HEAD
 	if (!mei_cl_is_connected(cl)) {
 		rets = -ENODEV;
 		goto out;
+=======
+		mutex_lock(&dev->device_lock);
+		if (!mei_cl_is_connected(cl)) {
+			rets = -ENODEV;
+			goto out;
+		}
+>>>>>>> upstream/rpi-4.4.y
 	}
 
 	cb = mei_cl_read_cb(cl, file);

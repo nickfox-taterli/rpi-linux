@@ -39,8 +39,13 @@
 	fragment@3 {
 		target-path = "/aliases";
 		__overlay__ {
+<<<<<<< HEAD
 			serial0 = "/soc/serial@7e201000";
 			serial1 = "/soc/serial@7e215040";
+=======
+			serial0 = "/soc/uart@7e201000";
+			serial1 = "/soc/uart@7e215040";
+>>>>>>> upstream/rpi-4.4.y
 		};
 	};
 };

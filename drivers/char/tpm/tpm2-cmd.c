@@ -941,7 +941,11 @@ int tpm2_probe(struct tpm_chip *chip)
 	cmd.params.get_tpm_pt_in.property_id = cpu_to_be32(0x100);
 	cmd.params.get_tpm_pt_in.property_cnt = cpu_to_be32(1);
 
+<<<<<<< HEAD
 	rc = tpm_transmit_cmd(chip, &cmd, sizeof(cmd),  0, NULL);
+=======
+	rc = tpm_transmit(chip, (const u8 *)&cmd, sizeof(cmd), 0);
+>>>>>>> upstream/rpi-4.4.y
 	if (rc <  0)
 		return rc;
 

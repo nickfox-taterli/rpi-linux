@@ -273,6 +273,11 @@ static int amdgpu_move_blit(struct ttm_buffer_object *bo,
 
 	adev = amdgpu_get_adev(bo->bdev);
 	ring = adev->mman.buffer_funcs_ring;
+<<<<<<< HEAD
+=======
+	old_start = (u64)old_mem->start << PAGE_SHIFT;
+	new_start = (u64)new_mem->start << PAGE_SHIFT;
+>>>>>>> upstream/rpi-4.4.y
 
 	switch (old_mem->mem_type) {
 	case TTM_PL_TT:
@@ -972,6 +977,25 @@ bool amdgpu_ttm_tt_userptr_invalidated(struct ttm_tt *ttm,
 
 	*last_invalidated = atomic_read(&gtt->mmu_invalidations);
 	return prev_invalidated != *last_invalidated;
+}
+
+bool amdgpu_ttm_tt_affect_userptr(struct ttm_tt *ttm, unsigned long start,
+				  unsigned long end)
+{
+	struct amdgpu_ttm_tt *gtt = (void *)ttm;
+	unsigned long size;
+
+	if (gtt == NULL)
+		return false;
+
+	if (gtt->ttm.ttm.state != tt_bound || !gtt->userptr)
+		return false;
+
+	size = (unsigned long)gtt->ttm.ttm.num_pages * PAGE_SIZE;
+	if (gtt->userptr > end || gtt->userptr + size <= start)
+		return false;
+
+	return true;
 }
 
 bool amdgpu_ttm_tt_is_readonly(struct ttm_tt *ttm)

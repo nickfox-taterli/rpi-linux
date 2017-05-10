@@ -1959,6 +1959,7 @@ void nf_conntrack_init_end(void)
 
 int nf_conntrack_init_net(struct net *net)
 {
+	static atomic64_t unique_id;
 	int ret = -ENOMEM;
 	int cpu;
 
@@ -1980,6 +1981,28 @@ int nf_conntrack_init_net(struct net *net)
 	if (!net->ct.stat)
 		goto err_pcpu_lists;
 
+<<<<<<< HEAD
+=======
+	net->ct.slabname = kasprintf(GFP_KERNEL, "nf_conntrack_%llu",
+				(u64)atomic64_inc_return(&unique_id));
+	if (!net->ct.slabname)
+		goto err_slabname;
+
+	net->ct.nf_conntrack_cachep = kmem_cache_create(net->ct.slabname,
+							sizeof(struct nf_conn), 0,
+							SLAB_DESTROY_BY_RCU, NULL);
+	if (!net->ct.nf_conntrack_cachep) {
+		printk(KERN_ERR "Unable to create nf_conn slab cache\n");
+		goto err_cache;
+	}
+
+	net->ct.htable_size = nf_conntrack_htable_size;
+	net->ct.hash = nf_ct_alloc_hashtable(&net->ct.htable_size, 1);
+	if (!net->ct.hash) {
+		printk(KERN_ERR "Unable to create nf_conntrack_hash\n");
+		goto err_hash;
+	}
+>>>>>>> upstream/rpi-4.4.y
 	ret = nf_conntrack_expect_pernet_init(net);
 	if (ret < 0)
 		goto err_expect;

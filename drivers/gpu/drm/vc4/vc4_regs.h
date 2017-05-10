@@ -177,7 +177,11 @@
 # define PV_CONTROL_WAIT_HSTART			BIT(12)
 # define PV_CONTROL_PIXEL_REP_MASK		VC4_MASK(5, 4)
 # define PV_CONTROL_PIXEL_REP_SHIFT		4
+<<<<<<< HEAD
 # define PV_CONTROL_CLK_SELECT_DSI		0
+=======
+# define PV_CONTROL_CLK_SELECT_DSI_VEC		0
+>>>>>>> upstream/rpi-4.4.y
 # define PV_CONTROL_CLK_SELECT_DPI_SMI_HDMI	1
 # define PV_CONTROL_CLK_SELECT_VEC		2
 # define PV_CONTROL_CLK_SELECT_MASK		VC4_MASK(3, 2)
@@ -479,6 +483,7 @@
 
 #define VC4_HDMI_RAM_PACKET_STATUS		0x0a4
 
+<<<<<<< HEAD
 #define VC4_HDMI_CRP_CFG			0x0a8
 /* When set, the CTS_PERIOD counts based on MAI bus sync pulse instead
  * of pixel clock.
@@ -502,6 +507,8 @@
 #define VC4_HDMI_CTS_PERIOD_0			0x0b4
 #define VC4_HDMI_CTS_PERIOD_1			0x0b8
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 #define VC4_HDMI_HORZA				0x0c4
 # define VC4_HDMI_HORZA_VPOS			BIT(14)
 # define VC4_HDMI_HORZA_HPOS			BIT(13)
@@ -563,11 +570,15 @@
 
 #define VC4_HDMI_TX_PHY_RESET_CTL		0x2c0
 
+<<<<<<< HEAD
 #define VC4_HDMI_TX_PHY_CTL0			0x2c4
 # define VC4_HDMI_TX_PHY_RNG_PWRDN		BIT(25)
 
 #define VC4_HDMI_GCP(x)				(0x400 + ((x) * 0x4))
 #define VC4_HDMI_RAM_PACKET(x)			(0x400 + ((x) * 0x24))
+=======
+#define VC4_HDMI_GCP_0				0x400
+>>>>>>> upstream/rpi-4.4.y
 #define VC4_HDMI_PACKET_STRIDE			0x24
 
 #define VC4_HD_M_CTL				0x00c

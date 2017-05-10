@@ -112,6 +112,51 @@
 
 static int page_cache_tree_insert(struct address_space *mapping,
 				  struct page *page, void **shadowp)
+<<<<<<< HEAD
+=======
+{
+	struct radix_tree_node *node;
+	void **slot;
+	int error;
+
+	error = __radix_tree_create(&mapping->page_tree, page->index,
+				    &node, &slot);
+	if (error)
+		return error;
+	if (*slot) {
+		void *p;
+
+		p = radix_tree_deref_slot_protected(slot, &mapping->tree_lock);
+		if (!radix_tree_exceptional_entry(p))
+			return -EEXIST;
+		if (shadowp)
+			*shadowp = p;
+		mapping->nrshadows--;
+		if (node)
+			workingset_node_shadows_dec(node);
+	}
+	radix_tree_replace_slot(slot, page);
+	mapping->nrpages++;
+	if (node) {
+		workingset_node_pages_inc(node);
+		/*
+		 * Don't track node that contains actual pages.
+		 *
+		 * Avoid acquiring the list_lru lock if already
+		 * untracked.  The list_empty() test is safe as
+		 * node->private_list is protected by
+		 * mapping->tree_lock.
+		 */
+		if (!list_empty(&node->private_list))
+			list_lru_del(&workingset_shadow_nodes,
+				     &node->private_list);
+	}
+	return 0;
+}
+
+static void page_cache_tree_delete(struct address_space *mapping,
+				   struct page *page, void *shadow)
+>>>>>>> upstream/rpi-4.4.y
 {
 	struct radix_tree_node *node;
 	void **slot;
@@ -128,6 +173,7 @@ static int page_cache_tree_insert(struct address_space *mapping,
 		if (!radix_tree_exceptional_entry(p))
 			return -EEXIST;
 
+<<<<<<< HEAD
 		mapping->nrexceptional--;
 		if (!dax_mapping(mapping)) {
 			if (shadowp)
@@ -151,6 +197,18 @@ static int page_cache_tree_insert(struct address_space *mapping,
 	mapping->nrpages++;
 	if (node) {
 		workingset_node_pages_inc(node);
+=======
+	if (!node) {
+		/*
+		 * We need a node to properly account shadow
+		 * entries. Don't plant any without. XXX
+		 */
+		shadow = NULL;
+	}
+
+	if (shadow) {
+		mapping->nrshadows++;
+>>>>>>> upstream/rpi-4.4.y
 		/*
 		 * Don't track node that contains actual pages.
 		 *
@@ -630,7 +688,11 @@ int replace_page_cache_page(struct page *old, struct page *new, gfp_t gfp_mask)
 		new->index = offset;
 
 		spin_lock_irqsave(&mapping->tree_lock, flags);
+<<<<<<< HEAD
 		__delete_from_page_cache(old, NULL);
+=======
+		__delete_from_page_cache(old, NULL, memcg);
+>>>>>>> upstream/rpi-4.4.y
 		error = page_cache_tree_insert(mapping, new, NULL);
 		BUG_ON(error);
 

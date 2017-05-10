@@ -134,9 +134,12 @@ _GLOBAL(tm_reclaim)
 1:	tdeqi   r6, 0
 	EMIT_BUG_ENTRY 1b,__FILE__,__LINE__,0
 
+<<<<<<< HEAD
 	/* Stash the stack pointer away for use after reclaim */
 	std	r1, PACAR1(r13)
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 	/* Clear MSR RI since we are about to change r1, EE is already off. */
 	li	r4, 0
 	mtmsrd	r4, 1
@@ -472,7 +475,10 @@ restore_gprs:
 	 * until we turn MSR RI back on.
 	 */
 
+<<<<<<< HEAD
 	SET_SCRATCH0(r1)
+=======
+>>>>>>> upstream/rpi-4.4.y
 	ld	r5, -8(r1)
 	ld	r1, -16(r1)
 

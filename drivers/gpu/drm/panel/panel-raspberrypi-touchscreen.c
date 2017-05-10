@@ -1,5 +1,9 @@
 /*
+<<<<<<< HEAD
  * Copyright © 2016 Broadcom
+=======
+ * Copyright © 2016 Broadcom Limited
+>>>>>>> upstream/rpi-4.4.y
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
@@ -40,6 +44,10 @@
  * driver, and should expose the touchscreen as a HID device.
  */
 
+<<<<<<< HEAD
+=======
+#include <linux/backlight.h>
+>>>>>>> upstream/rpi-4.4.y
 #include <linux/delay.h>
 #include <linux/err.h>
 #include <linux/fb.h>
@@ -58,6 +66,7 @@
 #include <drm/drm_mipi_dsi.h>
 #include <drm/drm_panel.h>
 
+<<<<<<< HEAD
 /* I2C registers of the Atmel microcontroller. */
 enum REG_ADDR {
 	REG_ID = 0x80,
@@ -194,10 +203,19 @@ enum REG_ADDR {
 #define WCMDQUEUE		0x0500
 #define RCMDQUEUE		0x0504
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 struct rpi_touchscreen {
 	struct drm_panel base;
 	struct mipi_dsi_device *dsi;
 	struct i2c_client *bridge_i2c;
+<<<<<<< HEAD
+=======
+	struct backlight_device *backlight;
+
+	bool prepared;
+	bool enabled;
+>>>>>>> upstream/rpi-4.4.y
 
 	/* Version of the firmware on the bridge chip */
 	int atmel_ver;
@@ -205,6 +223,7 @@ struct rpi_touchscreen {
 
 static const struct drm_display_mode rpi_touchscreen_modes[] = {
 	{
+<<<<<<< HEAD
 		/* The DSI PLL can only integer divide from the 2Ghz
 		 * PLLD, giving us few choices.  We pick a divide by 3
 		 * as our DSI HS clock, giving us a pixel clock of
@@ -234,6 +253,21 @@ static const struct drm_display_mode rpi_touchscreen_modes[] = {
 		.vsync_start = 480 + 7,
 		.vsync_end = 480 + 7 + 2,
 		.vtotal = VTOTAL,
+=======
+		/* This is assuming that we'll be running the DSI PLL
+		 * at 2Ghz / 3 (since we only get integer dividers),
+		 * so a pixel clock of 2Ghz / 3 / 8.
+		 */
+		.clock = 83333,
+		.hdisplay = 800,
+		.hsync_start = 800 + 61,
+		.hsync_end = 800 + 61 + 2,
+		.htotal = 800 + 61 + 2 + 44,
+		.vdisplay = 480,
+		.vsync_start = 480 + 7,
+		.vsync_end = 480 + 7 + 2,
+		.vtotal = 480 + 7 + 2 + 21,
+>>>>>>> upstream/rpi-4.4.y
 		.vrefresh = 60,
 	},
 };
@@ -243,6 +277,7 @@ static struct rpi_touchscreen *panel_to_ts(struct drm_panel *panel)
 	return container_of(panel, struct rpi_touchscreen, base);
 }
 
+<<<<<<< HEAD
 static u8 rpi_touchscreen_i2c_read(struct rpi_touchscreen *ts, u8 reg)
 {
 	return i2c_smbus_read_byte_data(ts->bridge_i2c, reg);
@@ -282,10 +317,33 @@ static int rpi_touchscreen_write(struct rpi_touchscreen *ts, u16 reg, u32 val)
 	rpi_touchscreen_i2c_write(ts, REG_WRITEH, val >> 8);
 	rpi_touchscreen_i2c_write(ts, REG_WRITEL, val);
 #endif
+=======
+struct regdump {
+	const char *reg;
+	u32 offset;
+};
+
+#define REGDUMP(reg) { #reg, reg }
+
+static int rpi_touchscreen_disable(struct drm_panel *panel)
+{
+	struct rpi_touchscreen *ts = panel_to_ts(panel);
+
+	if (!ts->enabled)
+		return 0;
+
+	if (ts->backlight) {
+		ts->backlight->props.power = FB_BLANK_POWERDOWN;
+		backlight_update_status(ts->backlight);
+	}
+
+	ts->enabled = false;
+>>>>>>> upstream/rpi-4.4.y
 
 	return 0;
 }
 
+<<<<<<< HEAD
 static int rpi_touchscreen_disable(struct drm_panel *panel)
 {
 	struct rpi_touchscreen *ts = panel_to_ts(panel);
@@ -294,10 +352,21 @@ static int rpi_touchscreen_disable(struct drm_panel *panel)
 
 	rpi_touchscreen_i2c_write(ts, REG_POWERON, 0);
 	udelay(1);
+=======
+static int rpi_touchscreen_unprepare(struct drm_panel *panel)
+{
+	struct rpi_touchscreen *ts = panel_to_ts(panel);
+
+	if (!ts->prepared)
+		return 0;
+
+	ts->prepared = false;
+>>>>>>> upstream/rpi-4.4.y
 
 	return 0;
 }
 
+<<<<<<< HEAD
 static int rpi_touchscreen_noop(struct drm_panel *panel)
 {
 	return 0;
@@ -343,6 +412,41 @@ static int rpi_touchscreen_enable(struct drm_panel *panel)
 	 * orientation bits.
 	 */
 	rpi_touchscreen_i2c_write(ts, REG_PORTA, BIT(2));
+=======
+static int rpi_touchscreen_prepare(struct drm_panel *panel)
+{
+	struct rpi_touchscreen *ts = panel_to_ts(panel);
+
+	if (ts->prepared)
+		return 0;
+
+	ts->prepared = true;
+
+	return 0;
+}
+
+/*
+ * Powers on the panel once the DSI link is up.
+ *
+ * The TC358762 is run in PLLOFF mode, where it usees the MIPI DSI
+ * byte clock instead of an external reference clock.  This means that
+ * we need the DSI host to be on and transmitting before we start
+ * talking to it.
+ */
+static int rpi_touchscreen_enable(struct drm_panel *panel)
+{
+	struct rpi_touchscreen *ts = panel_to_ts(panel);
+
+	if (ts->enabled)
+		return 0;
+
+	if (ts->backlight) {
+		ts->backlight->props.power = FB_BLANK_UNBLANK;
+		backlight_update_status(ts->backlight);
+	}
+
+	ts->enabled = true;
+>>>>>>> upstream/rpi-4.4.y
 
 	return 0;
 }
@@ -376,16 +480,43 @@ static int rpi_touchscreen_get_modes(struct drm_panel *panel)
 	}
 
 	connector->display_info.bpc = 8;
+<<<<<<< HEAD
 	connector->display_info.width_mm = 154;
 	connector->display_info.height_mm = 86;
+=======
+	connector->display_info.width_mm = 217; /* XXX */
+	connector->display_info.height_mm = 136; /* XXX */
+>>>>>>> upstream/rpi-4.4.y
 
 	return num;
 }
 
+<<<<<<< HEAD
 static const struct drm_panel_funcs rpi_touchscreen_funcs = {
 	.disable = rpi_touchscreen_disable,
 	.unprepare = rpi_touchscreen_noop,
 	.prepare = rpi_touchscreen_noop,
+=======
+static int rpi_touchscreen_backlight_update(struct backlight_device *bl)
+{
+	int brightness = bl->props.brightness;
+
+	if (bl->props.power != FB_BLANK_UNBLANK ||
+	    bl->props.state & (BL_CORE_SUSPENDED | BL_CORE_FBBLANK))
+		brightness = 0;
+
+	return 0;
+}
+
+static const struct backlight_ops rpi_touchscreen_backlight_ops = {
+	.update_status	= rpi_touchscreen_backlight_update,
+};
+
+static const struct drm_panel_funcs rpi_touchscreen_funcs = {
+	.disable = rpi_touchscreen_disable,
+	.unprepare = rpi_touchscreen_unprepare,
+	.prepare = rpi_touchscreen_prepare,
+>>>>>>> upstream/rpi-4.4.y
 	.enable = rpi_touchscreen_enable,
 	.get_modes = rpi_touchscreen_get_modes,
 };
@@ -404,9 +535,12 @@ static struct i2c_client *rpi_touchscreen_get_i2c(struct device *dev,
 
 	of_node_put(node);
 
+<<<<<<< HEAD
 	if (!client)
 		return ERR_PTR(-EPROBE_DEFER);
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 	return client;
 }
 
@@ -414,7 +548,11 @@ static int rpi_touchscreen_dsi_probe(struct mipi_dsi_device *dsi)
 {
 	struct device *dev = &dsi->dev;
 	struct rpi_touchscreen *ts;
+<<<<<<< HEAD
 	int ret, ver;
+=======
+	int ret;
+>>>>>>> upstream/rpi-4.4.y
 
 	ts = devm_kzalloc(dev, sizeof(*ts), GFP_KERNEL);
 	if (!ts)
@@ -424,18 +562,27 @@ static int rpi_touchscreen_dsi_probe(struct mipi_dsi_device *dsi)
 
 	ts->dsi = dsi;
 	dsi->mode_flags = (MIPI_DSI_MODE_VIDEO |
+<<<<<<< HEAD
 			   MIPI_DSI_MODE_VIDEO_SYNC_PULSE |
 			   MIPI_DSI_MODE_LPM);
+=======
+			   MIPI_DSI_MODE_VIDEO_SYNC_PULSE);
+>>>>>>> upstream/rpi-4.4.y
 	dsi->format = MIPI_DSI_FMT_RGB888;
 	dsi->lanes = 1;
 
 	ts->bridge_i2c =
 		rpi_touchscreen_get_i2c(dev, "raspberrypi,touchscreen-bridge");
+<<<<<<< HEAD
 	if (IS_ERR(ts->bridge_i2c)) {
+=======
+	if (!ts->bridge_i2c) {
+>>>>>>> upstream/rpi-4.4.y
 		ret = -EPROBE_DEFER;
 		return ret;
 	}
 
+<<<<<<< HEAD
 	ver = rpi_touchscreen_i2c_read(ts, REG_ID);
 	if (ver < 0) {
 		dev_err(dev, "Atmel I2C read failed: %d\n", ver);
@@ -456,6 +603,22 @@ static int rpi_touchscreen_dsi_probe(struct mipi_dsi_device *dsi)
 
 	/* Turn off at boot, so we can cleanly sequence powering on. */
 	rpi_touchscreen_i2c_write(ts, REG_POWERON, 0);
+=======
+#if 0
+	ts->backlight =
+		devm_backlight_device_register(dev,
+					       "raspberrypi-touchscreen-backlight",
+					       dev, ts,
+					       &rpi_touchscreen_backlight_ops,
+					       NULL);
+	if (IS_ERR(ts->backlight)) {
+		DRM_ERROR("failed to register backlight\n");
+		return PTR_ERR(ts->backlight);
+	}
+	ts->backlight->props.max_brightness = RPI_TOUCHSCREEN_MAX_BRIGHTNESS;
+	ts->backlight->props.brightness = RPI_TOUCHSCREEN_MAX_BRIGHTNESS;
+#endif
+>>>>>>> upstream/rpi-4.4.y
 
 	drm_panel_init(&ts->base);
 	ts->base.dev = dev;
@@ -494,10 +657,14 @@ static int rpi_touchscreen_dsi_remove(struct mipi_dsi_device *dsi)
 
 static void rpi_touchscreen_dsi_shutdown(struct mipi_dsi_device *dsi)
 {
+<<<<<<< HEAD
 	struct device *dev = &dsi->dev;
 	struct rpi_touchscreen *ts = dev_get_drvdata(dev);
 
 	rpi_touchscreen_i2c_write(ts, REG_POWERON, 0);
+=======
+	/* XXX: poweroff */
+>>>>>>> upstream/rpi-4.4.y
 }
 
 static const struct of_device_id rpi_touchscreen_of_match[] = {

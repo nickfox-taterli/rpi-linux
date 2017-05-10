@@ -174,6 +174,7 @@ void set_pmd_at(struct mm_struct *mm, unsigned long addr,
 		return;
 
 	if ((pmd_val(pmd) ^ pmd_val(orig)) & _PAGE_PMD_HUGE) {
+<<<<<<< HEAD
 		/*
 		 * Note that this routine only sets pmds for THP pages.
 		 * Hugetlb pages are handled elsewhere.  We need to check
@@ -193,6 +194,12 @@ void set_pmd_at(struct mm_struct *mm, unsigned long addr,
 			else
 				mm->context.thp_pte_count--;
 		}
+=======
+		if (pmd_val(pmd) & _PAGE_PMD_HUGE)
+			mm->context.thp_pte_count++;
+		else
+			mm->context.thp_pte_count--;
+>>>>>>> upstream/rpi-4.4.y
 
 		/* Do not try to allocate the TSB hash table if we
 		 * don't have one already.  We have various locks held

@@ -2219,8 +2219,11 @@ mpt3sas_scsih_issue_tm(struct MPT3SAS_ADAPTER *ioc, u16 handle, uint channel,
 	struct scsiio_tracker *scsi_lookup = NULL;
 	int rc;
 	u16 msix_task = 0;
+<<<<<<< HEAD
 
 	lockdep_assert_held(&ioc->tm_cmds.mutex);
+=======
+>>>>>>> upstream/rpi-4.4.y
 
 	if (ioc->tm_cmds.status != MPT3_CMD_NOT_USED) {
 		pr_info(MPT3SAS_FMT "%s: tm_cmd busy!!!\n",
@@ -2281,7 +2284,11 @@ mpt3sas_scsih_issue_tm(struct MPT3SAS_ADAPTER *ioc, u16 handle, uint channel,
 	else
 		msix_task = 0;
 	mpt3sas_base_put_smid_hi_priority(ioc, smid, msix_task);
+<<<<<<< HEAD
 	wait_for_completion_timeout(&ioc->tm_cmds.done, timeout*HZ);
+=======
+	timeleft = wait_for_completion_timeout(&ioc->tm_cmds.done, timeout*HZ);
+>>>>>>> upstream/rpi-4.4.y
 	if (!(ioc->tm_cmds.status & MPT3_CMD_COMPLETE)) {
 		pr_err(MPT3SAS_FMT "%s: timeout\n",
 		    ioc->name, __func__);
@@ -3886,6 +3893,7 @@ _scsih_temp_threshold_events(struct MPT3SAS_ADAPTER *ioc,
 	}
 }
 
+<<<<<<< HEAD
 static int _scsih_set_satl_pending(struct scsi_cmnd *scmd, bool pending)
 {
 	struct MPT3SAS_DEVICE *priv = scmd->device->hostdata;
@@ -3898,6 +3906,11 @@ static int _scsih_set_satl_pending(struct scsi_cmnd *scmd, bool pending)
 
 	clear_bit(0, &priv->ata_command_pending);
 	return 0;
+=======
+static inline bool ata_12_16_cmd(struct scsi_cmnd *scmd)
+{
+	return (scmd->cmnd[0] == ATA_12 || scmd->cmnd[0] == ATA_16);
+>>>>>>> upstream/rpi-4.4.y
 }
 
 /**
@@ -3921,7 +3934,13 @@ _scsih_flush_running_cmds(struct MPT3SAS_ADAPTER *ioc)
 		if (!scmd)
 			continue;
 		count++;
+<<<<<<< HEAD
 		_scsih_set_satl_pending(scmd, false);
+=======
+		if (ata_12_16_cmd(scmd))
+			scsi_internal_device_unblock(scmd->device,
+							SDEV_RUNNING);
+>>>>>>> upstream/rpi-4.4.y
 		mpt3sas_base_free_smid(ioc, smid);
 		scsi_dma_unmap(scmd);
 		if (ioc->pci_error_recovery)
@@ -4051,6 +4070,13 @@ scsih_qcmd(struct Scsi_Host *shost, struct scsi_cmnd *scmd)
 
 	if (ioc->logging_level & MPT_DEBUG_SCSI)
 		scsi_print_command(scmd);
+
+	/*
+	 * Lock the device for any subsequent command until command is
+	 * done.
+	 */
+	if (ata_12_16_cmd(scmd))
+		scsi_internal_device_block(scmd->device);
 
 	sas_device_priv_data = scmd->device->hostdata;
 	if (!sas_device_priv_data || !sas_device_priv_data->sas_target) {
@@ -4640,7 +4666,12 @@ _scsih_io_done(struct MPT3SAS_ADAPTER *ioc, u16 smid, u8 msix_index, u32 reply)
 	if (scmd == NULL)
 		return 1;
 
+<<<<<<< HEAD
 	_scsih_set_satl_pending(scmd, false);
+=======
+	if (ata_12_16_cmd(scmd))
+		scsi_internal_device_unblock(scmd->device, SDEV_RUNNING);
+>>>>>>> upstream/rpi-4.4.y
 
 	mpi_request = mpt3sas_base_get_msg_frame(ioc, smid);
 

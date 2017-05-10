@@ -185,6 +185,13 @@ static int __init mips_sc_probe_cm3(void)
 	}
 
 	return 0;
+<<<<<<< HEAD
+=======
+}
+
+void __weak platform_early_l2_init(void)
+{
+>>>>>>> upstream/rpi-4.4.y
 }
 
 static inline int __init mips_sc_probe(void)

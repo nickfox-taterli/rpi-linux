@@ -897,11 +897,19 @@ static int can_changelink(struct net_device *dev,
 		cm = nla_data(data[IFLA_CAN_CTRLMODE]);
 		ctrlstatic = priv->ctrlmode_static;
 		maskedflags = cm->flags & cm->mask;
+<<<<<<< HEAD
 
 		/* check whether provided bits are allowed to be passed */
 		if (cm->mask & ~(priv->ctrlmode_supported | ctrlstatic))
 			return -EOPNOTSUPP;
 
+=======
+
+		/* check whether provided bits are allowed to be passed */
+		if (cm->mask & ~(priv->ctrlmode_supported | ctrlstatic))
+			return -EOPNOTSUPP;
+
+>>>>>>> upstream/rpi-4.4.y
 		/* do not check for static fd-non-iso if 'fd' is disabled */
 		if (!(maskedflags & CAN_CTRLMODE_FD))
 			ctrlstatic &= ~CAN_CTRLMODE_FD_NON_ISO;

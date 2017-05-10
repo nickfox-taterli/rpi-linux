@@ -1665,8 +1665,11 @@ static int drm_dp_payload_send_msg(struct drm_dp_mst_topology_mgr *mgr,
 	struct drm_dp_sideband_msg_tx *txmsg;
 	struct drm_dp_mst_branch *mstb;
 	int len, ret, port_num;
+<<<<<<< HEAD
 	u8 sinks[DRM_DP_MAX_SDP_STREAMS];
 	int i;
+=======
+>>>>>>> upstream/rpi-4.4.y
 
 	port = drm_dp_get_validated_port_ref(mgr, port);
 	if (!port)
@@ -2722,6 +2725,7 @@ static int test_calc_pbn_mode(void)
 	if (ret != 1047) {
 		DRM_ERROR("PBN calculation test failed - clock %d, bpp %d, expected PBN %d, actual PBN %d.\n",
 				234000, 30, 1047, ret);
+<<<<<<< HEAD
 		return -EINVAL;
 	}
 	ret = drm_dp_calc_pbn_mode(297000, 24);
@@ -2730,6 +2734,16 @@ static int test_calc_pbn_mode(void)
 				297000, 24, 1063, ret);
 		return -EINVAL;
 	}
+=======
+		return -EINVAL;
+	}
+	ret = drm_dp_calc_pbn_mode(297000, 24);
+	if (ret != 1063) {
+		DRM_ERROR("PBN calculation test failed - clock %d, bpp %d, expected PBN %d, actual PBN %d.\n",
+				297000, 24, 1063, ret);
+		return -EINVAL;
+	}
+>>>>>>> upstream/rpi-4.4.y
 	return 0;
 }
 

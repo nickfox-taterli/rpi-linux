@@ -288,6 +288,48 @@ static void sti_mode_config_init(struct drm_device *dev)
 	dev->mode_config.funcs = &sti_mode_config_funcs;
 }
 
+<<<<<<< HEAD
+=======
+static int sti_load(struct drm_device *dev, unsigned long flags)
+{
+	struct sti_private *private;
+	int ret;
+
+	private = kzalloc(sizeof(*private), GFP_KERNEL);
+	if (!private) {
+		DRM_ERROR("Failed to allocate private\n");
+		return -ENOMEM;
+	}
+	dev->dev_private = (void *)private;
+	private->drm_dev = dev;
+
+	mutex_init(&private->commit.lock);
+	INIT_WORK(&private->commit.work, sti_atomic_work);
+
+	drm_mode_config_init(dev);
+	drm_kms_helper_poll_init(dev);
+
+	sti_mode_config_init(dev);
+
+	ret = component_bind_all(dev->dev, dev);
+	if (ret) {
+		drm_kms_helper_poll_fini(dev);
+		drm_mode_config_cleanup(dev);
+		kfree(private);
+		return ret;
+	}
+
+	drm_mode_config_reset(dev);
+
+	drm_helper_disable_unused_functions(dev);
+	drm_fbdev_cma_init(dev, 32,
+			   dev->mode_config.num_crtc,
+			   dev->mode_config.num_connector);
+
+	return 0;
+}
+
+>>>>>>> upstream/rpi-4.4.y
 static const struct file_operations sti_driver_fops = {
 	.owner = THIS_MODULE,
 	.open = drm_open,

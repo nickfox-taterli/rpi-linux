@@ -20,7 +20,10 @@
 #include <linux/input/mt.h>
 #include <linux/kthread.h>
 #include <linux/platform_device.h>
+<<<<<<< HEAD
 #include <linux/stddef.h>
+=======
+>>>>>>> upstream/rpi-4.4.y
 #include <asm/io.h>
 #include <linux/dma-mapping.h>
 #include <soc/bcm2835/raspberrypi-firmware.h>
@@ -48,6 +51,10 @@ struct ft5406 {
 	struct input_dev       * input_dev;
 	void __iomem           * ts_base;
 	dma_addr_t		 bus_addr;
+<<<<<<< HEAD
+=======
+	struct ft5406_regs     * regs;
+>>>>>>> upstream/rpi-4.4.y
 	struct task_struct     * thread;
 };
 
@@ -68,8 +75,13 @@ static int ft5406_thread(void *arg)
 	{
 		// 60fps polling
 		msleep_interruptible(17);
+<<<<<<< HEAD
 		memcpy_fromio(&regs, ts->ts_base, sizeof(struct ft5406_regs));
 		iowrite8(99, ts->ts_base + offsetof(struct ft5406_regs, num_points));
+=======
+		memcpy_fromio(&regs, ts->regs, sizeof(*ts->regs));
+		writel(99, &ts->regs->num_points);
+>>>>>>> upstream/rpi-4.4.y
 		// Do not output if theres no new information (num_points is 99)
 		// or we have no touch points and don't need to release any
 		if(!(regs.num_points == 99 || (regs.num_points == 0 && known_ids == 0)))
@@ -190,7 +202,11 @@ static int ft5406_probe(struct platform_device *pdev)
 
 		// mmap the physical memory
 		touchbuf &= ~0xc0000000;
+<<<<<<< HEAD
 		ts->ts_base = ioremap(touchbuf, sizeof(struct ft5406_regs));
+=======
+		ts->ts_base = ioremap(touchbuf, sizeof(*ts->regs));
+>>>>>>> upstream/rpi-4.4.y
 		if (ts->ts_base == NULL)
 		{
 			dev_err(dev, "Failed to map physical address\n");
@@ -222,6 +238,11 @@ static int ft5406_probe(struct platform_device *pdev)
 			err);
 		goto out;
 	}
+<<<<<<< HEAD
+=======
+	
+	ts->regs = (struct ft5406_regs *) ts->ts_base;
+>>>>>>> upstream/rpi-4.4.y
 
 	// create thread to poll the touch events
 	ts->thread = kthread_run(ft5406_thread, ts, "ft5406");

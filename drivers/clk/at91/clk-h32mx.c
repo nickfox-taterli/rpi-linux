@@ -113,8 +113,13 @@ static void __init of_sama5d4_clk_h32mx_setup(struct device_node *np)
 	h32mxclk->hw.init = &init;
 	h32mxclk->regmap = regmap;
 
+<<<<<<< HEAD
 	ret = clk_hw_register(NULL, &h32mxclk->hw);
 	if (ret) {
+=======
+	clk = clk_register(NULL, &h32mxclk->hw);
+	if (IS_ERR(clk)) {
+>>>>>>> upstream/rpi-4.4.y
 		kfree(h32mxclk);
 		return;
 	}

@@ -172,8 +172,11 @@ static const struct usb_device_id id_table[] = {
 	{ USB_DEVICE(0x1901, 0x0190) }, /* GE B850 CP2105 Recorder interface */
 	{ USB_DEVICE(0x1901, 0x0193) }, /* GE B650 CP2104 PMC interface */
 	{ USB_DEVICE(0x1901, 0x0194) },	/* GE Healthcare Remote Alarm Box */
+<<<<<<< HEAD
 	{ USB_DEVICE(0x1901, 0x0195) },	/* GE B850/B650/B450 CP2104 DP UART interface */
 	{ USB_DEVICE(0x1901, 0x0196) },	/* GE B850 CP2105 DP UART interface */
+=======
+>>>>>>> upstream/rpi-4.4.y
 	{ USB_DEVICE(0x19CF, 0x3000) }, /* Parrot NMEA GPS Flight Recorder */
 	{ USB_DEVICE(0x1ADB, 0x0001) }, /* Schweitzer Engineering C662 Cable */
 	{ USB_DEVICE(0x1B1C, 0x1C00) }, /* Corsair USB Dongle */
@@ -1014,11 +1017,17 @@ static void cp210x_set_termios(struct tty_struct *tty,
 					CP210X_SERIAL_RTS_FLOW_CTL);
 			dev_dbg(dev, "%s - flow control = CRTSCTS\n", __func__);
 		} else {
+<<<<<<< HEAD
 			ctl_hs &= ~CP210X_SERIAL_CTS_HANDSHAKE;
 
 			flow_repl &= ~CP210X_SERIAL_RTS_MASK;
 			flow_repl |= CP210X_SERIAL_RTS_SHIFT(
 					CP210X_SERIAL_RTS_ACTIVE);
+=======
+			modem_ctl[0] &= ~0x7B;
+			modem_ctl[0] |= 0x01;
+			modem_ctl[1] = 0x40;
+>>>>>>> upstream/rpi-4.4.y
 			dev_dbg(dev, "%s - flow control = NONE\n", __func__);
 		}
 
@@ -1080,7 +1089,11 @@ static int cp210x_tiocmget(struct tty_struct *tty)
 	u8 control;
 	int result;
 
+<<<<<<< HEAD
 	result = cp210x_read_u8_reg(port, CP210X_GET_MDMSTS, &control);
+=======
+	result = cp210x_get_config(port, CP210X_GET_MDMSTS, &control, 1);
+>>>>>>> upstream/rpi-4.4.y
 	if (result)
 		return result;
 

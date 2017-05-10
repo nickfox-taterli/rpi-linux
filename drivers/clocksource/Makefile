@@ -20,11 +20,19 @@ obj-$(CONFIG_CLKSRC_NOMADIK_MTU)	+= nomadik-mtu.o
 obj-$(CONFIG_CLKSRC_DBX500_PRCMU)	+= clksrc-dbx500-prcmu.o
 obj-$(CONFIG_ARMADA_370_XP_TIMER)	+= time-armada-370-xp.o
 obj-$(CONFIG_ORION_TIMER)	+= time-orion.o
+<<<<<<< HEAD
 obj-$(CONFIG_BCM2835_TIMER)	+= bcm2835_timer.o
 obj-$(CONFIG_CLPS711X_TIMER)	+= clps711x-timer.o
 obj-$(CONFIG_ATLAS7_TIMER)	+= timer-atlas7.o
 obj-$(CONFIG_MOXART_TIMER)	+= moxart_timer.o
 obj-$(CONFIG_MXS_TIMER)		+= mxs_timer.o
+=======
+obj-$(CONFIG_ARCH_BCM2835)$(CONFIG_ARCH_BCM2708)	+= bcm2835_timer.o
+obj-$(CONFIG_ARCH_CLPS711X)	+= clps711x-timer.o
+obj-$(CONFIG_ARCH_ATLAS7)	+= timer-atlas7.o
+obj-$(CONFIG_ARCH_MOXART)	+= moxart_timer.o
+obj-$(CONFIG_ARCH_MXS)		+= mxs_timer.o
+>>>>>>> upstream/rpi-4.4.y
 obj-$(CONFIG_CLKSRC_PXA)	+= pxa_timer.o
 obj-$(CONFIG_PRIMA2_TIMER)	+= timer-prima2.o
 obj-$(CONFIG_U300_TIMER)	+= timer-u300.o

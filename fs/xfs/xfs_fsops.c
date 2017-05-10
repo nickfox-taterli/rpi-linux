@@ -247,6 +247,7 @@ xfs_growfs_data_private(
 		agf->agf_roots[XFS_BTNUM_CNTi] = cpu_to_be32(XFS_CNT_BLOCK(mp));
 		agf->agf_levels[XFS_BTNUM_BNOi] = cpu_to_be32(1);
 		agf->agf_levels[XFS_BTNUM_CNTi] = cpu_to_be32(1);
+<<<<<<< HEAD
 		if (xfs_sb_version_hasrmapbt(&mp->m_sb)) {
 			agf->agf_roots[XFS_BTNUM_RMAPi] =
 						cpu_to_be32(XFS_RMAP_BLOCK(mp));
@@ -254,6 +255,8 @@ xfs_growfs_data_private(
 			agf->agf_rmap_blocks = cpu_to_be32(1);
 		}
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 		agf->agf_flfirst = cpu_to_be32(1);
 		agf->agf_fllast = 0;
 		agf->agf_flcount = 0;

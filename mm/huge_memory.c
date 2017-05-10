@@ -1774,10 +1774,75 @@ void vma_adjust_trans_huge(struct vm_area_struct *vma,
 	 * previously contain an hugepage: check if we need to split
 	 * an huge pmd.
 	 */
+<<<<<<< HEAD
 	if (start & ~HPAGE_PMD_MASK &&
 	    (start & HPAGE_PMD_MASK) >= vma->vm_start &&
 	    (start & HPAGE_PMD_MASK) + HPAGE_PMD_SIZE <= vma->vm_end)
 		split_huge_pmd_address(vma, start, false, NULL);
+=======
+	wakeup = list_empty(&khugepaged_scan.mm_head);
+	list_add_tail(&mm_slot->mm_node, &khugepaged_scan.mm_head);
+	spin_unlock(&khugepaged_mm_lock);
+
+	atomic_inc(&mm->mm_count);
+	if (wakeup)
+		wake_up_interruptible(&khugepaged_wait);
+
+	return 0;
+}
+
+int khugepaged_enter_vma_merge(struct vm_area_struct *vma,
+			       unsigned long vm_flags)
+{
+	unsigned long hstart, hend;
+	if (!vma->anon_vma)
+		/*
+		 * Not yet faulted in so we will register later in the
+		 * page fault if needed.
+		 */
+		return 0;
+	if (vma->vm_ops || (vm_flags & VM_NO_THP))
+		/* khugepaged not yet working on file or special mappings */
+		return 0;
+	hstart = (vma->vm_start + ~HPAGE_PMD_MASK) & HPAGE_PMD_MASK;
+	hend = vma->vm_end & HPAGE_PMD_MASK;
+	if (hstart < hend)
+		return khugepaged_enter(vma, vm_flags);
+	return 0;
+}
+
+void __khugepaged_exit(struct mm_struct *mm)
+{
+	struct mm_slot *mm_slot;
+	int free = 0;
+
+	spin_lock(&khugepaged_mm_lock);
+	mm_slot = get_mm_slot(mm);
+	if (mm_slot && khugepaged_scan.mm_slot != mm_slot) {
+		hash_del(&mm_slot->hash);
+		list_del(&mm_slot->mm_node);
+		free = 1;
+	}
+	spin_unlock(&khugepaged_mm_lock);
+
+	if (free) {
+		clear_bit(MMF_VM_HUGEPAGE, &mm->flags);
+		free_mm_slot(mm_slot);
+		mmdrop(mm);
+	} else if (mm_slot) {
+		/*
+		 * This is required to serialize against
+		 * khugepaged_test_exit() (which is guaranteed to run
+		 * under mmap sem read mode). Stop here (after we
+		 * return all pagetables will be destroyed) until
+		 * khugepaged has finished working on the pagetables
+		 * under the mmap_sem.
+		 */
+		down_write(&mm->mmap_sem);
+		up_write(&mm->mmap_sem);
+	}
+}
+>>>>>>> upstream/rpi-4.4.y
 
 	/*
 	 * If the new end address isn't hpage aligned and it could
@@ -1891,9 +1956,17 @@ static void __split_huge_page_tail(struct page *head, int tail,
 			page_tail);
 	page_tail->mapping = head->mapping;
 
+<<<<<<< HEAD
 	page_tail->index = head->index + tail;
 	page_cpupid_xchg_last(page_tail, page_cpupid_last(head));
 	lru_add_page_tail(head, page_tail, lruvec, list);
+=======
+	if (!vma->anon_vma || vma->vm_ops)
+		return false;
+	if (is_vma_temporary_stack(vma))
+		return false;
+	return !(vma->vm_flags & VM_NO_THP);
+>>>>>>> upstream/rpi-4.4.y
 }
 
 static void __split_huge_page(struct page *page, struct list_head *list,

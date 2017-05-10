@@ -488,8 +488,12 @@ int init_new_context(struct task_struct *tsk, struct mm_struct *mm)
 {
 	unsigned long mm_rss = get_mm_rss(mm);
 #if defined(CONFIG_HUGETLB_PAGE) || defined(CONFIG_TRANSPARENT_HUGEPAGE)
+<<<<<<< HEAD
 	unsigned long saved_hugetlb_pte_count;
 	unsigned long saved_thp_pte_count;
+=======
+	unsigned long total_huge_pte_count;
+>>>>>>> upstream/rpi-4.4.y
 #endif
 	unsigned int i;
 
@@ -502,12 +506,19 @@ int init_new_context(struct task_struct *tsk, struct mm_struct *mm)
 	 * will re-increment the counters as the parent PTEs are
 	 * copied into the child address space.
 	 */
+<<<<<<< HEAD
 	saved_hugetlb_pte_count = mm->context.hugetlb_pte_count;
 	saved_thp_pte_count = mm->context.thp_pte_count;
 	mm->context.hugetlb_pte_count = 0;
 	mm->context.thp_pte_count = 0;
 
 	mm_rss -= saved_thp_pte_count * (HPAGE_SIZE / PAGE_SIZE);
+=======
+	total_huge_pte_count = mm->context.hugetlb_pte_count +
+			 mm->context.thp_pte_count;
+	mm->context.hugetlb_pte_count = 0;
+	mm->context.thp_pte_count = 0;
+>>>>>>> upstream/rpi-4.4.y
 #endif
 
 	/* copy_mm() copies over the parent's mm_struct before calling
@@ -523,10 +534,15 @@ int init_new_context(struct task_struct *tsk, struct mm_struct *mm)
 	tsb_grow(mm, MM_TSB_BASE, mm_rss);
 
 #if defined(CONFIG_HUGETLB_PAGE) || defined(CONFIG_TRANSPARENT_HUGEPAGE)
+<<<<<<< HEAD
 	if (unlikely(saved_hugetlb_pte_count + saved_thp_pte_count))
 		tsb_grow(mm, MM_TSB_HUGE,
 			 (saved_hugetlb_pte_count + saved_thp_pte_count) *
 			 REAL_HPAGE_PER_HPAGE);
+=======
+	if (unlikely(total_huge_pte_count))
+		tsb_grow(mm, MM_TSB_HUGE, total_huge_pte_count);
+>>>>>>> upstream/rpi-4.4.y
 #endif
 
 	if (unlikely(!mm->context.tsb_block[MM_TSB_BASE].tsb))

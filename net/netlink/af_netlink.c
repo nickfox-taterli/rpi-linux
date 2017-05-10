@@ -659,6 +659,7 @@ static void deferred_put_nlk_sk(struct rcu_head *head)
 
 	if (!atomic_dec_and_test(&sk->sk_refcnt))
 		return;
+<<<<<<< HEAD
 
 	if (nlk->cb_running && nlk->cb.done) {
 		INIT_WORK(&nlk->work, netlink_sock_destruct_work);
@@ -666,6 +667,15 @@ static void deferred_put_nlk_sk(struct rcu_head *head)
 		return;
 	}
 
+=======
+
+	if (nlk->cb_running && nlk->cb.done) {
+		INIT_WORK(&nlk->work, netlink_sock_destruct_work);
+		schedule_work(&nlk->work);
+		return;
+	}
+
+>>>>>>> upstream/rpi-4.4.y
 	sk_free(sk);
 }
 
@@ -2100,6 +2110,7 @@ static int netlink_dump(struct sock *sk)
 
 	if (alloc_min_size < nlk->max_recvmsg_len) {
 		alloc_size = nlk->max_recvmsg_len;
+<<<<<<< HEAD
 		skb = alloc_skb(alloc_size,
 				(GFP_KERNEL & ~__GFP_DIRECT_RECLAIM) |
 				__GFP_NOWARN | __GFP_NORETRY);
@@ -2107,6 +2118,16 @@ static int netlink_dump(struct sock *sk)
 	if (!skb) {
 		alloc_size = alloc_min_size;
 		skb = alloc_skb(alloc_size, GFP_KERNEL);
+=======
+		skb = netlink_alloc_skb(sk, alloc_size, nlk->portid,
+					(GFP_KERNEL & ~__GFP_DIRECT_RECLAIM) |
+					__GFP_NOWARN | __GFP_NORETRY);
+	}
+	if (!skb) {
+		alloc_size = alloc_min_size;
+		skb = netlink_alloc_skb(sk, alloc_size, nlk->portid,
+					(GFP_KERNEL & ~__GFP_DIRECT_RECLAIM));
+>>>>>>> upstream/rpi-4.4.y
 	}
 	if (!skb)
 		goto errout_skb;

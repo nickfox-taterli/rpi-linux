@@ -2387,10 +2387,15 @@ static struct scsi_host_template driver_template = {
 /*
  * Device dependent values
  */
+<<<<<<< HEAD
 static struct dev_dependent_vals dev_corsa_vals = { CXLFLASH_MAX_SECTORS,
 					0ULL };
 static struct dev_dependent_vals dev_flash_gt_vals = { CXLFLASH_MAX_SECTORS,
 					CXLFLASH_NOTIFY_SHUTDOWN };
+=======
+static struct dev_dependent_vals dev_corsa_vals = { CXLFLASH_MAX_SECTORS };
+static struct dev_dependent_vals dev_flash_gt_vals = { CXLFLASH_MAX_SECTORS };
+>>>>>>> upstream/rpi-4.4.y
 
 /*
  * PCI device binding table

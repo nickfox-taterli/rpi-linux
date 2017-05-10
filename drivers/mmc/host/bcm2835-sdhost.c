@@ -235,10 +235,17 @@ static void __iomem *timer_base;
 #define LOG_ENTRIES (256*1)
 #define LOG_SIZE (sizeof(LOG_ENTRY_T)*LOG_ENTRIES)
 
+<<<<<<< HEAD
 static void log_init(struct device *dev, u32 bus_to_phys)
 {
 	spin_lock_init(&log_lock);
 	sdhost_log_buf = dma_zalloc_coherent(dev, LOG_SIZE, &sdhost_log_addr,
+=======
+static void log_init(u32 bus_to_phys)
+{
+	spin_lock_init(&log_lock);
+	sdhost_log_buf = dma_zalloc_coherent(NULL, LOG_SIZE, &sdhost_log_addr,
+>>>>>>> upstream/rpi-4.4.y
 					     GFP_KERNEL);
 	if (sdhost_log_buf) {
 		pr_info("sdhost: log_buf @ %p (%x)\n",
@@ -815,7 +822,11 @@ static void bcm2835_sdhost_prepare_dma(struct bcm2835_host *host,
 			if (sg_is_last(sg)) {
 				BUG_ON(sg->length < len);
 				sg->length -= len;
+<<<<<<< HEAD
 				host->drain_page = sg_page(sg);
+=======
+				host->drain_page = (struct page *)sg->page_link;
+>>>>>>> upstream/rpi-4.4.y
 				host->drain_offset = sg->offset + sg->length;
 			}
 		}
@@ -2037,6 +2048,10 @@ static int bcm2835_sdhost_probe(struct platform_device *pdev)
 		return -ENODEV;
 	}
 	host->bus_addr = be32_to_cpup(addr);
+<<<<<<< HEAD
+=======
+	log_init(iomem->start - host->bus_addr);
+>>>>>>> upstream/rpi-4.4.y
 	pr_debug(" - ioaddr %lx, iomem->start %lx, bus_addr %lx\n",
 		 (unsigned long)host->ioaddr,
 		 (unsigned long)iomem->start,
@@ -2088,11 +2103,16 @@ static int bcm2835_sdhost_probe(struct platform_device *pdev)
 
 	clk = devm_clk_get(dev, NULL);
 	if (IS_ERR(clk)) {
+<<<<<<< HEAD
 		ret = PTR_ERR(clk);
 		if (ret == -EPROBE_DEFER)
 			dev_info(dev, "could not get clk, deferring probe\n");
 		else
 			dev_err(dev, "could not get clk\n");
+=======
+		dev_err(dev, "could not get clk\n");
+		ret = PTR_ERR(clk);
+>>>>>>> upstream/rpi-4.4.y
 		goto err;
 	}
 
@@ -2109,8 +2129,11 @@ static int bcm2835_sdhost_probe(struct platform_device *pdev)
 		 (unsigned long)host->max_clk,
 		 (int)host->irq);
 
+<<<<<<< HEAD
 	log_init(dev, iomem->start - host->bus_addr);
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 	if (node)
 		mmc_of_parse(mmc);
 	else

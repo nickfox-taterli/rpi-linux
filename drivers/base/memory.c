@@ -391,7 +391,11 @@ static ssize_t show_valid_zones(struct device *dev,
 {
 	struct memory_block *mem = to_memory_block(dev);
 	unsigned long start_pfn, end_pfn;
+<<<<<<< HEAD
 	unsigned long valid_start, valid_end, valid_pages;
+=======
+	unsigned long valid_start, valid_end;
+>>>>>>> upstream/rpi-4.4.y
 	unsigned long nr_pages = PAGES_PER_SECTION * sections_per_block;
 	struct zone *zone;
 	int zone_shift = 0;
@@ -404,6 +408,7 @@ static ssize_t show_valid_zones(struct device *dev,
 		return sprintf(buf, "none\n");
 
 	zone = page_zone(pfn_to_page(valid_start));
+<<<<<<< HEAD
 	valid_pages = valid_end - valid_start;
 
 	/* MMOP_ONLINE_KEEP */
@@ -421,6 +426,21 @@ static ssize_t show_valid_zones(struct device *dev,
 	if (zone_shift) {
 		strcat(buf, " ");
 		strcat(buf, (zone + zone_shift)->name);
+=======
+
+	if (zone_idx(zone) == ZONE_MOVABLE - 1) {
+		/*The mem block is the last memoryblock of this zone.*/
+		if (valid_end == zone_end_pfn(zone))
+			return sprintf(buf, "%s %s\n",
+					zone->name, (zone + 1)->name);
+	}
+
+	if (zone_idx(zone) == ZONE_MOVABLE) {
+		/*The mem block is the first memoryblock of ZONE_MOVABLE.*/
+		if (valid_start == zone->zone_start_pfn)
+			return sprintf(buf, "%s %s\n",
+					zone->name, (zone - 1)->name);
+>>>>>>> upstream/rpi-4.4.y
 	}
 
 	strcat(buf, "\n");

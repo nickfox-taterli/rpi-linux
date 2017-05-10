@@ -140,7 +140,11 @@ static enum hrtimer_restart kvm_timer_expire(struct hrtimer *hrt)
 		return HRTIMER_RESTART;
 	}
 
+<<<<<<< HEAD
 	schedule_work(&timer->expired);
+=======
+	queue_work(wqueue, &timer->expired);
+>>>>>>> upstream/rpi-4.4.y
 	return HRTIMER_NORESTART;
 }
 
@@ -197,7 +201,11 @@ static int kvm_timer_update_state(struct kvm_vcpu *vcpu)
 	 * because the guest would never see the interrupt.  Instead wait
 	 * until we call this function from kvm_timer_flush_hwstate.
 	 */
+<<<<<<< HEAD
 	if (!vgic_initialized(vcpu->kvm) || !timer->enabled)
+=======
+	if (!vgic_initialized(vcpu->kvm))
+>>>>>>> upstream/rpi-4.4.y
 		return -ENODEV;
 
 	if (kvm_timer_should_fire(vcpu) != timer->irq.level)

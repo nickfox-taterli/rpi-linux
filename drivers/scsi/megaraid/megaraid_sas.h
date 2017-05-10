@@ -1343,8 +1343,11 @@ struct megasas_ctrl_info {
 
 #define SCAN_PD_CHANNEL	0x1
 #define SCAN_VD_CHANNEL	0x2
+<<<<<<< HEAD
 
 #define MEGASAS_KDUMP_QUEUE_DEPTH               100
+=======
+>>>>>>> upstream/rpi-4.4.y
 
 enum MR_SCSI_CMD_TYPE {
 	READ_WRITE_LDIO = 0,

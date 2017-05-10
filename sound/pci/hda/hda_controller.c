@@ -1150,6 +1150,7 @@ irqreturn_t azx_interrupt(int irq, void *dev_id)
 		if (status == 0 || status == 0xffffffff)
 			break;
 
+<<<<<<< HEAD
 		handled = true;
 		active = false;
 		if (snd_hdac_bus_handle_stream_irq(bus, status, stream_update))
@@ -1165,6 +1166,15 @@ irqreturn_t azx_interrupt(int irq, void *dev_id)
 				snd_hdac_bus_update_rirb(bus);
 			}
 			azx_writeb(chip, RIRBSTS, RIRB_INT_MASK);
+=======
+	/* clear rirb int */
+	status = azx_readb(chip, RIRBSTS);
+	if (status & RIRB_INT_MASK) {
+		if (status & RIRB_INT_RESPONSE) {
+			if (chip->driver_caps & AZX_DCAPS_CTX_WORKAROUND)
+				udelay(80);
+			snd_hdac_bus_update_rirb(bus);
+>>>>>>> upstream/rpi-4.4.y
 		}
 	} while (active && ++repeat < 10);
 

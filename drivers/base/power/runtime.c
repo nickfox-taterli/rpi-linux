@@ -1510,9 +1510,12 @@ int pm_runtime_force_resume(struct device *dev)
 		goto out;
 	}
 
+<<<<<<< HEAD
 	if (!pm_runtime_status_suspended(dev))
 		goto out;
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 	ret = pm_runtime_set_active(dev);
 	if (ret)
 		goto out;

@@ -116,11 +116,15 @@ extern int32_t dwc_otg_hcd_handle_intr(dwc_otg_hcd_t * dwc_otg_hcd);
 /** This function is used to handle the fast interrupt
  *
  */
+<<<<<<< HEAD
 #ifdef CONFIG_ARM64
 extern void dwc_otg_hcd_handle_fiq(void);
 #else
 extern void __attribute__ ((naked)) dwc_otg_hcd_handle_fiq(void);
 #endif
+=======
+extern void __attribute__ ((naked)) dwc_otg_hcd_handle_fiq(void);
+>>>>>>> upstream/rpi-4.4.y
 
 /**
  * Returns private data set by

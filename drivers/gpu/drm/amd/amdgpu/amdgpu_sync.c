@@ -276,10 +276,44 @@ struct fence *amdgpu_sync_peek_fence(struct amdgpu_sync *sync,
  */
 struct fence *amdgpu_sync_get_fence(struct amdgpu_sync *sync)
 {
+<<<<<<< HEAD
 	struct amdgpu_sync_entry *e;
 	struct hlist_node *tmp;
 	struct fence *f;
 	int i;
+=======
+	struct amdgpu_device *adev = ring->adev;
+	unsigned count = 0;
+	int i, r;
+
+	for (i = 0; i < AMDGPU_MAX_RINGS; ++i) {
+		struct amdgpu_ring *other = adev->rings[i];
+		struct amdgpu_semaphore *semaphore;
+		struct amdgpu_fence *fence;
+
+		if (!sync->sync_to[i])
+			continue;
+
+		fence = to_amdgpu_fence(sync->sync_to[i]);
+
+		/* check if we really need to sync */
+		if (!amdgpu_enable_scheduler &&
+		    !amdgpu_fence_need_sync(fence, ring))
+			continue;
+
+		/* prevent GPU deadlocks */
+		if (!other->ready) {
+			dev_err(adev->dev, "Syncing to a disabled ring!");
+			return -EINVAL;
+		}
+
+		if (amdgpu_enable_scheduler || !amdgpu_enable_semaphores) {
+			r = fence_wait(sync->sync_to[i], true);
+			if (r)
+				return r;
+			continue;
+		}
+>>>>>>> upstream/rpi-4.4.y
 
 	hash_for_each_safe(sync->fences, i, tmp, e, node) {
 

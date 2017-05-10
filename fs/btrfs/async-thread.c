@@ -74,6 +74,7 @@ void btrfs_##name(struct work_struct *arg)				\
 	normal_work_helper(work);					\
 }
 
+<<<<<<< HEAD
 struct btrfs_fs_info *
 btrfs_workqueue_owner(struct __btrfs_workqueue *wq)
 {
@@ -86,6 +87,8 @@ btrfs_work_owner(struct btrfs_work *work)
 	return work->wq->fs_info;
 }
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 bool btrfs_workqueue_normal_congested(struct btrfs_workqueue *wq)
 {
 	/*

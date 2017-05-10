@@ -44,6 +44,7 @@
 #include <linux/usb/phy.h>
 #include "hw.h"
 
+<<<<<<< HEAD
 /*
  * Suggested defines for tracers:
  * - no_printk:    Disable tracing
@@ -64,6 +65,8 @@
 	DWC2_TRACE_SCHEDULER_VB(pr_fmt("%s: SCH: " fmt),		\
 				dev_name(hsotg->dev), ##__VA_ARGS__)
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 #ifdef CONFIG_MIPS
 /*
  * There are some MIPS machines that can run in either big-endian

@@ -218,6 +218,7 @@ static int elan_query_product(struct elan_tp_data *data)
 
 static int elan_check_ASUS_special_fw(struct elan_tp_data *data)
 {
+<<<<<<< HEAD
 	if (data->ic_type == 0x0E) {
 		switch (data->product_id) {
 		case 0x05 ... 0x07:
@@ -231,6 +232,19 @@ static int elan_check_ASUS_special_fw(struct elan_tp_data *data)
 	}
 
 	return false;
+=======
+	if (data->ic_type != 0x0E)
+		return false;
+
+	switch (data->product_id) {
+	case 0x05 ... 0x07:
+	case 0x09:
+	case 0x13:
+		return true;
+	default:
+		return false;
+	}
+>>>>>>> upstream/rpi-4.4.y
 }
 
 static int __elan_initialize(struct elan_tp_data *data)

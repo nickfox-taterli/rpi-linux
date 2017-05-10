@@ -265,7 +265,11 @@ static int iio_trigger_attach_poll_func(struct iio_trigger *trig,
 		goto out_put_irq;
 
 	/* Enable trigger in driver */
+<<<<<<< HEAD
 	if (trig->ops->set_trigger_state && notinuse) {
+=======
+	if (trig->ops && trig->ops->set_trigger_state && notinuse) {
+>>>>>>> upstream/rpi-4.4.y
 		ret = trig->ops->set_trigger_state(trig, true);
 		if (ret < 0)
 			goto out_free_irq;
@@ -279,6 +283,14 @@ static int iio_trigger_attach_poll_func(struct iio_trigger *trig,
 	if (pf->indio_dev->dev.parent == trig->dev.parent)
 		trig->attached_own_device = true;
 
+	return ret;
+
+out_free_irq:
+	free_irq(pf->irq, pf);
+out_put_irq:
+	iio_trigger_put_irq(trig, pf->irq);
+out_put_module:
+	module_put(pf->indio_dev->info->driver_module);
 	return ret;
 
 out_free_irq:

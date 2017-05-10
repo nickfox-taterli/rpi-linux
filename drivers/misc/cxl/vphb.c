@@ -161,6 +161,7 @@ static int cxl_pcie_write_config(struct pci_bus *bus, unsigned int devfn,
 	if (rc)
 		goto out;
 
+<<<<<<< HEAD
 	switch (len) {
 	case 1:
 		rc = cxl_ops->afu_cr_write8(afu, record, offset, val & 0xff);
@@ -174,6 +175,9 @@ static int cxl_pcie_write_config(struct pci_bus *bus, unsigned int devfn,
 	default:
 		WARN_ON(1);
 	}
+=======
+	v = (in_le32(ioaddr) & ~mask) | (val & mask);
+>>>>>>> upstream/rpi-4.4.y
 
 out:
 	cxl_afu_configured_put(afu);

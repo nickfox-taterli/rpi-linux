@@ -24,7 +24,11 @@ struct inode *efivarfs_get_inode(struct super_block *sb,
 	if (inode) {
 		inode->i_ino = get_next_ino();
 		inode->i_mode = mode;
+<<<<<<< HEAD
 		inode->i_atime = inode->i_mtime = inode->i_ctime = current_time(inode);
+=======
+		inode->i_atime = inode->i_mtime = inode->i_ctime = CURRENT_TIME;
+>>>>>>> upstream/rpi-4.4.y
 		inode->i_flags = is_removable ? 0 : S_IMMUTABLE;
 		switch (mode & S_IFMT) {
 		case S_IFREG:
@@ -87,6 +91,16 @@ static int efivarfs_create(struct inode *dir, struct dentry *dentry,
 	namelen = dentry->d_name.len - EFI_VARIABLE_GUID_LEN - 1;
 
 	uuid_le_to_bin(dentry->d_name.name + namelen + 1, &var->var.VendorGuid);
+
+	if (efivar_variable_is_removable(var->var.VendorGuid,
+					 dentry->d_name.name, namelen))
+		is_removable = true;
+
+	inode = efivarfs_get_inode(dir->i_sb, dir, mode, 0, is_removable);
+	if (!inode) {
+		err = -ENOMEM;
+		goto out;
+	}
 
 	if (efivar_variable_is_removable(var->var.VendorGuid,
 					 dentry->d_name.name, namelen))

@@ -1225,7 +1225,11 @@ static void prepare_write_message_footer(struct ceph_connection *con)
 	m->footer.flags |= CEPH_MSG_FOOTER_COMPLETE;
 
 	dout("prepare_write_message_footer %p\n", con);
+<<<<<<< HEAD
 	con_out_kvec_add(con, sizeof_footer(con), &m->footer);
+=======
+	con->out_kvec[v].iov_base = &m->footer;
+>>>>>>> upstream/rpi-4.4.y
 	if (con->peer_features & CEPH_FEATURE_MSG_AUTH) {
 		if (con->ops->sign_message)
 			con->ops->sign_message(m);
@@ -3092,7 +3096,14 @@ void ceph_msg_revoke(struct ceph_msg *msg)
 			con->out_skip += con_out_kvec_skip(con);
 		} else {
 			BUG_ON(!msg->data_length);
+<<<<<<< HEAD
 			con->out_skip += sizeof_footer(con);
+=======
+			if (con->peer_features & CEPH_FEATURE_MSG_AUTH)
+				con->out_skip += sizeof(msg->footer);
+			else
+				con->out_skip += sizeof(msg->old_footer);
+>>>>>>> upstream/rpi-4.4.y
 		}
 		/* data, middle, front */
 		if (msg->data_length)

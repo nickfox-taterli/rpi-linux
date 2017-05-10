@@ -812,10 +812,17 @@ static void __init early_identify_cpu(struct cpuinfo_x86 *c)
 
 		if (this_cpu->c_early_init)
 			this_cpu->c_early_init(c);
+<<<<<<< HEAD
 
 		c->cpu_index = 0;
 		filter_cpuid_features(c, false);
 
+=======
+
+		c->cpu_index = 0;
+		filter_cpuid_features(c, false);
+
+>>>>>>> upstream/rpi-4.4.y
 		if (this_cpu->c_bsp_init)
 			this_cpu->c_bsp_init(c);
 	}

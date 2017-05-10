@@ -347,9 +347,13 @@ void update_mmu_cache(struct vm_area_struct *vma, unsigned long address, pte_t *
 
 #if defined(CONFIG_HUGETLB_PAGE) || defined(CONFIG_TRANSPARENT_HUGEPAGE)
 	if ((mm->context.hugetlb_pte_count || mm->context.thp_pte_count) &&
+<<<<<<< HEAD
 	    is_hugetlb_pte(pte)) {
 		/* We are fabricating 8MB pages using 4MB real hw pages.  */
 		pte_val(pte) |= (address & (1UL << REAL_HPAGE_SHIFT));
+=======
+	    is_hugetlb_pte(pte))
+>>>>>>> upstream/rpi-4.4.y
 		__update_mmu_tsb_insert(mm, MM_TSB_HUGE, REAL_HPAGE_SHIFT,
 					address, pte_val(pte));
 	} else
@@ -1217,7 +1221,11 @@ out:
 	return -1;
 }
 
+<<<<<<< HEAD
 static int __init find_best_numa_node_for_mlgroup(struct mdesc_mlgroup *grp)
+=======
+static int find_best_numa_node_for_mlgroup(struct mdesc_mlgroup *grp)
+>>>>>>> upstream/rpi-4.4.y
 {
 	int i;
 

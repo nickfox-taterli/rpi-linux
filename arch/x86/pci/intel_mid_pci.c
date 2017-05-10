@@ -36,8 +36,13 @@
 #define PCIE_CAP_OFFSET	0x100
 
 /* Quirks for the listed devices */
+<<<<<<< HEAD
 #define PCI_DEVICE_ID_INTEL_MRFLD_MMC	0x1190
 #define PCI_DEVICE_ID_INTEL_MRFLD_HSU	0x1191
+=======
+#define PCI_DEVICE_ID_INTEL_MRFL_MMC	0x1190
+#define PCI_DEVICE_ID_INTEL_MRFL_HSU	0x1191
+>>>>>>> upstream/rpi-4.4.y
 
 /* Fixed BAR fields */
 #define PCIE_VNDR_CAP_ID_FIXED_BAR 0x00	/* Fixed BAR (TBD) */
@@ -229,7 +234,11 @@ static int intel_mid_pci_irq_enable(struct pci_dev *dev)
 			 * Skip HS UART common registers device since it has
 			 * IRQ0 assigned and not used by the kernel.
 			 */
+<<<<<<< HEAD
 			if (dev->device == PCI_DEVICE_ID_INTEL_MRFLD_HSU)
+=======
+			if (dev->device == PCI_DEVICE_ID_INTEL_MRFL_HSU)
+>>>>>>> upstream/rpi-4.4.y
 				return -EBUSY;
 			/*
 			 * TNG has IRQ0 assigned to eMMC controller. But there
@@ -238,7 +247,11 @@ static int intel_mid_pci_irq_enable(struct pci_dev *dev)
 			 * eMMC gets it. The rest of devices still could be
 			 * enabled without interrupt line being allocated.
 			 */
+<<<<<<< HEAD
 			if (dev->device != PCI_DEVICE_ID_INTEL_MRFLD_MMC)
+=======
+			if (dev->device != PCI_DEVICE_ID_INTEL_MRFL_MMC)
+>>>>>>> upstream/rpi-4.4.y
 				return 0;
 		}
 		break;

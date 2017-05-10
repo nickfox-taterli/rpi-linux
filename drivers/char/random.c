@@ -751,6 +751,7 @@ static int credit_entropy_bits_safe(struct entropy_store *r, int nbits)
 
 	credit_entropy_bits(r, nbits);
 	return 0;
+<<<<<<< HEAD
 }
 
 /*********************************************************************
@@ -967,6 +968,8 @@ static ssize_t extract_crng_user(void __user *buf, size_t nbytes)
 	memzero_explicit(tmp, sizeof(tmp));
 
 	return ret;
+=======
+>>>>>>> upstream/rpi-4.4.y
 }
 
 
@@ -1738,6 +1741,7 @@ random_read(struct file *file, char __user *buf, size_t nbytes, loff_t *ppos)
 static ssize_t
 urandom_read(struct file *file, char __user *buf, size_t nbytes, loff_t *ppos)
 {
+<<<<<<< HEAD
 	unsigned long flags;
 	static int maxwarn = 10;
 	int ret;
@@ -1751,6 +1755,19 @@ urandom_read(struct file *file, char __user *buf, size_t nbytes, loff_t *ppos)
 		crng_init_cnt = 0;
 		spin_unlock_irqrestore(&primary_crng.lock, flags);
 	}
+=======
+	static int maxwarn = 10;
+	int ret;
+
+	if (unlikely(nonblocking_pool.initialized == 0) &&
+	    maxwarn > 0) {
+		maxwarn--;
+		printk(KERN_NOTICE "random: %s: uninitialized urandom read "
+		       "(%zd bytes read, %d bits of entropy available)\n",
+		       current->comm, nbytes, nonblocking_pool.entropy_total);
+	}
+
+>>>>>>> upstream/rpi-4.4.y
 	nbytes = min_t(size_t, nbytes, INT_MAX >> (ENTROPY_SHIFT + 3));
 	ret = extract_crng_user(buf, nbytes);
 	trace_urandom_read(8 * nbytes, 0, ENTROPY_BITS(&input_pool));
@@ -2144,6 +2161,7 @@ void add_hwgenerator_randomness(const char *buffer, size_t count,
 {
 	struct entropy_store *poolp = &input_pool;
 
+<<<<<<< HEAD
 	if (!crng_ready()) {
 		crng_fast_load(buffer, count);
 		return;
@@ -2154,7 +2172,20 @@ void add_hwgenerator_randomness(const char *buffer, size_t count,
 	 * or when the calling thread is about to terminate.
 	 */
 	wait_event_interruptible(random_write_wait, kthread_should_stop() ||
+=======
+	if (unlikely(nonblocking_pool.initialized == 0))
+		poolp = &nonblocking_pool;
+	else {
+		/* Suspend writing if we're above the trickle
+		 * threshold.  We'll be woken up again once below
+		 * random_write_wakeup_thresh, or when the calling
+		 * thread is about to terminate.
+		 */
+		wait_event_interruptible(random_write_wait,
+					 kthread_should_stop() ||
+>>>>>>> upstream/rpi-4.4.y
 			ENTROPY_BITS(&input_pool) <= random_write_wakeup_bits);
+	}
 	mix_pool_bytes(poolp, buffer, count);
 	credit_entropy_bits(poolp, entropy);
 }

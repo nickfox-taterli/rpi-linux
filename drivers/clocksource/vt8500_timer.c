@@ -161,8 +161,11 @@ static int __init vt8500_timer_init(struct device_node *np)
 
 	clockevents_config_and_register(&clockevent, VT8500_TIMER_HZ,
 					MIN_OSCR_DELTA * 2, 0xf0000000);
+<<<<<<< HEAD
 
 	return 0;
+=======
+>>>>>>> upstream/rpi-4.4.y
 }
 
 CLOCKSOURCE_OF_DECLARE(vt8500, "via,vt8500-timer", vt8500_timer_init);

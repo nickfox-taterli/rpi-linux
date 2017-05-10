@@ -1487,8 +1487,11 @@ static void adv7511_notify_no_edid(struct v4l2_subdev *sd)
 	/* We failed to read the EDID, so send an event for this. */
 	ed.present = false;
 	ed.segment = adv7511_rd(sd, 0xc4);
+<<<<<<< HEAD
 	ed.phys_addr = CEC_PHYS_ADDR_INVALID;
 	cec_s_phys_addr(state->cec_adap, ed.phys_addr, false);
+=======
+>>>>>>> upstream/rpi-4.4.y
 	v4l2_subdev_notify(sd, ADV7511_EDID_DETECT, (void *)&ed);
 	v4l2_ctrl_s_ctrl(state->have_edid0_ctrl, 0x0);
 }
@@ -1721,7 +1724,10 @@ static bool adv7511_check_edid_status(struct v4l2_subdev *sd)
 		ed.present = true;
 		ed.segment = 0;
 		state->edid_detect_counter++;
+<<<<<<< HEAD
 		cec_s_phys_addr(state->cec_adap, ed.phys_addr, false);
+=======
+>>>>>>> upstream/rpi-4.4.y
 		v4l2_subdev_notify(sd, ADV7511_EDID_DETECT, (void *)&ed);
 		return ed.present;
 	}

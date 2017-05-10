@@ -158,6 +158,7 @@
 #define OPAL_LEDS_SET_INDICATOR			115
 #define OPAL_CEC_REBOOT2			116
 #define OPAL_CONSOLE_FLUSH			117
+<<<<<<< HEAD
 #define OPAL_GET_DEVICE_TREE			118
 #define OPAL_PCI_GET_PRESENCE_STATE		119
 #define OPAL_PCI_GET_POWER_STATE		120
@@ -168,6 +169,9 @@
 #define OPAL_INT_SET_MFRR			125
 #define OPAL_PCI_TCE_KILL			126
 #define OPAL_LAST				126
+=======
+#define OPAL_LAST				117
+>>>>>>> upstream/rpi-4.4.y
 
 /* Device tree flags */
 

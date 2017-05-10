@@ -688,6 +688,13 @@ enum hv_signal_policy {
 	HV_SIGNAL_POLICY_DEFAULT = 0,
 	HV_SIGNAL_POLICY_EXPLICIT,
 };
+<<<<<<< HEAD
+=======
+
+struct vmbus_channel {
+	/* Unique channel id */
+	int id;
+>>>>>>> upstream/rpi-4.4.y
 
 enum hv_numa_policy {
 	HV_BALANCED = 0,
@@ -857,6 +864,7 @@ struct vmbus_channel {
 	 * signaling control.
 	 */
 	enum hv_signal_policy  signal_policy;
+<<<<<<< HEAD
 	/*
 	 * On the channel send side, many of the VMBUS
 	 * device drivers explicity serialize access to the
@@ -918,18 +926,25 @@ static inline bool is_hvsock_channel(const struct vmbus_channel *c)
 		  VMBUS_CHANNEL_TLNPI_PROVIDER_OFFER);
 }
 
+=======
+};
+
+>>>>>>> upstream/rpi-4.4.y
 static inline void set_channel_signal_state(struct vmbus_channel *c,
 					    enum hv_signal_policy policy)
 {
 	c->signal_policy = policy;
 }
 
+<<<<<<< HEAD
 static inline void set_channel_affinity_state(struct vmbus_channel *c,
 					      enum hv_numa_policy policy)
 {
 	c->affinity_policy = policy;
 }
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 static inline void set_channel_read_state(struct vmbus_channel *c, bool state)
 {
 	c->batched_reading = state;

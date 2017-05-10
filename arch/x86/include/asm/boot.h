@@ -26,8 +26,15 @@
 #ifdef CONFIG_KERNEL_BZIP2
 # define BOOT_HEAP_SIZE		0x400000
 #else /* !CONFIG_KERNEL_BZIP2 */
+<<<<<<< HEAD
 # define BOOT_HEAP_SIZE		 0x10000
 #endif
+=======
+
+#define BOOT_HEAP_SIZE	0x10000
+
+#endif /* !CONFIG_KERNEL_BZIP2 */
+>>>>>>> upstream/rpi-4.4.y
 
 #ifdef CONFIG_X86_64
 # define BOOT_STACK_SIZE	0x4000

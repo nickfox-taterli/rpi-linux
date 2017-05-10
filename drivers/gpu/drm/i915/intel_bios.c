@@ -1511,6 +1511,7 @@ intel_bios_init(struct drm_i915_private *dev_priv)
 }
 
 /**
+<<<<<<< HEAD
  * intel_bios_is_tv_present - is integrated TV present in VBT
  * @dev_priv:	i915 device instance
  *
@@ -1602,6 +1603,8 @@ bool intel_bios_is_lvds_present(struct drm_i915_private *dev_priv, u8 *i2c_pin)
 }
 
 /**
+=======
+>>>>>>> upstream/rpi-4.4.y
  * intel_bios_is_port_present - is the specified digital port present
  * @dev_priv:	i915 device instance
  * @port:	port to check
@@ -1639,6 +1642,7 @@ bool intel_bios_is_port_present(struct drm_i915_private *dev_priv, enum port por
 
 	return false;
 }
+<<<<<<< HEAD
 
 /**
  * intel_bios_is_port_edp - is the device in given port eDP
@@ -1805,3 +1809,5 @@ intel_bios_is_port_hpd_inverted(struct drm_i915_private *dev_priv,
 
 	return false;
 }
+=======
+>>>>>>> upstream/rpi-4.4.y

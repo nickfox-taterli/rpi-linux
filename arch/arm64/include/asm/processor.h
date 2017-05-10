@@ -189,7 +189,10 @@ static inline void spin_lock_prefetch(const void *ptr)
 #endif
 
 int cpu_enable_pan(void *__unused);
+<<<<<<< HEAD
 int cpu_enable_uao(void *__unused);
 int cpu_enable_cache_maint_trap(void *__unused);
+=======
+>>>>>>> upstream/rpi-4.4.y
 
 #endif /* __ASM_PROCESSOR_H */

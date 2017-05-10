@@ -184,8 +184,15 @@ __copy_to_user(void __user *to, const void *from, unsigned long n)
 static inline unsigned long __must_check
 copy_from_user(void *to, const void __user *from, unsigned long n)
 {
+<<<<<<< HEAD
 	if (likely(access_ok(VERIFY_READ, from, n)))
 		return __copy_from_user(to, from, n);
+=======
+	if (likely(access_ok(VERIFY_READ, from, n))) {
+		memcpy(to, (const void __force *)from, n);
+		return 0;
+	}
+>>>>>>> upstream/rpi-4.4.y
 	memset(to, 0, n);
 	return n;
 }

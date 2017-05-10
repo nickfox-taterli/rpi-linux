@@ -56,7 +56,11 @@
 #include <linux/pipe_fs_i.h>
 #include <linux/oom.h>
 #include <linux/compat.h>
+<<<<<<< HEAD
 #include <linux/vmalloc.h>
+=======
+#include <linux/user_namespace.h>
+>>>>>>> upstream/rpi-4.4.y
 
 #include <asm/uaccess.h>
 #include <asm/mmu_context.h>

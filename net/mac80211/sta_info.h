@@ -286,6 +286,7 @@ struct ieee80211_fast_tx {
 	u8 band;
 	u8 hdr[30 + 2 + IEEE80211_FAST_XMIT_MAX_IV +
 	       sizeof(rfc1042_header)] __aligned(2);
+<<<<<<< HEAD
 
 	struct rcu_head rcu_head;
 };
@@ -320,6 +321,8 @@ struct ieee80211_fast_rx {
 	   internal_forward:1,
 	   uses_rss:1;
 	u8 da_offs, sa_offs;
+=======
+>>>>>>> upstream/rpi-4.4.y
 
 	struct rcu_head rcu_head;
 };

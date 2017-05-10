@@ -74,7 +74,10 @@ obj-$(CONFIG_ARM_SA1100_CPUFREQ)	+= sa1100-cpufreq.o
 obj-$(CONFIG_ARM_SA1110_CPUFREQ)	+= sa1110-cpufreq.o
 obj-$(CONFIG_ARM_SCPI_CPUFREQ)		+= scpi-cpufreq.o
 obj-$(CONFIG_ARM_SPEAR_CPUFREQ)		+= spear-cpufreq.o
+<<<<<<< HEAD
 obj-$(CONFIG_ARM_STI_CPUFREQ)		+= sti-cpufreq.o
+=======
+>>>>>>> upstream/rpi-4.4.y
 obj-$(CONFIG_ARM_BCM2835_CPUFREQ)	+= bcm2835-cpufreq.o
 obj-$(CONFIG_ARM_TEGRA20_CPUFREQ)	+= tegra20-cpufreq.o
 obj-$(CONFIG_ARM_TEGRA124_CPUFREQ)	+= tegra124-cpufreq.o

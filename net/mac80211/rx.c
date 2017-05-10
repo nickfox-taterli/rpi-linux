@@ -2364,6 +2364,7 @@ ieee80211_rx_h_amsdu(struct ieee80211_rx_data *rx)
 		default:
 			return RX_DROP_UNUSABLE;
 		}
+<<<<<<< HEAD
 		check_da = NULL;
 		check_sa = NULL;
 	} else switch (rx->sdata->vif.type) {
@@ -2381,6 +2382,8 @@ ieee80211_rx_h_amsdu(struct ieee80211_rx_data *rx)
 			break;
 		default:
 			break;
+=======
+>>>>>>> upstream/rpi-4.4.y
 	}
 
 	if (is_multicast_ether_addr(hdr->addr1))

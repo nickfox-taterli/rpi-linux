@@ -91,6 +91,7 @@ static int bcm2835_rng_probe(struct platform_device *pdev)
 	}
 	bcm2835_rng_ops.priv = (unsigned long)rng_base;
 
+<<<<<<< HEAD
 	rng_id = of_match_node(bcm2835_rng_of_match, np);
 	if (!rng_id) {
 		iounmap(rng_base);
@@ -101,6 +102,8 @@ static int bcm2835_rng_probe(struct platform_device *pdev)
 	if (rng_setup)
 		rng_setup(rng_base);
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 	/* set warm-up count & enable */
 	if (!(__raw_readl(rng_base + RNG_CTRL) & RNG_RBGEN)) {
 		__raw_writel(RNG_WARMUP_COUNT, rng_base + RNG_STATUS);

@@ -38,7 +38,10 @@ $(warning LSE atomics not supported by binutils)
 endif
 
 KBUILD_CFLAGS	+= -mgeneral-regs-only $(lseinstr)
+<<<<<<< HEAD
 KBUILD_CFLAGS	+= -fno-asynchronous-unwind-tables
+=======
+>>>>>>> upstream/rpi-4.4.y
 KBUILD_CFLAGS	+= $(call cc-option, -mpc-relative-literal-loads)
 KBUILD_AFLAGS	+= $(lseinstr)
 

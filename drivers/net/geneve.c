@@ -342,6 +342,14 @@ static int geneve_udp_encap_recv(struct sock *sk, struct sk_buff *skb)
 		goto drop;
 
 	if (unlikely(geneveh->proto_type != htons(ETH_P_TEB)))
+<<<<<<< HEAD
+=======
+		goto drop;
+
+	opts_len = geneveh->opt_len * 4;
+	if (iptunnel_pull_header(skb, GENEVE_BASE_HLEN + opts_len,
+				 htons(ETH_P_TEB)))
+>>>>>>> upstream/rpi-4.4.y
 		goto drop;
 
 	gs = rcu_dereference_sk_user_data(sk);
@@ -454,7 +462,10 @@ static struct sk_buff **geneve_gro_receive(struct sock *sk,
 	skb_gro_pull(skb, gh_len);
 	skb_gro_postpull_rcsum(skb, gh, gh_len);
 	pp = call_gro_receive(ptype->callbacks.gro_receive, head, skb);
+<<<<<<< HEAD
 	flush = 0;
+=======
+>>>>>>> upstream/rpi-4.4.y
 
 out_unlock:
 	rcu_read_unlock();
@@ -949,7 +960,10 @@ static netdev_tx_t geneve6_xmit_skb(struct sk_buff *skb, struct net_device *dev,
 {
 	struct geneve_dev *geneve = netdev_priv(dev);
 	struct dst_entry *dst = NULL;
+<<<<<<< HEAD
 	struct geneve_sock *gs6;
+=======
+>>>>>>> upstream/rpi-4.4.y
 	int err = -EINVAL;
 	struct flowi6 fl6;
 	__u8 prio, ttl;
@@ -1007,8 +1021,12 @@ static netdev_tx_t geneve6_xmit_skb(struct sk_buff *skb, struct net_device *dev,
 		if (unlikely(err))
 			goto tx_error;
 
+<<<<<<< HEAD
 		prio = ip_tunnel_ecn_encap(ip6_tclass(fl6.flowlabel),
 					   ip_hdr(skb), skb);
+=======
+		prio = ip_tunnel_ecn_encap(fl6.flowi6_tos, ip_hdr(skb), skb);
+>>>>>>> upstream/rpi-4.4.y
 		ttl = geneve->ttl;
 		if (!ttl && ipv6_addr_is_multicast(&fl6.daddr))
 			ttl = 1;
@@ -1088,6 +1106,17 @@ static int __geneve_change_mtu(struct net_device *dev, int new_mtu, bool strict)
 static int geneve_change_mtu(struct net_device *dev, int new_mtu)
 {
 	return __geneve_change_mtu(dev, new_mtu, true);
+}
+
+static int geneve_change_mtu(struct net_device *dev, int new_mtu)
+{
+	/* GENEVE overhead is not fixed, so we can't enforce a more
+	 * precise max MTU.
+	 */
+	if (new_mtu < 68 || new_mtu > IP_MAX_MTU)
+		return -EINVAL;
+	dev->mtu = new_mtu;
+	return 0;
 }
 
 static int geneve_fill_metadata_dst(struct net_device *dev, struct sk_buff *skb)
@@ -1501,16 +1530,23 @@ struct net_device *geneve_dev_create_fb(struct net *net, const char *name,
 		return dev;
 
 	err = geneve_configure(net, dev, &geneve_remote_unspec,
+<<<<<<< HEAD
 			       0, 0, 0, 0, htons(dst_port), true,
 			       GENEVE_F_UDP_ZERO_CSUM6_RX);
 	if (err) {
 		free_netdev(dev);
 		return ERR_PTR(err);
 	}
+=======
+			       0, 0, 0, htons(dst_port), true);
+	if (err)
+		goto err;
+>>>>>>> upstream/rpi-4.4.y
 
 	/* openvswitch users expect packet sizes to be unrestricted,
 	 * so set the largest MTU we can.
 	 */
+<<<<<<< HEAD
 	err = __geneve_change_mtu(dev, IP_MAX_MTU, false);
 	if (err)
 		goto err;
@@ -1524,6 +1560,16 @@ struct net_device *geneve_dev_create_fb(struct net *net, const char *name,
  err:
 	geneve_dellink(dev, &list_kill);
 	unregister_netdevice_many(&list_kill);
+=======
+	err = geneve_change_mtu(dev, IP_MAX_MTU);
+	if (err)
+		goto err;
+
+	return dev;
+
+ err:
+	free_netdev(dev);
+>>>>>>> upstream/rpi-4.4.y
 	return ERR_PTR(err);
 }
 EXPORT_SYMBOL_GPL(geneve_dev_create_fb);

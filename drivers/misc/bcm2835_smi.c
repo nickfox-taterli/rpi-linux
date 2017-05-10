@@ -34,7 +34,10 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+<<<<<<< HEAD
 #include <linux/clk.h>
+=======
+>>>>>>> upstream/rpi-4.4.y
 #include <linux/kernel.h>
 #include <linux/module.h>
 #include <linux/of.h>
@@ -63,7 +66,11 @@
 struct bcm2835_smi_instance {
 	struct device *dev;
 	struct smi_settings settings;
+<<<<<<< HEAD
 	__iomem void *smi_regs_ptr;
+=======
+	__iomem void *smi_regs_ptr, *cm_smi_regs_ptr;
+>>>>>>> upstream/rpi-4.4.y
 	dma_addr_t smi_regs_busaddr;
 
 	struct dma_chan *dma_chan;
@@ -73,7 +80,12 @@ struct bcm2835_smi_instance {
 
 	struct scatterlist buffer_sgl;
 
+<<<<<<< HEAD
 	struct clk *clk;
+=======
+	int clock_source;
+	int clock_divisor;
+>>>>>>> upstream/rpi-4.4.y
 
 	/* Sometimes we are called into in an atomic context (e.g. by
 	   JFFS2 + MTD) so we can't use a mutex */
@@ -82,6 +94,45 @@ struct bcm2835_smi_instance {
 
 /****************************************************************************
 *
+<<<<<<< HEAD
+=======
+*   SMI clock manager setup
+*
+***************************************************************************/
+
+static inline void write_smi_cm_reg(struct bcm2835_smi_instance *inst,
+	u32 val, unsigned reg)
+{
+	writel(CM_PWD | val, inst->cm_smi_regs_ptr + reg);
+}
+
+static inline u32 read_smi_cm_reg(struct bcm2835_smi_instance *inst,
+	unsigned reg)
+{
+	return readl(inst->cm_smi_regs_ptr + reg);
+}
+
+static void smi_setup_clock(struct bcm2835_smi_instance *inst)
+{
+	dev_dbg(inst->dev, "Setting up clock...");
+	/* Disable SMI clock and wait for it to stop. */
+	write_smi_cm_reg(inst, 0, CM_SMI_CTL);
+	while (read_smi_cm_reg(inst, CM_SMI_CTL) & CM_SMI_CTL_BUSY)
+		;
+
+	write_smi_cm_reg(inst, (inst->clock_divisor << CM_SMI_DIV_DIVI_OFFS),
+	       CM_SMI_DIV);
+	write_smi_cm_reg(inst, (inst->clock_source << CM_SMI_CTL_SRC_OFFS),
+	       CM_SMI_CTL);
+
+	/* Enable the clock */
+	write_smi_cm_reg(inst, (inst->clock_source << CM_SMI_CTL_SRC_OFFS) |
+	       CM_SMI_CTL_ENAB, CM_SMI_CTL);
+}
+
+/****************************************************************************
+*
+>>>>>>> upstream/rpi-4.4.y
 *   SMI peripheral setup
 *
 ***************************************************************************/
@@ -858,6 +909,7 @@ static int bcm2835_smi_probe(struct platform_device *pdev)
 	struct device_node *node = dev->of_node;
 	struct resource *ioresource;
 	struct bcm2835_smi_instance *inst;
+<<<<<<< HEAD
 	const __be32 *addr;
 
 	/* We require device tree support */
@@ -866,12 +918,21 @@ static int bcm2835_smi_probe(struct platform_device *pdev)
 	/* Allocate buffers and instance data */
 	inst = devm_kzalloc(dev, sizeof(struct bcm2835_smi_instance),
 		GFP_KERNEL);
+=======
+
+	/* Allocate buffers and instance data */
+
+	inst = devm_kzalloc(dev, sizeof(struct bcm2835_smi_instance),
+		GFP_KERNEL);
+
+>>>>>>> upstream/rpi-4.4.y
 	if (!inst)
 		return -ENOMEM;
 
 	inst->dev = dev;
 	spin_lock_init(&inst->transaction_lock);
 
+<<<<<<< HEAD
 	ioresource = platform_get_resource(pdev, IORESOURCE_MEM, 0);
 	inst->smi_regs_ptr = devm_ioremap_resource(dev, ioresource);
 	if (IS_ERR(inst->smi_regs_ptr)) {
@@ -892,6 +953,32 @@ static int bcm2835_smi_probe(struct platform_device *pdev)
 	clk_prepare_enable(inst->clk);
 
 	/* Finally, do peripheral setup */
+=======
+	/* We require device tree support */
+	if (!node)
+		return -EINVAL;
+
+	ioresource = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+	inst->smi_regs_ptr = devm_ioremap_resource(dev, ioresource);
+	ioresource = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+	inst->cm_smi_regs_ptr = devm_ioremap_resource(dev, ioresource);
+	inst->smi_regs_busaddr = be32_to_cpu(
+		*of_get_address(node, 0, NULL, NULL));
+	of_property_read_u32(node,
+			     "brcm,smi-clock-source",
+			     &inst->clock_source);
+	of_property_read_u32(node,
+			     "brcm,smi-clock-divisor",
+			     &inst->clock_divisor);
+
+	err = bcm2835_smi_dma_setup(inst);
+	if (err)
+		return err;
+
+	/* Finally, do peripheral setup */
+
+	smi_setup_clock(inst);
+>>>>>>> upstream/rpi-4.4.y
 	smi_setup_regs(inst);
 
 	platform_set_drvdata(pdev, inst);
@@ -899,9 +986,12 @@ static int bcm2835_smi_probe(struct platform_device *pdev)
 	dev_info(inst->dev, "initialised");
 
 	return 0;
+<<<<<<< HEAD
 err:
 	kfree(inst);
 	return err;
+=======
+>>>>>>> upstream/rpi-4.4.y
 }
 
 /****************************************************************************
@@ -915,11 +1005,14 @@ static int bcm2835_smi_remove(struct platform_device *pdev)
 	struct bcm2835_smi_instance *inst = platform_get_drvdata(pdev);
 	struct device *dev = inst->dev;
 
+<<<<<<< HEAD
 	dmaengine_terminate_all(inst->dma_chan);
 	dma_release_channel(inst->dma_chan);
 
 	clk_disable_unprepare(inst->clk);
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 	dev_info(dev, "SMI device removed - OK");
 	return 0;
 }

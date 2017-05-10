@@ -6,6 +6,22 @@
 	compatible = "brcm,bcm2708";
     
 	fragment@0 {
+<<<<<<< HEAD
+=======
+		target = <&soc>;
+		
+		__overlay__ {
+			codec_supply: fixedregulator@0 {
+				compatible = "regulator-fixed";
+				regulator-name = "AVDD";
+				regulator-min-microvolt = <3300000>;
+				regulator-max-microvolt = <3300000>;
+			};
+		};
+	};
+	
+	fragment@1 {
+>>>>>>> upstream/rpi-4.4.y
         	target = <&i2c>;
         	
 		__overlay__ {
@@ -17,19 +33,31 @@
                         	compatible = "adi,adau1977";
                         	reg = <0x11>;
                         	reset-gpios = <&gpio 5 0>;
+<<<<<<< HEAD
 				AVDD-supply = <&vdd_3v3_reg>;
+=======
+                        	AVDD-supply = <&codec_supply>;
+>>>>>>> upstream/rpi-4.4.y
                 	};
         	};
 	};
 
+<<<<<<< HEAD
 	fragment@1 {
+=======
+	fragment@2 {
+>>>>>>> upstream/rpi-4.4.y
 		target = <&i2s>;
 		__overlay__ {
 			status = "okay";
 		};
 	};
 
+<<<<<<< HEAD
 	fragment@2 {
+=======
+	fragment@3 {
+>>>>>>> upstream/rpi-4.4.y
 		target = <&sound>;
 		__overlay__ {
 			compatible = "adi,adau1977-adc";

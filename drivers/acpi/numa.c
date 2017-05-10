@@ -445,15 +445,22 @@ int __init acpi_numa_init(void)
 
 	/* SRAT: Static Resource Affinity Table */
 	if (!acpi_table_parse(ACPI_SIG_SRAT, acpi_parse_srat)) {
+<<<<<<< HEAD
 		struct acpi_subtable_proc srat_proc[3];
+=======
+		struct acpi_subtable_proc srat_proc[2];
+>>>>>>> upstream/rpi-4.4.y
 
 		memset(srat_proc, 0, sizeof(srat_proc));
 		srat_proc[0].id = ACPI_SRAT_TYPE_CPU_AFFINITY;
 		srat_proc[0].handler = acpi_parse_processor_affinity;
 		srat_proc[1].id = ACPI_SRAT_TYPE_X2APIC_CPU_AFFINITY;
 		srat_proc[1].handler = acpi_parse_x2apic_affinity;
+<<<<<<< HEAD
 		srat_proc[2].id = ACPI_SRAT_TYPE_GICC_AFFINITY;
 		srat_proc[2].handler = acpi_parse_gicc_affinity;
+=======
+>>>>>>> upstream/rpi-4.4.y
 
 		acpi_table_parse_entries_array(ACPI_SIG_SRAT,
 					sizeof(struct acpi_table_srat),

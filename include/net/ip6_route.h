@@ -79,6 +79,19 @@ static inline struct dst_entry *ip6_route_output(struct net *net,
 	return ip6_route_output_flags(net, sk, fl6, 0);
 }
 
+<<<<<<< HEAD
+=======
+struct dst_entry *ip6_route_output_flags(struct net *net, const struct sock *sk,
+					 struct flowi6 *fl6, int flags);
+
+static inline struct dst_entry *ip6_route_output(struct net *net,
+						 const struct sock *sk,
+						 struct flowi6 *fl6)
+{
+	return ip6_route_output_flags(net, sk, fl6, 0);
+}
+
+>>>>>>> upstream/rpi-4.4.y
 struct dst_entry *ip6_route_lookup(struct net *net, struct flowi6 *fl6,
 				   int flags);
 struct rt6_info *ip6_pol_route(struct net *net, struct fib6_table *table,

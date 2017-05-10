@@ -2468,6 +2468,7 @@ static int __clk_core_init(struct clk_core *core)
 		core->ops->init(core->hw);
 
 	if (core->flags & CLK_IS_CRITICAL) {
+<<<<<<< HEAD
 		unsigned long flags;
 
 		clk_core_prepare(core);
@@ -2475,6 +2476,10 @@ static int __clk_core_init(struct clk_core *core)
 		flags = clk_enable_lock();
 		clk_core_enable(core);
 		clk_enable_unlock(flags);
+=======
+		clk_core_prepare(core);
+		clk_core_enable(core);
+>>>>>>> upstream/rpi-4.4.y
 	}
 
 	kref_init(&core->ref);

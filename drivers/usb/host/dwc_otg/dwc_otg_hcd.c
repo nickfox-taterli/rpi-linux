@@ -193,6 +193,7 @@ static void kill_urbs_in_qh_list(dwc_otg_hcd_t * hcd, dwc_list_link_t * qh_list)
 			 * It is possible that the channel has already halted
 			 * but not yet been through the IRQ handler.
 			 */
+<<<<<<< HEAD
 			if (fiq_fsm_enable && (hcd->fiq_state->channel[qh->channel->hc_num].fsm != FIQ_PASSTHROUGH)) {
 				qh->channel->halt_status = DWC_OTG_HC_XFER_URB_DEQUEUE;
 				qh->channel->halt_pending = 1;
@@ -200,6 +201,10 @@ static void kill_urbs_in_qh_list(dwc_otg_hcd_t * hcd, dwc_list_link_t * qh_list)
 				dwc_otg_hc_halt(hcd->core_if, qh->channel,
 						DWC_OTG_HC_XFER_URB_DEQUEUE);
 			}
+=======
+			dwc_otg_hc_halt(hcd->core_if, qh->channel,
+				DWC_OTG_HC_XFER_URB_DEQUEUE);
+>>>>>>> upstream/rpi-4.4.y
 			if(microframe_schedule)
 				hcd->available_host_channels++;
 			qh->channel = NULL;
@@ -621,7 +626,11 @@ int dwc_otg_hcd_urb_dequeue(dwc_otg_hcd_t * hcd,
 			if (fiq_fsm_enable && (hcd->fiq_state->channel[n].fsm != FIQ_PASSTHROUGH)) {
 				qh->channel->halt_status = DWC_OTG_HC_XFER_URB_DEQUEUE;
 				qh->channel->halt_pending = 1;
+<<<<<<< HEAD
 				//hcd->fiq_state->channel[n].fsm = FIQ_DEQUEUE_ISSUED;
+=======
+				hcd->fiq_state->channel[n].fsm = FIQ_DEQUEUE_ISSUED;
+>>>>>>> upstream/rpi-4.4.y
 			} else {
 				dwc_otg_hc_halt(hcd->core_if, qh->channel,
 						DWC_OTG_HC_XFER_URB_DEQUEUE);
@@ -639,8 +648,11 @@ int dwc_otg_hcd_urb_dequeue(dwc_otg_hcd_t * hcd,
                     hcd->core_if->dma_desc_enable?"DMA ":"");
 	if (!hcd->core_if->dma_desc_enable) {
 		uint8_t b = urb_qtd->in_process;
+<<<<<<< HEAD
 		if (nak_holdoff && qh->do_split && dwc_qh_is_non_per(qh))
 			qh->nak_frame = 0xFFFF;
+=======
+>>>>>>> upstream/rpi-4.4.y
 		dwc_otg_hcd_qtd_remove_and_free(hcd, urb_qtd, qh);
 		if (b) {
 			dwc_otg_hcd_qh_deactivate(hcd, qh, 0);
@@ -891,7 +903,10 @@ void dwc_otg_cleanup_fiq_channel(dwc_otg_hcd_t *hcd, uint32_t num)
  */
 static void dwc_otg_hcd_free(dwc_otg_hcd_t * dwc_otg_hcd)
 {
+<<<<<<< HEAD
 	struct device *dev = dwc_otg_hcd_to_dev(dwc_otg_hcd);
+=======
+>>>>>>> upstream/rpi-4.4.y
 	int i;
 
 	DWC_DEBUGPL(DBG_HCD, "DWC OTG HCD FREE\n");
@@ -924,7 +939,11 @@ static void dwc_otg_hcd_free(dwc_otg_hcd_t * dwc_otg_hcd)
 
 	if (dwc_otg_hcd->core_if->dma_enable) {
 		if (dwc_otg_hcd->status_buf_dma) {
+<<<<<<< HEAD
 			DWC_DMA_FREE(dev, DWC_OTG_HCD_STATUS_BUF_SIZE,
+=======
+			DWC_DMA_FREE(DWC_OTG_HCD_STATUS_BUF_SIZE,
+>>>>>>> upstream/rpi-4.4.y
 				     dwc_otg_hcd->status_buf,
 				     dwc_otg_hcd->status_buf_dma);
 		}
@@ -954,7 +973,10 @@ int init_hcd_usecs(dwc_otg_hcd_t *_hcd);
 
 int dwc_otg_hcd_init(dwc_otg_hcd_t * hcd, dwc_otg_core_if_t * core_if)
 {
+<<<<<<< HEAD
 	struct device *dev = dwc_otg_hcd_to_dev(hcd);
+=======
+>>>>>>> upstream/rpi-4.4.y
 	int retval = 0;
 	int num_channels;
 	int i;
@@ -1028,10 +1050,13 @@ int dwc_otg_hcd_init(dwc_otg_hcd_t * hcd, dwc_otg_core_if_t * core_if)
 		}
 		DWC_MEMSET(hcd->fiq_state, 0, (sizeof(struct fiq_state) + (sizeof(struct fiq_channel_state) * num_channels)));
 
+<<<<<<< HEAD
 #ifdef CONFIG_ARM64
 		spin_lock_init(&hcd->fiq_state->lock);
 #endif
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 		for (i = 0; i < num_channels; i++) {
 			hcd->fiq_state->channel[i].fsm = FIQ_PASSTHROUGH;
 		}
@@ -1054,7 +1079,11 @@ int dwc_otg_hcd_init(dwc_otg_hcd_t * hcd, dwc_otg_core_if_t * core_if)
 		 * for use as transaction bounce buffers in a 2-D array. Our access into this chunk is done by some
 		 * moderately readable array casts.
 		 */
+<<<<<<< HEAD
 		hcd->fiq_dmab = DWC_DMA_ALLOC(dev, (sizeof(struct fiq_dma_channel) * num_channels), &hcd->fiq_state->dma_base);
+=======
+		hcd->fiq_dmab = DWC_DMA_ALLOC((sizeof(struct fiq_dma_channel) * num_channels), &hcd->fiq_state->dma_base);
+>>>>>>> upstream/rpi-4.4.y
 		DWC_WARN("FIQ DMA bounce buffers: virt = 0x%08x dma = 0x%08x len=%d",
 				(unsigned int)hcd->fiq_dmab, (unsigned int)hcd->fiq_state->dma_base,
 				sizeof(struct fiq_dma_channel) * num_channels);
@@ -1105,7 +1134,11 @@ int dwc_otg_hcd_init(dwc_otg_hcd_t * hcd, dwc_otg_core_if_t * core_if)
 	 */
 	if (hcd->core_if->dma_enable) {
 		hcd->status_buf =
+<<<<<<< HEAD
 		    DWC_DMA_ALLOC(dev, DWC_OTG_HCD_STATUS_BUF_SIZE,
+=======
+		    DWC_DMA_ALLOC(DWC_OTG_HCD_STATUS_BUF_SIZE,
+>>>>>>> upstream/rpi-4.4.y
 				  &hcd->status_buf_dma);
 	} else {
 		hcd->status_buf = DWC_ALLOC(DWC_OTG_HCD_STATUS_BUF_SIZE);
@@ -1200,7 +1233,10 @@ static void assign_and_init_hc(dwc_otg_hcd_t * hcd, dwc_otg_qh_t * qh)
 	uint32_t intr_enable;
 	unsigned long flags;
 	gintmsk_data_t gintmsk = { .d32 = 0, };
+<<<<<<< HEAD
 	struct device *dev = dwc_otg_hcd_to_dev(hcd);
+=======
+>>>>>>> upstream/rpi-4.4.y
 
 	qtd = DWC_CIRCLEQ_FIRST(&qh->qtd_list);
 
@@ -1275,7 +1311,10 @@ static void assign_and_init_hc(dwc_otg_hcd_t * hcd, dwc_otg_qh_t * qh)
 	if (qh->do_split) {
 		uint32_t hub_addr, port_addr;
 		hc->do_split = 1;
+<<<<<<< HEAD
 		hc->start_pkt_count = 1;
+=======
+>>>>>>> upstream/rpi-4.4.y
 		hc->xact_pos = qtd->isoc_split_pos;
 		/* We don't need to do complete splits anymore */
 //		if(fiq_fsm_enable)
@@ -1396,7 +1435,11 @@ static void assign_and_init_hc(dwc_otg_hcd_t * hcd, dwc_otg_qh_t * qh)
 			buf_size = 4096;
 		}
 		if (!qh->dw_align_buf) {
+<<<<<<< HEAD
 			qh->dw_align_buf = DWC_DMA_ALLOC_ATOMIC(dev, buf_size,
+=======
+			qh->dw_align_buf = DWC_DMA_ALLOC_ATOMIC(buf_size,
+>>>>>>> upstream/rpi-4.4.y
 							 &qh->dw_align_buf_dma);
 			if (!qh->dw_align_buf) {
 				DWC_ERROR
@@ -1447,7 +1490,11 @@ static void assign_and_init_hc(dwc_otg_hcd_t * hcd, dwc_otg_qh_t * qh)
 		fiq_fsm_spin_unlock(&hcd->fiq_state->lock);
 		local_fiq_enable();
 	}
+<<<<<<< HEAD
 
+=======
+	
+>>>>>>> upstream/rpi-4.4.y
 	local_irq_restore(flags);
 	hc->qh = qh;
 }

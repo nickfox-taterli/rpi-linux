@@ -154,6 +154,7 @@ static int exynos_rng_probe(struct platform_device *pdev)
 	}
 
 	return ret;
+<<<<<<< HEAD
 }
 
 static int exynos_rng_remove(struct platform_device *pdev)
@@ -162,6 +163,8 @@ static int exynos_rng_remove(struct platform_device *pdev)
 	pm_runtime_disable(&pdev->dev);
 
 	return 0;
+=======
+>>>>>>> upstream/rpi-4.4.y
 }
 
 static int __maybe_unused exynos_rng_runtime_suspend(struct device *dev)

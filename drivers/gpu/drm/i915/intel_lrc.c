@@ -578,8 +578,30 @@ static void intel_lrc_irq_handler(unsigned long data)
 				engine->preempt_wa = false;
 			}
 
+<<<<<<< HEAD
 			GEM_BUG_ON(port[0].count == 0 &&
 				   !(status & GEN8_CTX_STATUS_ACTIVE_IDLE));
+=======
+	if (unlikely(bytes > remain_usable)) {
+		/*
+		 * Not enough space for the basic request. So need to flush
+		 * out the remainder and then wait for base + reserved.
+		 */
+		wait_bytes = remain_actual + total_bytes;
+		need_wrap = true;
+	} else {
+		if (unlikely(total_bytes > remain_usable)) {
+			/*
+			 * The base request will fit but the reserved space
+			 * falls off the end. So don't need an immediate wrap
+			 * and only need to effectively wait for the reserved
+			 * size space from the start of ringbuffer.
+			 */
+			wait_bytes = remain_actual + ringbuf->reserved_size;
+		} else if (total_bytes > ringbuf->space) {
+			/* No wrapping required, just waiting. */
+			wait_bytes = total_bytes;
+>>>>>>> upstream/rpi-4.4.y
 		}
 
 		writel(_MASKED_FIELD(GEN8_CSB_READ_PTR_MASK,

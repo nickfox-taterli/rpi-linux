@@ -293,6 +293,7 @@ done:
 	return wanted - bytes;
 }
 
+<<<<<<< HEAD
 #ifdef PIPE_PARANOIA
 static bool sanity(const struct iov_iter *i)
 {
@@ -380,6 +381,8 @@ out:
 	return bytes;
 }
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 /*
  * Fault in one or more iovecs of the given iov_iter, to a maximum length of
  * bytes.  For each iovec, fault in each page that constitutes the iovec.

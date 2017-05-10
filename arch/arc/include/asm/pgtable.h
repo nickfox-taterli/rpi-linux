@@ -284,6 +284,10 @@ static inline void pmd_set(pmd_t *pmdp, pte_t *ptep)
 
 /* Don't use virt_to_pfn for macros below: could cause truncations for PAE40*/
 #define pte_pfn(pte)		(pte_val(pte) >> PAGE_SHIFT)
+<<<<<<< HEAD
+=======
+#define pfn_pte(pfn, prot)	(__pte(((pfn) << PAGE_SHIFT) | pgprot_val(prot)))
+>>>>>>> upstream/rpi-4.4.y
 #define __pte_index(addr)	(((addr) >> PAGE_SHIFT) & (PTRS_PER_PTE - 1))
 
 /*

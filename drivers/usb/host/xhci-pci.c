@@ -170,10 +170,13 @@ static void xhci_pci_quirks(struct device *dev, struct xhci_hcd *xhci)
 		xhci->quirks |= XHCI_PME_STUCK_QUIRK;
 	}
 	if (pdev->vendor == PCI_VENDOR_ID_INTEL &&
+<<<<<<< HEAD
 		 pdev->device == PCI_DEVICE_ID_INTEL_CHERRYVIEW_XHCI) {
 		xhci->quirks |= XHCI_SSIC_PORT_UNUSED;
 	}
 	if (pdev->vendor == PCI_VENDOR_ID_INTEL &&
+=======
+>>>>>>> upstream/rpi-4.4.y
 	    (pdev->device == PCI_DEVICE_ID_INTEL_CHERRYVIEW_XHCI ||
 	     pdev->device == PCI_DEVICE_ID_INTEL_APL_XHCI))
 		xhci->quirks |= XHCI_MISSING_CAS;
@@ -346,6 +349,7 @@ static void xhci_ssic_port_unused_quirk(struct usb_hcd *hcd, bool suspend)
 	void __iomem *reg;
 	int i;
 
+<<<<<<< HEAD
 	for (i = 0; i < SSIC_PORT_NUM; i++) {
 		reg = (void __iomem *) xhci->cap_regs +
 				SSIC_PORT_CFG2 +
@@ -367,6 +371,36 @@ static void xhci_ssic_port_unused_quirk(struct usb_hcd *hcd, bool suspend)
 		val = readl(reg) | PROG_DONE;
 		writel(val, reg);
 		readl(reg);
+=======
+	if (pdev->vendor == PCI_VENDOR_ID_INTEL &&
+		 pdev->device == PCI_DEVICE_ID_INTEL_CHERRYVIEW_XHCI) {
+
+		for (i = 0; i < SSIC_PORT_NUM; i++) {
+			reg = (void __iomem *) xhci->cap_regs +
+					SSIC_PORT_CFG2 +
+					i * SSIC_PORT_CFG2_OFFSET;
+
+			/*
+			 * Notify SSIC that SSIC profile programming
+			 * is not done.
+			 */
+			val = readl(reg) & ~PROG_DONE;
+			writel(val, reg);
+
+			/* Mark SSIC port as unused(suspend) or used(resume) */
+			val = readl(reg);
+			if (suspend)
+				val |= SSIC_PORT_UNUSED;
+			else
+				val &= ~SSIC_PORT_UNUSED;
+			writel(val, reg);
+
+			/* Notify SSIC that SSIC profile programming is done */
+			val = readl(reg) | PROG_DONE;
+			writel(val, reg);
+			readl(reg);
+		}
+>>>>>>> upstream/rpi-4.4.y
 	}
 }
 

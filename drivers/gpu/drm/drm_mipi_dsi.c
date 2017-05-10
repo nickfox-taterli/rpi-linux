@@ -75,6 +75,24 @@ static int mipi_dsi_uevent(struct device *dev, struct kobj_uevent_env *env)
 	return 0;
 }
 
+/**
+ * Send modalias events when devices are created on the bus, so that
+ * modules can load automatically.
+ */
+static int mipi_dsi_uevent(struct device *dev, struct kobj_uevent_env *env)
+{
+	int rc;
+
+	/* Just do the OF uevent, which emits the compatible string so
+	 * that a MODULE_DEVICE_TABLE(of, ...) works.
+	 */
+	rc = of_device_uevent_modalias(dev, env);
+	if (rc != -ENODEV)
+		return rc;
+
+	return 0;
+}
+
 static const struct dev_pm_ops mipi_dsi_device_pm_ops = {
 	.runtime_suspend = pm_generic_runtime_suspend,
 	.runtime_resume = pm_generic_runtime_resume,
@@ -91,6 +109,7 @@ static struct bus_type mipi_dsi_bus_type = {
 	.match = mipi_dsi_device_match,
 	.uevent = mipi_dsi_uevent,
 	.pm = &mipi_dsi_device_pm_ops,
+	.uevent = mipi_dsi_uevent,
 };
 
 static int of_device_match(struct device *dev, void *data)
@@ -1155,6 +1174,12 @@ static int __init mipi_dsi_bus_init(void)
 	return bus_register(&mipi_dsi_bus_type);
 }
 postcore_initcall(mipi_dsi_bus_init);
+
+static void __exit mipi_dsi_bus_exit(void)
+{
+	bus_unregister(&mipi_dsi_bus_type);
+}
+module_exit(mipi_dsi_bus_exit);
 
 MODULE_AUTHOR("Andrzej Hajda <a.hajda@samsung.com>");
 MODULE_DESCRIPTION("MIPI DSI Bus");

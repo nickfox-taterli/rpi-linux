@@ -53,7 +53,11 @@ struct frame_vector *vb2_create_framevec(unsigned long start,
 	vec = frame_vector_create(nr);
 	if (!vec)
 		return ERR_PTR(-ENOMEM);
+<<<<<<< HEAD
 	ret = get_vaddr_frames(start & PAGE_MASK, nr, flags, vec);
+=======
+	ret = get_vaddr_frames(start & PAGE_MASK, nr, write, true, vec);
+>>>>>>> upstream/rpi-4.4.y
 	if (ret < 0)
 		goto out_destroy;
 	/* We accept only complete set of PFNs */

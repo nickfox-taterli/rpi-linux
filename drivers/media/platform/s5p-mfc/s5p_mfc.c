@@ -1060,12 +1060,24 @@ static void s5p_mfc_memdev_release(struct device *dev)
 	of_reserved_mem_device_release(dev);
 }
 
+<<<<<<< HEAD
 static struct device *s5p_mfc_alloc_memdev(struct device *dev,
 					   const char *name, unsigned int idx)
+=======
+static void s5p_mfc_memdev_release(struct device *dev)
+{
+	dma_release_declared_memory(dev);
+}
+
+static void *mfc_get_drv_data(struct platform_device *pdev);
+
+static int s5p_mfc_alloc_memdevs(struct s5p_mfc_dev *dev)
+>>>>>>> upstream/rpi-4.4.y
 {
 	struct device *child;
 	int ret;
 
+<<<<<<< HEAD
 	child = devm_kzalloc(dev, sizeof(struct device), GFP_KERNEL);
 	if (!child)
 		return NULL;
@@ -1084,6 +1096,26 @@ static struct device *s5p_mfc_alloc_memdev(struct device *dev,
 		if (ret == 0)
 			return child;
 		device_del(child);
+=======
+	dev->mem_dev_l = devm_kzalloc(&dev->plat_dev->dev,
+			sizeof(struct device), GFP_KERNEL);
+	if (!dev->mem_dev_l) {
+		mfc_err("Not enough memory\n");
+		return -ENOMEM;
+	}
+
+	dev_set_name(dev->mem_dev_l, "%s", "s5p-mfc-l");
+	dev->mem_dev_l->release = s5p_mfc_memdev_release;
+	device_initialize(dev->mem_dev_l);
+	of_property_read_u32_array(dev->plat_dev->dev.of_node,
+			"samsung,mfc-l", mem_info, 2);
+	if (dma_declare_coherent_memory(dev->mem_dev_l, mem_info[0],
+				mem_info[0], mem_info[1],
+				DMA_MEMORY_MAP | DMA_MEMORY_EXCLUSIVE) == 0) {
+		mfc_err("Failed to declare coherent memory for\n"
+		"MFC device\n");
+		return -ENOMEM;
+>>>>>>> upstream/rpi-4.4.y
 	}
 
 	put_device(child);
@@ -1110,6 +1142,7 @@ static int s5p_mfc_configure_dma_memory(struct s5p_mfc_dev *mfc_dev)
 		return ret;
 	}
 
+<<<<<<< HEAD
 	/*
 	 * Create and initialize virtual devices for accessing
 	 * reserved memory regions.
@@ -1123,6 +1156,19 @@ static int s5p_mfc_configure_dma_memory(struct s5p_mfc_dev *mfc_dev)
 	if (!mfc_dev->mem_dev_r) {
 		device_unregister(mfc_dev->mem_dev_l);
 		return -ENODEV;
+=======
+	dev_set_name(dev->mem_dev_r, "%s", "s5p-mfc-r");
+	dev->mem_dev_r->release = s5p_mfc_memdev_release;
+	device_initialize(dev->mem_dev_r);
+	of_property_read_u32_array(dev->plat_dev->dev.of_node,
+			"samsung,mfc-r", mem_info, 2);
+	if (dma_declare_coherent_memory(dev->mem_dev_r, mem_info[0],
+				mem_info[0], mem_info[1],
+				DMA_MEMORY_MAP | DMA_MEMORY_EXCLUSIVE) == 0) {
+		pr_err("Failed to declare coherent memory for\n"
+		"MFC device\n");
+		return -ENOMEM;
+>>>>>>> upstream/rpi-4.4.y
 	}
 
 	return 0;

@@ -408,6 +408,7 @@ static inline __must_check
 void **radix_tree_iter_retry(struct radix_tree_iter *iter)
 {
 	iter->next_index = iter->index;
+<<<<<<< HEAD
 	iter->tags = 0;
 	return NULL;
 }
@@ -431,6 +432,8 @@ void **radix_tree_iter_next(struct radix_tree_iter *iter)
 {
 	iter->next_index = __radix_tree_iter_add(iter, 1);
 	iter->tags = 0;
+=======
+>>>>>>> upstream/rpi-4.4.y
 	return NULL;
 }
 
@@ -502,10 +505,16 @@ radix_tree_next_slot(void **slot, struct radix_tree_iter *iter, unsigned flags)
 			return slot + offset + 1;
 		}
 	} else {
+<<<<<<< HEAD
 		long count = radix_tree_chunk_size(iter);
 		void *canon = slot;
 
 		while (--count > 0) {
+=======
+		long size = radix_tree_chunk_size(iter);
+
+		while (--size > 0) {
+>>>>>>> upstream/rpi-4.4.y
 			slot++;
 			iter->index = __radix_tree_iter_add(iter, 1);
 

@@ -430,6 +430,64 @@ pnfs_layout_remove_lseg(struct pnfs_layout_hdr *lo,
 	rpc_wake_up(&NFS_SERVER(inode)->roc_rpcwaitq);
 }
 
+<<<<<<< HEAD
+=======
+/* Return true if layoutreturn is needed */
+static bool
+pnfs_layout_need_return(struct pnfs_layout_hdr *lo,
+			struct pnfs_layout_segment *lseg)
+{
+	struct pnfs_layout_segment *s;
+
+	if (!test_and_clear_bit(NFS_LSEG_LAYOUTRETURN, &lseg->pls_flags))
+		return false;
+
+	list_for_each_entry(s, &lo->plh_segs, pls_list)
+		if (s != lseg && test_bit(NFS_LSEG_LAYOUTRETURN, &s->pls_flags))
+			return false;
+
+	return true;
+}
+
+static bool
+pnfs_prepare_layoutreturn(struct pnfs_layout_hdr *lo)
+{
+	/* Serialise LAYOUTGET/LAYOUTRETURN */
+	if (atomic_read(&lo->plh_outstanding) != 0)
+		return false;
+	if (test_and_set_bit(NFS_LAYOUT_RETURN, &lo->plh_flags))
+		return false;
+	lo->plh_return_iomode = 0;
+	pnfs_get_layout_hdr(lo);
+	clear_bit(NFS_LAYOUT_RETURN_BEFORE_CLOSE, &lo->plh_flags);
+	return true;
+}
+
+static void pnfs_layoutreturn_before_put_lseg(struct pnfs_layout_segment *lseg,
+		struct pnfs_layout_hdr *lo, struct inode *inode)
+{
+	lo = lseg->pls_layout;
+	inode = lo->plh_inode;
+
+	spin_lock(&inode->i_lock);
+	if (pnfs_layout_need_return(lo, lseg)) {
+		nfs4_stateid stateid;
+		enum pnfs_iomode iomode;
+		bool send;
+
+		stateid = lo->plh_stateid;
+		iomode = lo->plh_return_iomode;
+		send = pnfs_prepare_layoutreturn(lo);
+		spin_unlock(&inode->i_lock);
+		if (send) {
+			/* Send an async layoutreturn so we dont deadlock */
+			pnfs_send_layoutreturn(lo, stateid, iomode, false);
+		}
+	} else
+		spin_unlock(&inode->i_lock);
+}
+
+>>>>>>> upstream/rpi-4.4.y
 void
 pnfs_put_lseg(struct pnfs_layout_segment *lseg)
 {

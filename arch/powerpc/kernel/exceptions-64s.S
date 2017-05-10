@@ -918,7 +918,73 @@ EXC_VIRT_BEGIN(system_call, 0x4c00, 0x4d00)
 	SYSCALL_PSERIES_3
 EXC_VIRT_END(system_call, 0x4c00, 0x4d00)
 
+<<<<<<< HEAD
 TRAMP_KVM(PACA_EXGEN, 0xc00)
+=======
+	STD_RELON_EXCEPTION_PSERIES(0x4d00, 0xd00, single_step)
+
+	. = 0x4e00
+	b	.	/* Can't happen, see v2.07 Book III-S section 6.5 */
+
+	. = 0x4e20
+	b	.	/* Can't happen, see v2.07 Book III-S section 6.5 */
+
+	. = 0x4e40
+emulation_assist_relon_trampoline:
+	SET_SCRATCH0(r13)
+	EXCEPTION_PROLOG_0(PACA_EXGEN)
+	b	emulation_assist_relon_hv
+
+	. = 0x4e60
+	b	.	/* Can't happen, see v2.07 Book III-S section 6.5 */
+
+	. = 0x4e80
+h_doorbell_relon_trampoline:
+	SET_SCRATCH0(r13)
+	EXCEPTION_PROLOG_0(PACA_EXGEN)
+	b	h_doorbell_relon_hv
+
+	. = 0x4f00
+performance_monitor_relon_pseries_trampoline:
+	SET_SCRATCH0(r13)
+	EXCEPTION_PROLOG_0(PACA_EXGEN)
+	b	performance_monitor_relon_pSeries
+
+	. = 0x4f20
+altivec_unavailable_relon_pseries_trampoline:
+	SET_SCRATCH0(r13)
+	EXCEPTION_PROLOG_0(PACA_EXGEN)
+	b	altivec_unavailable_relon_pSeries
+
+	. = 0x4f40
+vsx_unavailable_relon_pseries_trampoline:
+	SET_SCRATCH0(r13)
+	EXCEPTION_PROLOG_0(PACA_EXGEN)
+	b	vsx_unavailable_relon_pSeries
+
+	. = 0x4f60
+facility_unavailable_relon_trampoline:
+	SET_SCRATCH0(r13)
+	EXCEPTION_PROLOG_0(PACA_EXGEN)
+	b	facility_unavailable_relon_pSeries
+
+	. = 0x4f80
+hv_facility_unavailable_relon_trampoline:
+	SET_SCRATCH0(r13)
+	EXCEPTION_PROLOG_0(PACA_EXGEN)
+	b	hv_facility_unavailable_relon_hv
+
+	STD_RELON_EXCEPTION_PSERIES(0x5300, 0x1300, instruction_breakpoint)
+#ifdef CONFIG_PPC_DENORMALISATION
+	. = 0x5500
+	b	denorm_exception_hv
+#endif
+	STD_RELON_EXCEPTION_PSERIES(0x5700, 0x1700, altivec_assist)
+
+	.align	7
+system_call_entry:
+	b	system_call_common
+>>>>>>> upstream/rpi-4.4.y
 
 
 EXC_REAL(single_step, 0xd00, 0xe00)
@@ -1125,6 +1191,28 @@ EXC_VIRT_OOL_HV(h_facility_unavailable, 0x4f80, 0x4fa0, 0xf80)
 TRAMP_KVM_HV(PACA_EXGEN, 0xf80)
 EXC_COMMON(h_facility_unavailable_common, 0xf80, facility_unavailable_exception)
 
+<<<<<<< HEAD
+=======
+	/*
+	 * The __end_interrupts marker must be past the out-of-line (OOL)
+	 * handlers, so that they are copied to real address 0x100 when running
+	 * a relocatable kernel. This ensures they can be reached from the short
+	 * trampoline handlers (like 0x4f00, 0x4f20, etc.) which branch
+	 * directly, without using LOAD_HANDLER().
+	 */
+	.align	7
+	.globl	__end_interrupts
+__end_interrupts:
+
+#if defined(CONFIG_PPC_PSERIES) || defined(CONFIG_PPC_POWERNV)
+/*
+ * Data area reserved for FWNMI option.
+ * This address (0x7000) is fixed by the RPA.
+ */
+	.= 0x7000
+	.globl fwnmi_data_area
+fwnmi_data_area:
+>>>>>>> upstream/rpi-4.4.y
 
 EXC_REAL_NONE(0xfa0, 0x1200)
 EXC_VIRT_NONE(0x4fa0, 0x5200)

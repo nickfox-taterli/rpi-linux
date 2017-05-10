@@ -1366,7 +1366,13 @@ int amdgpu_vm_bo_map(struct amdgpu_device *adev,
 	saddr /= AMDGPU_GPU_PAGE_SIZE;
 	eaddr /= AMDGPU_GPU_PAGE_SIZE;
 
+<<<<<<< HEAD
 	it = interval_tree_iter_first(&vm->va, saddr, eaddr);
+=======
+	spin_lock(&vm->it_lock);
+	it = interval_tree_iter_first(&vm->va, saddr, eaddr);
+	spin_unlock(&vm->it_lock);
+>>>>>>> upstream/rpi-4.4.y
 	if (it) {
 		struct amdgpu_bo_va_mapping *tmp;
 		tmp = container_of(it, struct amdgpu_bo_va_mapping, it);
@@ -1586,9 +1592,12 @@ int amdgpu_vm_init(struct amdgpu_device *adev, struct amdgpu_vm *vm)
 	const unsigned align = min(AMDGPU_VM_PTB_ALIGN_SIZE,
 		AMDGPU_VM_PTE_COUNT * 8);
 	unsigned pd_size, pd_entries;
+<<<<<<< HEAD
 	unsigned ring_instance;
 	struct amdgpu_ring *ring;
 	struct amd_sched_rq *rq;
+=======
+>>>>>>> upstream/rpi-4.4.y
 	int i, r;
 
 	for (i = 0; i < AMDGPU_MAX_RINGS; ++i)
@@ -1696,6 +1705,7 @@ void amdgpu_vm_fini(struct amdgpu_device *adev, struct amdgpu_vm *vm)
 		kfree(mapping);
 	}
 
+<<<<<<< HEAD
 	for (i = 0; i < amdgpu_vm_num_pdes(adev); i++) {
 		struct amdgpu_bo *pt = vm->page_tables[i].entry.robj;
 
@@ -1705,6 +1715,10 @@ void amdgpu_vm_fini(struct amdgpu_device *adev, struct amdgpu_vm *vm)
 		amdgpu_bo_unref(&pt->shadow);
 		amdgpu_bo_unref(&pt);
 	}
+=======
+	for (i = 0; i < amdgpu_vm_num_pdes(adev); i++)
+		amdgpu_bo_unref(&vm->page_tables[i].bo);
+>>>>>>> upstream/rpi-4.4.y
 	drm_free_large(vm->page_tables);
 
 	amdgpu_bo_unref(&vm->page_directory->shadow);

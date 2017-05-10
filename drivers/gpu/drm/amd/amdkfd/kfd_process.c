@@ -407,34 +407,51 @@ void kfd_unbind_process_from_device(struct kfd_dev *dev, unsigned int pasid)
 
 	BUG_ON(dev == NULL);
 
+<<<<<<< HEAD
+=======
+	idx = srcu_read_lock(&kfd_processes_srcu);
+
+>>>>>>> upstream/rpi-4.4.y
 	/*
 	 * Look for the process that matches the pasid. If there is no such
 	 * process, we either released it in amdkfd's own notifier, or there
 	 * is a bug. Unfortunately, there is no way to tell...
 	 */
+<<<<<<< HEAD
 	p = kfd_lookup_process_by_pasid(pasid);
 	if (!p)
 		return;
 
 	pr_debug("Unbinding process %d from IOMMU\n", pasid);
+=======
+	hash_for_each_rcu(kfd_processes_table, i, p, kfd_processes)
+		if (p->pasid == pasid) {
 
-	if ((dev->dbgmgr) && (dev->dbgmgr->pasid == p->pasid))
-		kfd_dbgmgr_destroy(dev->dbgmgr);
+			srcu_read_unlock(&kfd_processes_srcu, idx);
 
-	pqm_uninit(&p->pqm);
+			pr_debug("Unbinding process %d from IOMMU\n", pasid);
 
-	pdd = kfd_get_process_device_data(dev, p);
+			mutex_lock(&p->mutex);
+>>>>>>> upstream/rpi-4.4.y
 
-	if (!pdd) {
-		mutex_unlock(&p->mutex);
-		return;
-	}
+			if ((dev->dbgmgr) && (dev->dbgmgr->pasid == p->pasid))
+				kfd_dbgmgr_destroy(dev->dbgmgr);
 
-	if (pdd->reset_wavefronts) {
-		dbgdev_wave_reset_wavefronts(pdd->dev, p);
-		pdd->reset_wavefronts = false;
-	}
+			pqm_uninit(&p->pqm);
 
+			pdd = kfd_get_process_device_data(dev, p);
+
+			if (!pdd) {
+				mutex_unlock(&p->mutex);
+				return;
+			}
+
+			if (pdd->reset_wavefronts) {
+				dbgdev_wave_reset_wavefronts(pdd->dev, p);
+				pdd->reset_wavefronts = false;
+			}
+
+<<<<<<< HEAD
 	/*
 	 * Just mark pdd as unbound, because we still need it
 	 * to call amd_iommu_unbind_pasid() in when the
@@ -443,8 +460,23 @@ void kfd_unbind_process_from_device(struct kfd_dev *dev, unsigned int pasid)
 	 * because the IOMMU called us.
 	 */
 	pdd->bound = false;
+=======
+			/*
+			 * Just mark pdd as unbound, because we still need it
+			 * to call amd_iommu_unbind_pasid() in when the
+			 * process exits.
+			 * We don't call amd_iommu_unbind_pasid() here
+			 * because the IOMMU called us.
+			 */
+			pdd->bound = false;
+>>>>>>> upstream/rpi-4.4.y
 
-	mutex_unlock(&p->mutex);
+			mutex_unlock(&p->mutex);
+
+			return;
+		}
+
+	srcu_read_unlock(&kfd_processes_srcu, idx);
 }
 
 struct kfd_process_device *kfd_get_first_process_device_data(struct kfd_process *p)

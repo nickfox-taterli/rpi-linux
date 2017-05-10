@@ -74,6 +74,7 @@ void notrace _fiq_print(enum fiq_debug_level dbg_lvl, volatile struct fiq_state 
 	}
 }
 
+<<<<<<< HEAD
 
 #ifdef CONFIG_ARM64
 
@@ -89,11 +90,17 @@ inline void fiq_fsm_spin_unlock(fiq_lock_t *lock)
 
 #else
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 /**
  * fiq_fsm_spin_lock() - ARMv6+ bare bones spinlock
  * Must be called with local interrupts and FIQ disabled.
  */
+<<<<<<< HEAD
 #if defined(CONFIG_ARCH_BCM2835) && defined(CONFIG_SMP)
+=======
+#if defined(CONFIG_ARCH_BCM2709) && defined(CONFIG_SMP)
+>>>>>>> upstream/rpi-4.4.y
 inline void fiq_fsm_spin_lock(fiq_lock_t *lock)
 {
 	unsigned long tmp;
@@ -126,7 +133,11 @@ inline void fiq_fsm_spin_lock(fiq_lock_t *lock) { }
 /**
  * fiq_fsm_spin_unlock() - ARMv6+ bare bones spinunlock
  */
+<<<<<<< HEAD
 #if defined(CONFIG_ARCH_BCM2835) && defined(CONFIG_SMP)
+=======
+#if defined(CONFIG_ARCH_BCM2709) && defined(CONFIG_SMP)
+>>>>>>> upstream/rpi-4.4.y
 inline void fiq_fsm_spin_unlock(fiq_lock_t *lock)
 {
 	smp_mb();
@@ -137,8 +148,11 @@ inline void fiq_fsm_spin_unlock(fiq_lock_t *lock)
 inline void fiq_fsm_spin_unlock(fiq_lock_t *lock) { }
 #endif
 
+<<<<<<< HEAD
 #endif
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 /**
  * fiq_fsm_restart_channel() - Poke channel enable bit for a split transaction
  * @channel: channel to re-enable
@@ -491,10 +505,14 @@ static void notrace noinline fiq_fsm_start_next_periodic(struct fiq_state *st, i
 		if (st->channel[n].fsm == FIQ_PER_ISO_OUT_PENDING) {
 			if (!fiq_fsm_tt_in_use(st, num_channels, n)) {
 				fiq_print(FIQDBG_INT, st, "NEXTISO ");
+<<<<<<< HEAD
 				if (st->channel[n].nrpackets == 1)
 					st->channel[n].fsm = FIQ_PER_ISO_OUT_LAST;
 				else
 					st->channel[n].fsm = FIQ_PER_ISO_OUT_ACTIVE;
+=======
+				st->channel[n].fsm = FIQ_PER_ISO_OUT_ACTIVE;
+>>>>>>> upstream/rpi-4.4.y
 				fiq_fsm_restart_channel(st, n, 0);
 				break;
 			}

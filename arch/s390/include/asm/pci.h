@@ -61,12 +61,18 @@ struct zpci_fmb {
 	u64 st_ops;
 	u64 stb_ops;
 	u64 rpcit_ops;
+<<<<<<< HEAD
 	/* format specific counters */
 	union {
 		struct zpci_fmb_fmt0 fmt0;
 		struct zpci_fmb_fmt1 fmt1;
 		struct zpci_fmb_fmt2 fmt2;
 	};
+=======
+	u64 dma_rbytes;
+	u64 dma_wbytes;
+	u64 pad[2];
+>>>>>>> upstream/rpi-4.4.y
 } __packed __aligned(128);
 
 enum zpci_state {

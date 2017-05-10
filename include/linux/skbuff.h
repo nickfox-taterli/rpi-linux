@@ -301,11 +301,14 @@ struct sk_buff;
 #define MAX_SKB_FRAGS (65536/PAGE_SIZE + 1)
 #endif
 extern int sysctl_max_skb_frags;
+<<<<<<< HEAD
 
 /* Set skb_shinfo(skb)->gso_size to this in case you want skb_segment to
  * segment using its current segmentation instead.
  */
 #define GSO_BY_FRAGS	0xFFFF
+=======
+>>>>>>> upstream/rpi-4.4.y
 
 typedef struct skb_frag_struct skb_frag_t;
 
@@ -2929,6 +2932,42 @@ static inline void skb_postpush_rcsum(struct sk_buff *skb,
 }
 
 unsigned char *skb_pull_rcsum(struct sk_buff *skb, unsigned int len);
+
+static inline void skb_postpush_rcsum(struct sk_buff *skb,
+				      const void *start, unsigned int len)
+{
+	/* For performing the reverse operation to skb_postpull_rcsum(),
+	 * we can instead of ...
+	 *
+	 *   skb->csum = csum_add(skb->csum, csum_partial(start, len, 0));
+	 *
+	 * ... just use this equivalent version here to save a few
+	 * instructions. Feeding csum of 0 in csum_partial() and later
+	 * on adding skb->csum is equivalent to feed skb->csum in the
+	 * first place.
+	 */
+	if (skb->ip_summed == CHECKSUM_COMPLETE)
+		skb->csum = csum_partial(start, len, skb->csum);
+}
+
+/**
+ *	skb_push_rcsum - push skb and update receive checksum
+ *	@skb: buffer to update
+ *	@len: length of data pulled
+ *
+ *	This function performs an skb_push on the packet and updates
+ *	the CHECKSUM_COMPLETE checksum.  It should be used on
+ *	receive path processing instead of skb_push unless you know
+ *	that the checksum difference is zero (e.g., a valid IP header)
+ *	or you are setting ip_summed to CHECKSUM_NONE.
+ */
+static inline unsigned char *skb_push_rcsum(struct sk_buff *skb,
+					    unsigned int len)
+{
+	skb_push(skb, len);
+	skb_postpush_rcsum(skb, skb->data, len);
+	return skb->data;
+}
 
 /**
  *	skb_push_rcsum - push skb and update receive checksum

@@ -57,6 +57,10 @@
 #include <linux/vmalloc.h> /* TODO: replace with more sophisticated array */
 #include <linux/kthread.h>
 #include <linux/delay.h>
+<<<<<<< HEAD
+=======
+#include <linux/cpuset.h>
+>>>>>>> upstream/rpi-4.4.y
 #include <linux/atomic.h>
 #include <linux/cpuset.h>
 #include <linux/proc_ns.h>
@@ -5488,10 +5492,17 @@ static int cgroup_destroy_locked(struct cgroup *cgrp)
 	 */
 	cgrp->self.flags &= ~CSS_ONLINE;
 
+<<<<<<< HEAD
 	spin_lock_irq(&css_set_lock);
 	list_for_each_entry(link, &cgrp->cset_links, cset_link)
 		link->cset->dead = true;
 	spin_unlock_irq(&css_set_lock);
+=======
+	spin_lock_bh(&css_set_lock);
+	list_for_each_entry(link, &cgrp->cset_links, cset_link)
+		link->cset->dead = true;
+	spin_unlock_bh(&css_set_lock);
+>>>>>>> upstream/rpi-4.4.y
 
 	/* initiate massacre of all css's */
 	for_each_css(css, ssid, cgrp)
@@ -5627,7 +5638,11 @@ int __init cgroup_init_early(void)
 	return 0;
 }
 
+<<<<<<< HEAD
 static u16 cgroup_disable_mask __initdata = 1<<0;
+=======
+static unsigned long cgroup_disable_mask __initdata = 1<<0;
+>>>>>>> upstream/rpi-4.4.y
 
 /**
  * cgroup_init - cgroup initialization
@@ -6137,6 +6152,7 @@ static int __init cgroup_disable(char *str)
 }
 __setup("cgroup_disable=", cgroup_disable);
 
+<<<<<<< HEAD
 static int __init cgroup_no_v1(char *str)
 {
 	struct cgroup_subsys *ss;
@@ -6164,6 +6180,8 @@ static int __init cgroup_no_v1(char *str)
 }
 __setup("cgroup_no_v1=", cgroup_no_v1);
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 static int __init cgroup_enable(char *str)
 {
 	struct cgroup_subsys *ss;
@@ -6178,7 +6196,10 @@ static int __init cgroup_enable(char *str)
 			if (strcmp(token, ss->name) &&
 			    strcmp(token, ss->legacy_name))
 				continue;
+<<<<<<< HEAD
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 			cgroup_disable_mask &= ~(1 << i);
 		}
 	}

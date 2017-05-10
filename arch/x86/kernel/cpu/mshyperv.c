@@ -159,6 +159,7 @@ static unsigned char hv_get_nmi_reason(void)
 	return 0;
 }
 
+<<<<<<< HEAD
 #ifdef CONFIG_X86_LOCAL_APIC
 /*
  * Prior to WS2016 Debug-VM sends NMIs to all CPUs which makes
@@ -179,6 +180,8 @@ static int hv_nmi_unknown(unsigned int val, struct pt_regs *regs)
 }
 #endif
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 static void __init ms_hyperv_init_platform(void)
 {
 	/*

@@ -48,7 +48,11 @@ static inline struct fou *fou_from_sock(struct sock *sk)
 	return sk->sk_user_data;
 }
 
+<<<<<<< HEAD
 static int fou_recv_pull(struct sk_buff *skb, struct fou *fou, size_t len)
+=======
+static int fou_recv_pull(struct sk_buff *skb, size_t len)
+>>>>>>> upstream/rpi-4.4.y
 {
 	/* Remove 'len' bytes from the packet (UDP header and
 	 * FOU header if present).
@@ -72,7 +76,11 @@ static int fou_udp_recv(struct sock *sk, struct sk_buff *skb)
 	if (!fou)
 		return 1;
 
+<<<<<<< HEAD
 	if (fou_recv_pull(skb, fou, sizeof(struct udphdr)))
+=======
+	if (fou_recv_pull(skb, sizeof(struct udphdr)))
+>>>>>>> upstream/rpi-4.4.y
 		goto drop;
 
 	return -fou->protocol;
@@ -442,7 +450,10 @@ next_proto:
 		goto out_unlock;
 
 	pp = call_gro_receive(ops->callbacks.gro_receive, head, skb);
+<<<<<<< HEAD
 	flush = 0;
+=======
+>>>>>>> upstream/rpi-4.4.y
 
 out_unlock:
 	rcu_read_unlock();

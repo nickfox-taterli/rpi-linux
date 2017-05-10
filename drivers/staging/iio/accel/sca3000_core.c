@@ -669,6 +669,126 @@ error_ret:
 	return ret;
 }
 
+<<<<<<< HEAD
+=======
+/**
+ * __sca3000_get_base_freq() obtain mode specific base frequency
+ *
+ * lock must be held
+ **/
+static inline int __sca3000_get_base_freq(struct sca3000_state *st,
+					  const struct sca3000_chip_info *info,
+					  int *base_freq)
+{
+	int ret;
+
+	ret = sca3000_read_data_short(st, SCA3000_REG_ADDR_MODE, 1);
+	if (ret)
+		goto error_ret;
+	switch (0x03 & st->rx[0]) {
+	case SCA3000_MEAS_MODE_NORMAL:
+		*base_freq = info->measurement_mode_freq;
+		break;
+	case SCA3000_MEAS_MODE_OP_1:
+		*base_freq = info->option_mode_1_freq;
+		break;
+	case SCA3000_MEAS_MODE_OP_2:
+		*base_freq = info->option_mode_2_freq;
+		break;
+	}
+error_ret:
+	return ret;
+}
+
+/**
+ * sca3000_read_frequency() sysfs interface to get the current frequency
+ **/
+static ssize_t sca3000_read_frequency(struct device *dev,
+				      struct device_attribute *attr,
+				      char *buf)
+{
+	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
+	struct sca3000_state *st = iio_priv(indio_dev);
+	int ret, len = 0, base_freq = 0, val;
+
+	mutex_lock(&st->lock);
+	ret = __sca3000_get_base_freq(st, st->info, &base_freq);
+	if (ret)
+		goto error_ret_mut;
+	ret = sca3000_read_ctrl_reg(st, SCA3000_REG_CTRL_SEL_OUT_CTRL);
+	mutex_unlock(&st->lock);
+	if (ret < 0)
+		goto error_ret;
+	val = ret;
+	if (base_freq > 0)
+		switch (val & 0x03) {
+		case 0x00:
+		case 0x03:
+			len = sprintf(buf, "%d\n", base_freq);
+			break;
+		case 0x01:
+			len = sprintf(buf, "%d\n", base_freq / 2);
+			break;
+		case 0x02:
+			len = sprintf(buf, "%d\n", base_freq / 4);
+			break;
+	}
+
+	return len;
+error_ret_mut:
+	mutex_unlock(&st->lock);
+error_ret:
+	return ret;
+}
+
+/**
+ * sca3000_set_frequency() sysfs interface to set the current frequency
+ **/
+static ssize_t sca3000_set_frequency(struct device *dev,
+				     struct device_attribute *attr,
+				     const char *buf,
+				     size_t len)
+{
+	struct iio_dev *indio_dev = dev_to_iio_dev(dev);
+	struct sca3000_state *st = iio_priv(indio_dev);
+	int ret, base_freq = 0;
+	int ctrlval;
+	int val;
+
+	ret = kstrtoint(buf, 10, &val);
+	if (ret)
+		return ret;
+
+	mutex_lock(&st->lock);
+	/* What mode are we in? */
+	ret = __sca3000_get_base_freq(st, st->info, &base_freq);
+	if (ret)
+		goto error_free_lock;
+
+	ret = sca3000_read_ctrl_reg(st, SCA3000_REG_CTRL_SEL_OUT_CTRL);
+	if (ret < 0)
+		goto error_free_lock;
+	ctrlval = ret;
+	/* clear the bits */
+	ctrlval &= ~0x03;
+
+	if (val == base_freq / 2) {
+		ctrlval |= SCA3000_OUT_CTRL_BUF_DIV_2;
+	} else if (val == base_freq / 4) {
+		ctrlval |= SCA3000_OUT_CTRL_BUF_DIV_4;
+	} else if (val != base_freq) {
+		ret = -EINVAL;
+		goto error_free_lock;
+	}
+	ret = sca3000_write_ctrl_reg(st, SCA3000_REG_CTRL_SEL_OUT_CTRL,
+				     ctrlval);
+error_free_lock:
+	mutex_unlock(&st->lock);
+
+	return ret ? ret : len;
+}
+
+>>>>>>> upstream/rpi-4.4.y
 /*
  * Should only really be registered if ring buffer support is compiled in.
  * Does no harm however and doing it right would add a fair bit of complexity

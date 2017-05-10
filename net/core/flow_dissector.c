@@ -450,6 +450,7 @@ ip_proto_again:
 						     data, hlen, _ppp_hdr);
 			if (!ppp_hdr)
 				goto out_bad;
+<<<<<<< HEAD
 
 			switch (PPP_PROTOCOL(ppp_hdr)) {
 			case PPP_IP:
@@ -464,6 +465,17 @@ ip_proto_again:
 			}
 
 			offset += PPP_HDRLEN;
+=======
+			proto = eth->h_proto;
+			nhoff += sizeof(*eth);
+
+			/* Cap headers that we access via pointers at the
+			 * end of the Ethernet header as our maximum alignment
+			 * at that point is only 2 bytes.
+			 */
+			if (NET_IP_ALIGN)
+				hlen = nhoff;
+>>>>>>> upstream/rpi-4.4.y
 		}
 
 		nhoff += offset;

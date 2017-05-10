@@ -421,6 +421,10 @@ struct nested_vmx {
 	/* vmcs02_list cache of VMCSs recently used to run L2 guests */
 	struct list_head vmcs02_pool;
 	int vmcs02_num;
+<<<<<<< HEAD
+=======
+	u64 vmcs01_tsc_offset;
+>>>>>>> upstream/rpi-4.4.y
 	bool change_vmcs01_virtual_x2apic_mode;
 	/* L2 must run next, and mustn't decide to exit to L1. */
 	bool nested_run_pending;
@@ -611,6 +615,7 @@ struct vcpu_vmx {
 #define PML_ENTITY_NUM		512
 	struct page *pml_pg;
 
+<<<<<<< HEAD
 	/* apic deadline value in host tsc */
 	u64 hv_deadline_tsc;
 
@@ -627,6 +632,9 @@ struct vcpu_vmx {
 	 */
 	u64 msr_ia32_feature_control;
 	u64 msr_ia32_feature_control_valid_bits;
+=======
+	u64 current_tsc_ratio;
+>>>>>>> upstream/rpi-4.4.y
 };
 
 enum segment_cache_field {
@@ -2273,8 +2281,15 @@ static void vmx_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
 
 	/* Setup TSC multiplier */
 	if (kvm_has_tsc_control &&
+<<<<<<< HEAD
 	    vmx->current_tsc_ratio != vcpu->arch.tsc_scaling_ratio)
 		decache_tsc_multiplier(vmx);
+=======
+	    vmx->current_tsc_ratio != vcpu->arch.tsc_scaling_ratio) {
+		vmx->current_tsc_ratio = vcpu->arch.tsc_scaling_ratio;
+		vmcs_write64(TSC_MULTIPLIER, vmx->current_tsc_ratio);
+	}
+>>>>>>> upstream/rpi-4.4.y
 
 	vmx_vcpu_pi_load(vcpu, cpu);
 	vmx->host_pkru = read_pkru();
@@ -8485,7 +8500,16 @@ static void vmx_set_virtual_x2apic_mode(struct kvm_vcpu *vcpu, bool set)
 		return;
 	}
 
+<<<<<<< HEAD
 	if (!cpu_has_vmx_virtualize_x2apic_mode())
+=======
+	/*
+	 * There is not point to enable virtualize x2apic without enable
+	 * apicv
+	 */
+	if (!cpu_has_vmx_virtualize_x2apic_mode() ||
+				!vmx_cpu_uses_apicv(vcpu))
+>>>>>>> upstream/rpi-4.4.y
 		return;
 
 	if (!cpu_need_tpr_shadow(vcpu))
@@ -10809,6 +10833,12 @@ static void nested_vmx_vmexit(struct kvm_vcpu *vcpu, u32 exit_reason,
 			      PIN_BASED_VMX_PREEMPTION_TIMER);
 	if (kvm_has_tsc_control)
 		decache_tsc_multiplier(vmx);
+
+	if (vmx->nested.change_vmcs01_virtual_x2apic_mode) {
+		vmx->nested.change_vmcs01_virtual_x2apic_mode = false;
+		vmx_set_virtual_x2apic_mode(vcpu,
+				vcpu->arch.apic_base & X2APIC_ENABLE);
+	}
 
 	if (vmx->nested.change_vmcs01_virtual_x2apic_mode) {
 		vmx->nested.change_vmcs01_virtual_x2apic_mode = false;

@@ -1403,6 +1403,13 @@ static inline bool __bvec_gap_to_prev(struct request_queue *q,
 		((bprv->bv_offset + bprv->bv_len) & queue_virt_boundary(q));
 }
 
+static inline bool __bvec_gap_to_prev(struct request_queue *q,
+				struct bio_vec *bprv, unsigned int offset)
+{
+	return offset ||
+		((bprv->bv_offset + bprv->bv_len) & queue_virt_boundary(q));
+}
+
 /*
  * Check if adding a bio_vec after bprv with offset would create a gap in
  * the SG list. Most drivers don't care about this, but some do.
@@ -1423,10 +1430,17 @@ static inline bool bio_will_gap(struct request_queue *q, struct bio *prev,
 
 		bio_get_last_bvec(prev, &pb);
 		bio_get_first_bvec(next, &nb);
+<<<<<<< HEAD
 
 		return __bvec_gap_to_prev(q, &pb, nb.bv_offset);
 	}
 
+=======
+
+		return __bvec_gap_to_prev(q, &pb, nb.bv_offset);
+	}
+
+>>>>>>> upstream/rpi-4.4.y
 	return false;
 }
 

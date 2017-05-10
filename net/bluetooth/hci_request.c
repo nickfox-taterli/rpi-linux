@@ -462,6 +462,7 @@ void __hci_req_update_name(struct hci_request *req)
 	struct hci_dev *hdev = req->hdev;
 	struct hci_cp_write_local_name cp;
 
+<<<<<<< HEAD
 	memcpy(cp.name, hdev->dev_name, sizeof(cp.name));
 
 	hci_req_add(req, HCI_OP_WRITE_LOCAL_NAME, sizeof(cp), &cp);
@@ -488,6 +489,29 @@ static u8 *create_uuid16_list(struct hci_dev *hdev, u8 *data, ptrdiff_t len)
 			continue;
 
 		if (uuid16 == PNP_INFO_SVCLASS_ID)
+=======
+	/* Go through the current white list programmed into the
+	 * controller one by one and check if that address is still
+	 * in the list of pending connections or list of devices to
+	 * report. If not present in either list, then queue the
+	 * command to remove it from the controller.
+	 */
+	list_for_each_entry(b, &hdev->le_white_list, list) {
+		/* If the device is neither in pend_le_conns nor
+		 * pend_le_reports then remove it from the whitelist.
+		 */
+		if (!hci_pend_le_action_lookup(&hdev->pend_le_conns,
+					       &b->bdaddr, b->bdaddr_type) &&
+		    !hci_pend_le_action_lookup(&hdev->pend_le_reports,
+					       &b->bdaddr, b->bdaddr_type)) {
+			struct hci_cp_le_del_from_white_list cp;
+
+			cp.bdaddr_type = b->bdaddr_type;
+			bacpy(&cp.bdaddr, &b->bdaddr);
+
+			hci_req_add(req, HCI_OP_LE_DEL_FROM_WHITE_LIST,
+				    sizeof(cp), &cp);
+>>>>>>> upstream/rpi-4.4.y
 			continue;
 
 		if (!uuids_start) {
@@ -497,6 +521,7 @@ static u8 *create_uuid16_list(struct hci_dev *hdev, u8 *data, ptrdiff_t len)
 			ptr += 2;
 		}
 
+<<<<<<< HEAD
 		/* Stop if not enough space to put next UUID */
 		if ((ptr - data) + sizeof(u16) > len) {
 			uuids_start[1] = EIR_UUID16_SOME;
@@ -506,6 +531,14 @@ static u8 *create_uuid16_list(struct hci_dev *hdev, u8 *data, ptrdiff_t len)
 		*ptr++ = (uuid16 & 0x00ff);
 		*ptr++ = (uuid16 & 0xff00) >> 8;
 		uuids_start[0] += sizeof(uuid16);
+=======
+		if (hci_find_irk_by_addr(hdev, &b->bdaddr, b->bdaddr_type)) {
+			/* White list can not be used with RPAs */
+			return 0x00;
+		}
+
+		white_list_entries++;
+>>>>>>> upstream/rpi-4.4.y
 	}
 
 	return ptr;

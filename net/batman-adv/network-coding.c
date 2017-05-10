@@ -212,6 +212,7 @@ void batadv_nc_init_orig(struct batadv_orig_node *orig_node)
 /**
  * batadv_nc_node_release - release nc_node from lists and queue for free after
  *  rcu grace period
+<<<<<<< HEAD
  * @ref: kref pointer of the nc_node
  */
 static void batadv_nc_node_release(struct kref *ref)
@@ -238,14 +239,33 @@ static void batadv_nc_node_put(struct batadv_nc_node *nc_node)
  * batadv_nc_path_release - release nc_path from lists and queue for free after
  *  rcu grace period
  * @ref: kref pointer of the nc_path
+=======
+ * @nc_node: the nc node to free
+ */
+static void batadv_nc_node_release(struct batadv_nc_node *nc_node)
+{
+	batadv_orig_node_free_ref(nc_node->orig_node);
+	kfree_rcu(nc_node, rcu);
+}
+
+/**
+ * batadv_nc_node_free_ref - decrement the nc node refcounter and possibly
+ *  release it
+ * @nc_node: the nc node to free
+>>>>>>> upstream/rpi-4.4.y
  */
 static void batadv_nc_path_release(struct kref *ref)
 {
+<<<<<<< HEAD
 	struct batadv_nc_path *nc_path;
 
 	nc_path = container_of(ref, struct batadv_nc_path, refcount);
 
 	kfree_rcu(nc_path, rcu);
+=======
+	if (atomic_dec_and_test(&nc_node->refcount))
+		batadv_nc_node_release(nc_node);
+>>>>>>> upstream/rpi-4.4.y
 }
 
 /**

@@ -22,8 +22,13 @@
 #define __iowmb()		do { } while (0)
 #endif
 
+<<<<<<< HEAD
 extern void __iomem *ioremap(phys_addr_t paddr, unsigned long size);
 extern void __iomem *ioremap_prot(phys_addr_t paddr, unsigned long size,
+=======
+extern void __iomem *ioremap(unsigned long physaddr, unsigned long size);
+extern void __iomem *ioremap_prot(phys_addr_t offset, unsigned long size,
+>>>>>>> upstream/rpi-4.4.y
 				  unsigned long flags);
 static inline void __iomem *ioport_map(unsigned long port, unsigned int nr)
 {

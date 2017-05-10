@@ -40,6 +40,12 @@
 
 #include "hyperv_net.h"
 
+<<<<<<< HEAD
+=======
+/* Restrict GSO size to account for NVGRE */
+#define NETVSC_GSO_MAX_SIZE	62768
+
+>>>>>>> upstream/rpi-4.4.y
 #define RING_SIZE_MIN 64
 #define LINKCHANGE_INT (2 * HZ)
 #define NETVSC_HW_FEATURES	(NETIF_F_RXCSUM | \

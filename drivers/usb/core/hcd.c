@@ -1103,7 +1103,11 @@ static int register_root_hub(struct usb_hcd *hcd)
 		if (!retval) {
 			usb_dev->lpm_capable = usb_device_supports_lpm(usb_dev);
 		} else if (usb_dev->speed >= USB_SPEED_SUPER) {
+<<<<<<< HEAD
 			mutex_unlock(&usb_bus_idr_lock);
+=======
+			mutex_unlock(&usb_bus_list_lock);
+>>>>>>> upstream/rpi-4.4.y
 			dev_dbg(parent_dev, "can't read %s bos descriptor %d\n",
 					dev_name(&usb_dev->dev), retval);
 			return retval;

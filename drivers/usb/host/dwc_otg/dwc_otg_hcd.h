@@ -41,7 +41,10 @@
 #include "dwc_list.h"
 #include "dwc_otg_cil.h"
 #include "dwc_otg_fiq_fsm.h"
+<<<<<<< HEAD
 #include "dwc_otg_driver.h"
+=======
+>>>>>>> upstream/rpi-4.4.y
 
 
 /**
@@ -614,11 +617,14 @@ struct dwc_otg_hcd {
 #endif
 };
 
+<<<<<<< HEAD
 static inline struct device *dwc_otg_hcd_to_dev(struct dwc_otg_hcd *hcd)
 {
 	return &hcd->otg_dev->os_dep.platformdev->dev;
 }
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 /** @name Transaction Execution Functions */
 /** @{ */
 extern dwc_otg_transaction_type_e dwc_otg_hcd_select_transactions(dwc_otg_hcd_t

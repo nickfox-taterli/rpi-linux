@@ -987,9 +987,12 @@ static void team_port_disable(struct team *team,
 			    NETIF_F_FRAGLIST | NETIF_F_ALL_TSO | \
 			    NETIF_F_HIGHDMA | NETIF_F_LRO)
 
+<<<<<<< HEAD
 #define TEAM_ENC_FEATURES	(NETIF_F_HW_CSUM | NETIF_F_SG | \
 				 NETIF_F_RXCSUM | NETIF_F_ALL_TSO)
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 static void ___team_compute_features(struct team *team)
 {
 	struct team_port *port;

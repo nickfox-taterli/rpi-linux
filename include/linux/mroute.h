@@ -118,7 +118,13 @@ struct mfc_cache {
 #endif
 
 struct rtmsg;
+<<<<<<< HEAD
 int ipmr_get_route(struct net *net, struct sk_buff *skb,
 		   __be32 saddr, __be32 daddr,
 		   struct rtmsg *rtm, int nowait, u32 portid);
+=======
+extern int ipmr_get_route(struct net *net, struct sk_buff *skb,
+			  __be32 saddr, __be32 daddr,
+			  struct rtmsg *rtm, int nowait, u32 portid);
+>>>>>>> upstream/rpi-4.4.y
 #endif

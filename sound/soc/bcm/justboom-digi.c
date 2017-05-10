@@ -181,7 +181,11 @@ static int snd_rpi_justboom_digi_probe(struct platform_device *pdev)
 	}
 
 	ret = snd_soc_register_card(&snd_rpi_justboom_digi);
+<<<<<<< HEAD
 	if (ret && ret != -EPROBE_DEFER)
+=======
+	if (ret)
+>>>>>>> upstream/rpi-4.4.y
 		dev_err(&pdev->dev,
 			"snd_soc_register_card() failed: %d\n", ret);
 

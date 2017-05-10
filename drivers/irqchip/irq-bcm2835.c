@@ -166,6 +166,7 @@ static void armctrl_unmask_irq(struct irq_data *d)
 		writel_relaxed(HWIRQ_BIT(d->hwirq),
 			       intc.enable[HWIRQ_BANK(d->hwirq)]);
 	}
+<<<<<<< HEAD
 }
 
 #ifdef CONFIG_ARM64
@@ -174,6 +175,8 @@ void bcm2836_arm_irqchip_spin_gpu_irq(void);
 static void armctrl_ack_irq(struct irq_data *d)
 {
 	bcm2836_arm_irqchip_spin_gpu_irq();
+=======
+>>>>>>> upstream/rpi-4.4.y
 }
 
 #endif
@@ -275,9 +278,13 @@ static int __init armctrl_of_init(struct device_node *node,
 			irq_set_probe(irq);
 		}
 	}
+<<<<<<< HEAD
 #ifndef CONFIG_ARM64
 	init_FIQ(FIQ_START);
 #endif
+=======
+	init_FIQ(FIQ_START);
+>>>>>>> upstream/rpi-4.4.y
 
 	return 0;
 }

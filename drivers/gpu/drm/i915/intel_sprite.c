@@ -208,6 +208,7 @@ skl_update_plane(struct drm_plane *drm_plane,
 	struct intel_crtc *intel_crtc = to_intel_crtc(crtc);
 	const int pipe = intel_plane->pipe;
 	const int plane = intel_plane->plane + 1;
+<<<<<<< HEAD
 	u32 plane_ctl;
 	const struct drm_intel_sprite_colorkey *key = &plane_state->ckey;
 	u32 surf_addr = plane_state->main.offset;
@@ -221,6 +222,18 @@ skl_update_plane(struct drm_plane *drm_plane,
 	uint32_t y = plane_state->main.y;
 	uint32_t src_w = drm_rect_width(&plane_state->base.src) >> 16;
 	uint32_t src_h = drm_rect_height(&plane_state->base.src) >> 16;
+=======
+	u32 plane_ctl, stride_div, stride;
+	int pixel_size = drm_format_plane_cpp(fb->pixel_format, 0);
+	const struct drm_intel_sprite_colorkey *key =
+		&to_intel_plane_state(drm_plane->state)->ckey;
+	u32 surf_addr;
+	u32 tile_height, plane_offset, plane_size;
+	unsigned int rotation;
+	int x_offset, y_offset;
+	struct intel_crtc_state *crtc_state = to_intel_crtc(crtc)->config;
+	int scaler_id;
+>>>>>>> upstream/rpi-4.4.y
 
 	plane_ctl = PLANE_CTL_ENABLE |
 		PLANE_CTL_PIPE_GAMMA_ENABLE |

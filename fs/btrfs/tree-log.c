@@ -4477,8 +4477,12 @@ static int btrfs_log_trailing_hole(struct btrfs_trans_handle *trans,
 static int btrfs_check_ref_name_override(struct extent_buffer *eb,
 					 const int slot,
 					 const struct btrfs_key *key,
+<<<<<<< HEAD
 					 struct inode *inode,
 					 u64 *other_ino)
+=======
+					 struct inode *inode)
+>>>>>>> upstream/rpi-4.4.y
 {
 	int ret;
 	struct btrfs_path *search_path;
@@ -4537,6 +4541,7 @@ static int btrfs_check_ref_name_override(struct extent_buffer *eb,
 					   search_path, parent,
 					   name, this_name_len, 0);
 		if (di && !IS_ERR(di)) {
+<<<<<<< HEAD
 			struct btrfs_key di_key;
 
 			btrfs_dir_item_key_to_cpu(search_path->nodes[0],
@@ -4547,6 +4552,9 @@ static int btrfs_check_ref_name_override(struct extent_buffer *eb,
 			} else {
 				ret = -EAGAIN;
 			}
+=======
+			ret = 1;
+>>>>>>> upstream/rpi-4.4.y
 			goto out;
 		} else if (IS_ERR(di)) {
 			ret = PTR_ERR(di);
@@ -4740,6 +4748,7 @@ again:
 		if ((min_key.type == BTRFS_INODE_REF_KEY ||
 		     min_key.type == BTRFS_INODE_EXTREF_KEY) &&
 		    BTRFS_I(inode)->generation == trans->transid) {
+<<<<<<< HEAD
 			u64 other_ino = 0;
 
 			ret = btrfs_check_ref_name_override(path->nodes[0],
@@ -4806,6 +4815,18 @@ again:
 					goto out_unlock;
 				else
 					goto next_key;
+=======
+			ret = btrfs_check_ref_name_override(path->nodes[0],
+							    path->slots[0],
+							    &min_key, inode);
+			if (ret < 0) {
+				err = ret;
+				goto out_unlock;
+			} else if (ret > 0) {
+				err = 1;
+				btrfs_set_log_full_commit(root->fs_info, trans);
+				goto out_unlock;
+>>>>>>> upstream/rpi-4.4.y
 			}
 		}
 

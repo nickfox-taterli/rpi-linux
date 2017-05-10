@@ -1389,7 +1389,11 @@ static inline int stack_guard_page_end(struct vm_area_struct *vma,
 		!vma_growsup(vma->vm_next, addr);
 }
 
+<<<<<<< HEAD
 int vma_is_stack_for_current(struct vm_area_struct *vma);
+=======
+int vma_is_stack_for_task(struct vm_area_struct *vma, struct task_struct *t);
+>>>>>>> upstream/rpi-4.4.y
 
 extern unsigned long move_page_tables(struct vm_area_struct *vma,
 		unsigned long old_addr, struct vm_area_struct *new_vma,
@@ -2009,9 +2013,12 @@ extern void mm_drop_all_locks(struct mm_struct *mm);
 extern void set_mm_exe_file(struct mm_struct *mm, struct file *new_exe_file);
 extern struct file *get_mm_exe_file(struct mm_struct *mm);
 extern struct file *get_task_exe_file(struct task_struct *task);
+<<<<<<< HEAD
 
 extern bool may_expand_vm(struct mm_struct *, vm_flags_t, unsigned long npages);
 extern void vm_stat_account(struct mm_struct *, vm_flags_t, long npages);
+=======
+>>>>>>> upstream/rpi-4.4.y
 
 extern bool vma_is_special_mapping(const struct vm_area_struct *vma,
 				   const struct vm_special_mapping *sm);
@@ -2229,7 +2236,10 @@ static inline struct page *follow_page(struct vm_area_struct *vma,
 #define FOLL_MIGRATION	0x400	/* wait for page to replace migration entry */
 #define FOLL_TRIED	0x800	/* a retry, previous pass started an IO */
 #define FOLL_MLOCK	0x1000	/* lock present pages */
+<<<<<<< HEAD
 #define FOLL_REMOTE	0x2000	/* we are working on non-current tsk/mm */
+=======
+>>>>>>> upstream/rpi-4.4.y
 #define FOLL_COW	0x4000	/* internal GUP flag */
 
 typedef int (*pte_fn_t)(pte_t *pte, pgtable_t token, unsigned long addr,

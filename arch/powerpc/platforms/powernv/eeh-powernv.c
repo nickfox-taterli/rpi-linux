@@ -1092,6 +1092,7 @@ static int pnv_eeh_reset(struct eeh_pe *pe, int option)
 		}
 	}
 
+<<<<<<< HEAD
 	if (pe->type & EEH_PE_VF)
 		return pnv_eeh_reset_vf_pe(pe, option);
 
@@ -1100,6 +1101,19 @@ static int pnv_eeh_reset(struct eeh_pe *pe, int option)
 		pr_err("%s: Cannot find PCI bus for PHB#%d-PE#%x\n",
 			__func__, pe->phb->global_number, pe->addr);
 		return -EIO;
+=======
+		bus = eeh_pe_bus_get(pe);
+		if (!bus) {
+			pr_err("%s: Cannot find PCI bus for PHB#%d-PE#%x\n",
+			       __func__, pe->phb->global_number, pe->addr);
+			return -EIO;
+		}
+		if (pci_is_root_bus(bus) ||
+			pci_is_root_bus(bus->parent))
+			ret = pnv_eeh_root_reset(hose, option);
+		else
+			ret = pnv_eeh_bridge_reset(bus->self, option);
+>>>>>>> upstream/rpi-4.4.y
 	}
 
 	if (pci_is_root_bus(bus) ||

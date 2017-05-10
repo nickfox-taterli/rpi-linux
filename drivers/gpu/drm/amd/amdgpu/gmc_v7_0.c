@@ -44,8 +44,51 @@ static int gmc_v7_0_wait_for_idle(void *handle);
 MODULE_FIRMWARE("radeon/bonaire_mc.bin");
 MODULE_FIRMWARE("radeon/hawaii_mc.bin");
 MODULE_FIRMWARE("amdgpu/topaz_mc.bin");
+<<<<<<< HEAD
 
 static const u32 golden_settings_iceland_a11[] =
+=======
+
+static const u32 golden_settings_iceland_a11[] =
+{
+	mmVM_PRT_APERTURE0_LOW_ADDR, 0x0fffffff, 0x0fffffff,
+	mmVM_PRT_APERTURE1_LOW_ADDR, 0x0fffffff, 0x0fffffff,
+	mmVM_PRT_APERTURE2_LOW_ADDR, 0x0fffffff, 0x0fffffff,
+	mmVM_PRT_APERTURE3_LOW_ADDR, 0x0fffffff, 0x0fffffff
+};
+
+static const u32 iceland_mgcg_cgcg_init[] =
+{
+	mmMC_MEM_POWER_LS, 0xffffffff, 0x00000104
+};
+
+static void gmc_v7_0_init_golden_registers(struct amdgpu_device *adev)
+{
+	switch (adev->asic_type) {
+	case CHIP_TOPAZ:
+		amdgpu_program_register_sequence(adev,
+						 iceland_mgcg_cgcg_init,
+						 (const u32)ARRAY_SIZE(iceland_mgcg_cgcg_init));
+		amdgpu_program_register_sequence(adev,
+						 golden_settings_iceland_a11,
+						 (const u32)ARRAY_SIZE(golden_settings_iceland_a11));
+		break;
+	default:
+		break;
+	}
+}
+
+/**
+ * gmc7_mc_wait_for_idle - wait for MC idle callback.
+ *
+ * @adev: amdgpu_device pointer
+ *
+ * Wait for the MC (memory controller) to be idle.
+ * (evergreen+).
+ * Returns 0 if the MC is idle, -1 if not.
+ */
+int gmc_v7_0_mc_wait_for_idle(struct amdgpu_device *adev)
+>>>>>>> upstream/rpi-4.4.y
 {
 	mmVM_PRT_APERTURE0_LOW_ADDR, 0x0fffffff, 0x0fffffff,
 	mmVM_PRT_APERTURE1_LOW_ADDR, 0x0fffffff, 0x0fffffff,
@@ -891,6 +934,14 @@ static int gmc_v7_0_sw_init(void *handle)
 	int r;
 	int dma_bits;
 	struct amdgpu_device *adev = (struct amdgpu_device *)handle;
+
+	if (adev->flags & AMD_IS_APU) {
+		adev->mc.vram_type = AMDGPU_VRAM_TYPE_UNKNOWN;
+	} else {
+		u32 tmp = RREG32(mmMC_SEQ_MISC0);
+		tmp &= MC_SEQ_MISC0__MT__MASK;
+		adev->mc.vram_type = gmc_v7_0_convert_vram_type(tmp);
+	}
 
 	if (adev->flags & AMD_IS_APU) {
 		adev->mc.vram_type = AMDGPU_VRAM_TYPE_UNKNOWN;

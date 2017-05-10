@@ -78,9 +78,12 @@ static struct resource s3c_ac97_resource[] = {
 };
 
 static struct s3c_audio_pdata s3c_ac97_pdata = {
+<<<<<<< HEAD
 #ifdef CONFIG_S3C24XX_DMAC
 	.dma_filter = s3c24xx_dma_filter,
 #endif
+=======
+>>>>>>> upstream/rpi-4.4.y
 	.dma_playback = (void *)DMACH_PCM_OUT,
 	.dma_capture = (void *)DMACH_PCM_IN,
 	.dma_capture_mic = (void *)DMACH_MIC_IN,

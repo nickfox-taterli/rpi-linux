@@ -1241,12 +1241,21 @@ int rproc_add(struct rproc *rproc)
 	ret = rproc_add_virtio_devices(rproc);
 	if (ret < 0)
 		return ret;
+<<<<<<< HEAD
 
 	/* expose to rproc_get_by_phandle users */
 	mutex_lock(&rproc_list_mutex);
 	list_add(&rproc->node, &rproc_list);
 	mutex_unlock(&rproc_list_mutex);
 
+=======
+
+	/* expose to rproc_get_by_phandle users */
+	mutex_lock(&rproc_list_mutex);
+	list_add(&rproc->node, &rproc_list);
+	mutex_unlock(&rproc_list_mutex);
+
+>>>>>>> upstream/rpi-4.4.y
 	return 0;
 }
 EXPORT_SYMBOL(rproc_add);

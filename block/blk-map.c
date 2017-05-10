@@ -116,7 +116,45 @@ int blk_rq_map_user_iov(struct request_queue *q, struct request *rq,
 	unsigned long align = q->dma_pad_mask | queue_dma_alignment(q);
 	struct bio *bio = NULL;
 	struct iov_iter i;
+<<<<<<< HEAD
 	int ret;
+=======
+	struct iovec iov, prv = {.iov_base = NULL, .iov_len = 0};
+
+	if (!iter || !iter->count)
+		return -EINVAL;
+
+	if (!iter_is_iovec(iter))
+		return -EINVAL;
+
+	iov_for_each(iov, i, *iter) {
+		unsigned long uaddr = (unsigned long) iov.iov_base;
+
+		if (!iov.iov_len)
+			return -EINVAL;
+
+		/*
+		 * Keep going so we check length of all segments
+		 */
+		if ((uaddr & queue_dma_alignment(q)) ||
+		    iovec_gap_to_prv(q, &prv, &iov))
+			unaligned = 1;
+
+		prv.iov_base = iov.iov_base;
+		prv.iov_len = iov.iov_len;
+	}
+
+	if (unaligned || (q->dma_pad_mask & iter->count) || map_data)
+		bio = bio_copy_user_iov(q, map_data, iter, gfp_mask);
+	else
+		bio = bio_map_user_iov(q, iter, gfp_mask);
+
+	if (IS_ERR(bio))
+		return PTR_ERR(bio);
+
+	if (map_data && map_data->null_mapped)
+		bio_set_flag(bio, BIO_NULL_MAPPED);
+>>>>>>> upstream/rpi-4.4.y
 
 	if (!iter_is_iovec(iter))
 		goto fail;

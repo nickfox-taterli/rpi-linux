@@ -761,6 +761,26 @@ static inline void qdisc_reset_queue(struct Qdisc *sch)
 
 static inline struct Qdisc *qdisc_replace(struct Qdisc *sch, struct Qdisc *new,
 					  struct Qdisc **pold)
+<<<<<<< HEAD
+=======
+{
+	struct Qdisc *old;
+
+	sch_tree_lock(sch);
+	old = *pold;
+	*pold = new;
+	if (old != NULL) {
+		qdisc_tree_reduce_backlog(old, old->q.qlen, old->qstats.backlog);
+		qdisc_reset(old);
+	}
+	sch_tree_unlock(sch);
+
+	return old;
+}
+
+static inline unsigned int __qdisc_queue_drop(struct Qdisc *sch,
+					      struct sk_buff_head *list)
+>>>>>>> upstream/rpi-4.4.y
 {
 	struct Qdisc *old;
 

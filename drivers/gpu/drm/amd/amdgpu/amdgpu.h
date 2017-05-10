@@ -1660,8 +1660,11 @@ struct amdgpu_uvd {
 	void			*cpu_addr;
 	uint64_t		gpu_addr;
 	unsigned		fw_version;
+<<<<<<< HEAD
 	void			*saved_bo;
 	unsigned		max_handles;
+=======
+>>>>>>> upstream/rpi-4.4.y
 	atomic_t		handles[AMDGPU_MAX_UVD_HANDLES];
 	struct drm_file		*filp[AMDGPU_MAX_UVD_HANDLES];
 	struct delayed_work	idle_work;
@@ -2423,11 +2426,16 @@ int amdgpu_ttm_tt_get_user_pages(struct ttm_tt *ttm, struct page **pages);
 int amdgpu_ttm_tt_set_userptr(struct ttm_tt *ttm, uint64_t addr,
 				     uint32_t flags);
 bool amdgpu_ttm_tt_has_userptr(struct ttm_tt *ttm);
+<<<<<<< HEAD
 struct mm_struct *amdgpu_ttm_tt_get_usermm(struct ttm_tt *ttm);
 bool amdgpu_ttm_tt_affect_userptr(struct ttm_tt *ttm, unsigned long start,
 				  unsigned long end);
 bool amdgpu_ttm_tt_userptr_invalidated(struct ttm_tt *ttm,
 				       int *last_invalidated);
+=======
+bool amdgpu_ttm_tt_affect_userptr(struct ttm_tt *ttm, unsigned long start,
+				  unsigned long end);
+>>>>>>> upstream/rpi-4.4.y
 bool amdgpu_ttm_tt_is_readonly(struct ttm_tt *ttm);
 uint32_t amdgpu_ttm_tt_pte_flags(struct amdgpu_device *adev, struct ttm_tt *ttm,
 				 struct ttm_mem_reg *mem);

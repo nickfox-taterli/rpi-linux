@@ -201,6 +201,15 @@ static int fm10k_handle_reset(struct fm10k_intfc *interface)
 		dev_err(&interface->pdev->dev, "init_hw failed: %d\n", err);
 		goto reinit_err;
 	}
+<<<<<<< HEAD
+=======
+
+	err = fm10k_init_queueing_scheme(interface);
+	if (err) {
+		dev_err(&interface->pdev->dev, "init_queueing_scheme failed: %d\n", err);
+		goto reinit_err;
+	}
+>>>>>>> upstream/rpi-4.4.y
 
 	err = fm10k_init_queueing_scheme(interface);
 	if (err) {
@@ -238,6 +247,10 @@ static int fm10k_handle_reset(struct fm10k_intfc *interface)
 		goto err_open;
 
 	fm10k_iov_resume(interface->pdev);
+
+reinit_err:
+	if (err)
+		netif_device_detach(netdev);
 
 	rtnl_unlock();
 
@@ -1199,8 +1212,11 @@ void fm10k_mbx_free_irq(struct fm10k_intfc *interface)
 	if (!interface->msix_entries)
 		return;
 
+<<<<<<< HEAD
 	entry = &interface->msix_entries[FM10K_MBX_VECTOR];
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 	/* disconnect the mailbox */
 	hw->mbx.ops.disconnect(hw, &hw->mbx);
 
@@ -2212,7 +2228,34 @@ static int fm10k_resume(struct pci_dev *pdev)
 	/* refresh hw_addr in case it was dropped */
 	hw->hw_addr = interface->uc_addr;
 
+<<<<<<< HEAD
 	err = fm10k_handle_resume(interface);
+=======
+	/* reset hardware to known state */
+	err = hw->mac.ops.init_hw(&interface->hw);
+	if (err) {
+		dev_err(&pdev->dev, "init_hw failed: %d\n", err);
+		return err;
+	}
+
+	/* reset statistics starting values */
+	hw->mac.ops.rebind_hw_stats(hw, &interface->stats);
+
+	/* reset clock */
+	fm10k_ts_reset(interface);
+
+	rtnl_lock();
+
+	err = fm10k_init_queueing_scheme(interface);
+	if (!err) {
+		fm10k_mbx_request_irq(interface);
+		if (netif_running(netdev))
+			err = fm10k_open(netdev);
+	}
+
+	rtnl_unlock();
+
+>>>>>>> upstream/rpi-4.4.y
 	if (err)
 		return err;
 
@@ -2271,7 +2314,19 @@ static pci_ers_result_t fm10k_io_error_detected(struct pci_dev *pdev,
 	if (state == pci_channel_io_perm_failure)
 		return PCI_ERS_RESULT_DISCONNECT;
 
+<<<<<<< HEAD
 	fm10k_prepare_suspend(interface);
+=======
+	if (netif_running(netdev))
+		fm10k_close(netdev);
+
+	/* free interrupts */
+	fm10k_clear_queueing_scheme(interface);
+
+	fm10k_mbx_free_irq(interface);
+
+	pci_disable_device(pdev);
+>>>>>>> upstream/rpi-4.4.y
 
 	/* Request a slot reset. */
 	return PCI_ERS_RESULT_NEED_RESET;
@@ -2323,6 +2378,7 @@ static void fm10k_io_resume(struct pci_dev *pdev)
 	struct net_device *netdev = interface->netdev;
 	int err;
 
+<<<<<<< HEAD
 	err = fm10k_handle_resume(interface);
 
 	if (err)
@@ -2331,6 +2387,26 @@ static void fm10k_io_resume(struct pci_dev *pdev)
 	else
 		netif_device_attach(netdev);
 }
+=======
+	/* reset hardware to known state */
+	err = hw->mac.ops.init_hw(&interface->hw);
+	if (err) {
+		dev_err(&pdev->dev, "init_hw failed: %d\n", err);
+		return;
+	}
+
+	/* reset statistics starting values */
+	hw->mac.ops.rebind_hw_stats(hw, &interface->stats);
+
+	err = fm10k_init_queueing_scheme(interface);
+	if (err) {
+		dev_err(&interface->pdev->dev, "init_queueing_scheme failed: %d\n", err);
+		return;
+	}
+
+	/* reassociate interrupts */
+	fm10k_mbx_request_irq(interface);
+>>>>>>> upstream/rpi-4.4.y
 
 /**
  * fm10k_io_reset_notify - called when PCI function is reset

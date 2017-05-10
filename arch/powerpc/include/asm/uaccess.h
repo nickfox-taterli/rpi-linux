@@ -308,10 +308,15 @@ extern unsigned long __copy_tofrom_user(void __user *to,
 static inline unsigned long copy_from_user(void *to,
 		const void __user *from, unsigned long n)
 {
+<<<<<<< HEAD
 	if (likely(access_ok(VERIFY_READ, from, n))) {
 		check_object_size(to, n, false);
 		return __copy_tofrom_user((__force void __user *)to, from, n);
 	}
+=======
+	if (likely(access_ok(VERIFY_READ, from, n)))
+		return __copy_tofrom_user((__force void __user *)to, from, n);
+>>>>>>> upstream/rpi-4.4.y
 	memset(to, 0, n);
 	return n;
 }
@@ -319,10 +324,15 @@ static inline unsigned long copy_from_user(void *to,
 static inline unsigned long copy_to_user(void __user *to,
 		const void *from, unsigned long n)
 {
+<<<<<<< HEAD
 	if (access_ok(VERIFY_WRITE, to, n)) {
 		check_object_size(from, n, true);
 		return __copy_tofrom_user(to, (__force void __user *)from, n);
 	}
+=======
+	if (access_ok(VERIFY_WRITE, to, n))
+		return __copy_tofrom_user(to, (__force void __user *)from, n);
+>>>>>>> upstream/rpi-4.4.y
 	return n;
 }
 

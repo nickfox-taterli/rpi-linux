@@ -405,6 +405,36 @@ enum {
 	 * - scatter elements (16 bytes each)
 	 */
 	MLX5_MAX_SGE_RD	= (512 - 16 - 16) / 16
+<<<<<<< HEAD
+=======
+};
+
+struct mlx5_inbox_hdr {
+	__be16		opcode;
+	u8		rsvd[4];
+	__be16		opmod;
+};
+
+struct mlx5_outbox_hdr {
+	u8		status;
+	u8		rsvd[3];
+	__be32		syndrome;
+};
+
+struct mlx5_cmd_query_adapter_mbox_in {
+	struct mlx5_inbox_hdr	hdr;
+	u8			rsvd[8];
+};
+
+struct mlx5_cmd_query_adapter_mbox_out {
+	struct mlx5_outbox_hdr	hdr;
+	u8			rsvd0[24];
+	u8			intapin;
+	u8			rsvd1[13];
+	__be16			vsd_vendor_id;
+	u8			vsd[208];
+	u8			vsd_psid[16];
+>>>>>>> upstream/rpi-4.4.y
 };
 
 enum mlx5_odp_transport_cap_bits {

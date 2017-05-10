@@ -1524,10 +1524,13 @@ static int vidioc_g_tuner(struct file *file, void *priv, struct v4l2_tuner *t)
 	if (t->index != 0)
 		return -EINVAL;
 
+<<<<<<< HEAD
 	ret = v4l_enable_media_source(vfd);
 	if (ret)
 		return ret;
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 	dprintk(1, "%s called std_set %d dev_state %ld\n", __func__,
 		dev->std_set_in_tuner_core, dev->dev_state);
 

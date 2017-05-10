@@ -492,6 +492,7 @@ static unsigned long isolate_freepages_block(struct compact_control *cc,
 				goto isolate_fail;
 		}
 
+<<<<<<< HEAD
 		/* Found a free page, will break it into order-0 pages */
 		order = page_order(page);
 		isolated = __isolate_free_page(page, order);
@@ -503,6 +504,19 @@ static unsigned long isolate_freepages_block(struct compact_control *cc,
 		cc->nr_freepages += isolated;
 		list_add_tail(&page->lru, freelist);
 
+=======
+		/* Found a free page, break it into order-0 pages */
+		isolated = split_free_page(page);
+		if (!isolated)
+			break;
+
+		total_isolated += isolated;
+		cc->nr_freepages += isolated;
+		for (i = 0; i < isolated; i++) {
+			list_add(&page->lru, freelist);
+			page++;
+		}
+>>>>>>> upstream/rpi-4.4.y
 		if (!strict && cc->nr_migratepages <= cc->nr_freepages) {
 			blockpfn += isolated;
 			break;

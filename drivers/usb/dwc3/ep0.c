@@ -101,7 +101,12 @@ static int dwc3_ep0_start_trans(struct dwc3 *dwc, u8 epnum)
 	params.param0 = upper_32_bits(dwc->ep0_trb_addr);
 	params.param1 = lower_32_bits(dwc->ep0_trb_addr);
 
+<<<<<<< HEAD
 	ret = dwc3_send_gadget_ep_cmd(dep, DWC3_DEPCMD_STARTTRANSFER, &params);
+=======
+	ret = dwc3_send_gadget_ep_cmd(dwc, dep->number,
+			DWC3_DEPCMD_STARTTRANSFER, &params);
+>>>>>>> upstream/rpi-4.4.y
 	if (ret < 0) {
 		dwc3_trace(trace_dwc3_ep0, "%s STARTTRANSFER failed",
 				dep->name);

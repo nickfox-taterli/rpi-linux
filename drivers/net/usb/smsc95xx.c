@@ -61,8 +61,11 @@
 #define SUSPEND_ALLMODES		(SUSPEND_SUSPEND0 | SUSPEND_SUSPEND1 | \
 					 SUSPEND_SUSPEND2 | SUSPEND_SUSPEND3)
 #define MAC_ADDR_LEN                    (6)
+<<<<<<< HEAD
 
 #define CARRIER_CHECK_DELAY (2 * HZ)
+=======
+>>>>>>> upstream/rpi-4.4.y
 
 struct smsc95xx_priv {
 	u32 chip_id;
@@ -79,7 +82,7 @@ struct smsc95xx_priv {
 	struct usbnet *dev;
 };
 
-static bool turbo_mode = true;
+static bool turbo_mode = false;
 module_param(turbo_mode, bool, 0644);
 MODULE_PARM_DESC(turbo_mode, "Enable multiple frames per Rx transaction");
 
@@ -87,14 +90,24 @@ static bool truesize_mode = false;
 module_param(truesize_mode, bool, 0644);
 MODULE_PARM_DESC(truesize_mode, "Report larger truesize value");
 
+<<<<<<< HEAD
 static int packetsize = 2560;
 module_param(packetsize, int, 0644);
 MODULE_PARM_DESC(packetsize, "Override the RX URB packet size");
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 static char *macaddr = ":";
 module_param(macaddr, charp, 0);
 MODULE_PARM_DESC(macaddr, "MAC address");
 
+<<<<<<< HEAD
+=======
+static int packetsize = 0;
+module_param(packetsize, int, 0644);
+MODULE_PARM_DESC(packetsize, "Override the RX URB packet size");
+
+>>>>>>> upstream/rpi-4.4.y
 static int __must_check __smsc95xx_read_reg(struct usbnet *dev, u32 index,
 					    u32 *data, int in_pm)
 {
@@ -995,7 +1008,11 @@ static void smsc95xx_init_mac_address(struct usbnet *dev)
 	if (smsc95xx_is_macaddr_param(dev, dev->net->dev_addr))
 		return;
 
+<<<<<<< HEAD
 	/* no useful static MAC address found. generate a random one */
+=======
+	/* no eeprom, or eeprom values are invalid, and no module parameter specified to set MAC. Generate random MAC */
+>>>>>>> upstream/rpi-4.4.y
 	eth_hw_addr_random(dev->net);
 	netif_dbg(dev, ifup, dev->net, "MAC address set to eth_random_addr\n");
 }

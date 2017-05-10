@@ -32,6 +32,7 @@ static int udf_uni2char_utf8(wchar_t uni,
 			     unsigned char *out,
 			     int boundlen)
 {
+<<<<<<< HEAD
 	int u_len = 0;
 
 	if (boundlen <= 0)
@@ -50,6 +51,104 @@ static int udf_uni2char_utf8(wchar_t uni,
 		out[u_len++] = (unsigned char)(0xe0 | (uni >> 12));
 		out[u_len++] = (unsigned char)(0x80 | ((uni >> 6) & 0x3f));
 		out[u_len++] = (unsigned char)(0x80 | (uni & 0x3f));
+=======
+	int usesize;
+
+	if (!dest || !ptr || !size)
+		return -1;
+	BUG_ON(size < 2);
+
+	usesize = min_t(size_t, ptr[size - 1], sizeof(dest->u_name));
+	usesize = min(usesize, size - 2);
+	dest->u_cmpID = ptr[0];
+	dest->u_len = usesize;
+	memcpy(dest->u_name, ptr + 1, usesize);
+	memset(dest->u_name + usesize, 0, sizeof(dest->u_name) - usesize);
+
+	return 0;
+}
+
+/*
+ * udf_build_ustr_exact
+ */
+static void udf_build_ustr_exact(struct ustr *dest, dstring *ptr, int exactsize)
+{
+	memset(dest, 0, sizeof(struct ustr));
+	dest->u_cmpID = ptr[0];
+	dest->u_len = exactsize - 1;
+	memcpy(dest->u_name, ptr + 1, exactsize - 1);
+}
+
+/*
+ * udf_CS0toUTF8
+ *
+ * PURPOSE
+ *	Convert OSTA Compressed Unicode to the UTF-8 equivalent.
+ *
+ * PRE-CONDITIONS
+ *	utf			Pointer to UTF-8 output buffer.
+ *	ocu			Pointer to OSTA Compressed Unicode input buffer
+ *				of size UDF_NAME_LEN bytes.
+ * 				both of type "struct ustr *"
+ *
+ * POST-CONDITIONS
+ *	<return>		>= 0 on success.
+ *
+ * HISTORY
+ *	November 12, 1997 - Andrew E. Mileski
+ *	Written, tested, and released.
+ */
+int udf_CS0toUTF8(struct ustr *utf_o, const struct ustr *ocu_i)
+{
+	const uint8_t *ocu;
+	uint8_t cmp_id, ocu_len;
+	int i;
+
+	ocu_len = ocu_i->u_len;
+	if (ocu_len == 0) {
+		memset(utf_o, 0, sizeof(struct ustr));
+		return 0;
+	}
+
+	cmp_id = ocu_i->u_cmpID;
+	if (cmp_id != 8 && cmp_id != 16) {
+		memset(utf_o, 0, sizeof(struct ustr));
+		pr_err("unknown compression code (%d) stri=%s\n",
+		       cmp_id, ocu_i->u_name);
+		return -EINVAL;
+	}
+
+	ocu = ocu_i->u_name;
+	utf_o->u_len = 0;
+	for (i = 0; (i < ocu_len) && (utf_o->u_len <= (UDF_NAME_LEN - 3));) {
+
+		/* Expand OSTA compressed Unicode to Unicode */
+		uint32_t c = ocu[i++];
+		if (cmp_id == 16)
+			c = (c << 8) | ocu[i++];
+
+		/* Compress Unicode to UTF-8 */
+		if (c < 0x80U)
+			utf_o->u_name[utf_o->u_len++] = (uint8_t)c;
+		else if (c < 0x800U) {
+			if (utf_o->u_len > (UDF_NAME_LEN - 4))
+				break;
+			utf_o->u_name[utf_o->u_len++] =
+						(uint8_t)(0xc0 | (c >> 6));
+			utf_o->u_name[utf_o->u_len++] =
+						(uint8_t)(0x80 | (c & 0x3f));
+		} else {
+			if (utf_o->u_len > (UDF_NAME_LEN - 5))
+				break;
+			utf_o->u_name[utf_o->u_len++] =
+						(uint8_t)(0xe0 | (c >> 12));
+			utf_o->u_name[utf_o->u_len++] =
+						(uint8_t)(0x80 |
+							  ((c >> 6) & 0x3f));
+			utf_o->u_name[utf_o->u_len++] =
+						(uint8_t)(0x80 | (c & 0x3f));
+		}
+>>>>>>> upstream/rpi-4.4.y
 	}
 	return u_len;
 }
@@ -58,6 +157,7 @@ static int udf_char2uni_utf8(const unsigned char *in,
 			     int boundlen,
 			     wchar_t *uni)
 {
+<<<<<<< HEAD
 	unsigned int utf_char;
 	unsigned char c;
 	int utf_cnt, u_len;
@@ -66,6 +166,26 @@ static int udf_char2uni_utf8(const unsigned char *in,
 	utf_cnt = 0;
 	for (u_len = 0; u_len < boundlen;) {
 		c = in[u_len++];
+=======
+	unsigned c, i, max_val, utf_char;
+	int utf_cnt, u_len, u_ch;
+
+	memset(ocu, 0, sizeof(dstring) * length);
+	ocu[0] = 8;
+	max_val = 0xffU;
+	u_ch = 1;
+
+try_again:
+	u_len = 0U;
+	utf_char = 0U;
+	utf_cnt = 0U;
+	for (i = 0U; i < utf->u_len; i++) {
+		/* Name didn't fit? */
+		if (u_len + 1 + u_ch >= length)
+			return 0;
+
+		c = (uint8_t)utf->u_name[i];
+>>>>>>> upstream/rpi-4.4.y
 
 		/* Complete a multi-byte UTF-8 character */
 		if (utf_cnt) {
@@ -101,8 +221,26 @@ static int udf_char2uni_utf8(const unsigned char *in,
 				utf_char = c;
 			}
 		}
+<<<<<<< HEAD
 		*uni = utf_char;
 		break;
+=======
+
+		/* Choose no compression if necessary */
+		if (utf_char > max_val) {
+			if (max_val == 0xffU) {
+				max_val = 0xffffU;
+				ocu[0] = (uint8_t)0x10U;
+				u_ch = 2;
+				goto try_again;
+			}
+			goto error_out;
+		}
+
+		if (max_val == 0xffffU)
+			ocu[++u_len] = (uint8_t)(utf_char >> 8);
+		ocu[++u_len] = (uint8_t)(utf_char & 0xffU);
+>>>>>>> upstream/rpi-4.4.y
 	}
 	if (utf_cnt) {
 		*uni = '?';
@@ -208,6 +346,7 @@ static int udf_name_from_CS0(uint8_t *str_o, int str_max_len,
 	ocu++;
 	ocu_len--;
 
+<<<<<<< HEAD
 	if (ocu_len % u_ch) {
 		pr_err("incorrect filename length (%d)\n", ocu_len + 1);
 		return -EINVAL;
@@ -241,6 +380,15 @@ static int udf_name_from_CS0(uint8_t *str_o, int str_max_len,
 					ext_crc_len = ext_o_len;
 			}
 		}
+=======
+		len = nls->uni2char(c, &utf_o->u_name[utf_o->u_len],
+				    UDF_NAME_LEN - 2 - utf_o->u_len);
+		/* Valid character? */
+		if (len >= 0)
+			utf_o->u_len += len;
+		else
+			utf_o->u_name[utf_o->u_len++] = '?';
+>>>>>>> upstream/rpi-4.4.y
 	}
 
 	idx = 0;
@@ -291,9 +439,15 @@ static int udf_name_to_CS0(uint8_t *ocu, int ocu_max_len,
 			   const uint8_t *str_i, int str_len,
 			   int (*conv_f)(const unsigned char *, int, wchar_t *))
 {
+<<<<<<< HEAD
 	int i, len;
 	unsigned int max_val;
 	wchar_t uni_char;
+=======
+	int len;
+	unsigned i, max_val;
+	uint16_t uni_char;
+>>>>>>> upstream/rpi-4.4.y
 	int u_len, u_ch;
 
 	if (ocu_max_len <= 0)
@@ -301,6 +455,7 @@ static int udf_name_to_CS0(uint8_t *ocu, int ocu_max_len,
 
 	memset(ocu, 0, ocu_max_len);
 	ocu[0] = 8;
+<<<<<<< HEAD
 	max_val = 0xff;
 	u_ch = 1;
 
@@ -311,6 +466,18 @@ try_again:
 		if (u_len + u_ch > ocu_max_len)
 			return 0;
 		len = conv_f(&str_i[i], str_len - i, &uni_char);
+=======
+	max_val = 0xffU;
+	u_ch = 1;
+
+try_again:
+	u_len = 0U;
+	for (i = 0U; i < uni->u_len; i++) {
+		/* Name didn't fit? */
+		if (u_len + 1 + u_ch >= length)
+			return 0;
+		len = nls->char2uni(&uni->u_name[i], uni->u_len - i, &uni_char);
+>>>>>>> upstream/rpi-4.4.y
 		if (!len)
 			continue;
 		/* Invalid character, deal with it */
@@ -320,8 +487,13 @@ try_again:
 		}
 
 		if (uni_char > max_val) {
+<<<<<<< HEAD
 			max_val = 0xffff;
 			ocu[0] = 0x10;
+=======
+			max_val = 0xffffU;
+			ocu[0] = (uint8_t)0x10U;
+>>>>>>> upstream/rpi-4.4.y
 			u_ch = 2;
 			goto try_again;
 		}

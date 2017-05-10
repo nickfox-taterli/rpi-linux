@@ -1140,6 +1140,7 @@ int dev_pm_opp_set_supported_hw(struct device *dev, const u32 *versions,
 		goto err;
 	}
 
+<<<<<<< HEAD
 	opp_table->supported_hw_count = count;
 	mutex_unlock(&opp_table_lock);
 	return 0;
@@ -1180,6 +1181,16 @@ void dev_pm_opp_put_supported_hw(struct device *dev)
 		dev_err(dev, "Failed to find opp_table: %ld\n",
 			PTR_ERR(opp_table));
 		goto unlock;
+=======
+	opp->u_volt = microvolt[0];
+
+	if (count == 1) {
+		opp->u_volt_min = opp->u_volt;
+		opp->u_volt_max = opp->u_volt;
+	} else {
+		opp->u_volt_min = microvolt[1];
+		opp->u_volt_max = microvolt[2];
+>>>>>>> upstream/rpi-4.4.y
 	}
 
 	/* Make sure there are no concurrent readers while updating opp_table */

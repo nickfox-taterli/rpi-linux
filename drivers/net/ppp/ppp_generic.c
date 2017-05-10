@@ -2996,7 +2996,12 @@ static int ppp_create_interface(struct net *net, struct file *file, int *unit)
 
 	return 0;
 
+<<<<<<< HEAD
 err_dev:
+=======
+out2:
+	mutex_unlock(&pn->all_ppp_mutex);
+>>>>>>> upstream/rpi-4.4.y
 	rtnl_unlock();
 	free_netdev(dev);
 err:

@@ -484,6 +484,7 @@ ssize_t tpm_transmit(struct tpm_chip *chip, const u8 *buf, size_t bufsiz,
 		     unsigned int flags);
 ssize_t tpm_transmit_cmd(struct tpm_chip *chip, const void *cmd, int len,
 			 unsigned int flags, const char *desc);
+<<<<<<< HEAD
 ssize_t tpm_getcap(struct tpm_chip *chip, __be32 subcap_id, cap_t *cap,
 		   const char *desc);
 int tpm_get_timeouts(struct tpm_chip *);
@@ -494,6 +495,17 @@ int tpm_pm_suspend(struct device *dev);
 int tpm_pm_resume(struct device *dev);
 int wait_for_tpm_stat(struct tpm_chip *chip, u8 mask, unsigned long timeout,
 		      wait_queue_head_t *queue, bool check_cancel);
+=======
+ssize_t	tpm_getcap(struct device *, __be32, cap_t *, const char *);
+extern int tpm_get_timeouts(struct tpm_chip *);
+extern void tpm_gen_interrupt(struct tpm_chip *);
+extern int tpm_do_selftest(struct tpm_chip *);
+extern unsigned long tpm_calc_ordinal_duration(struct tpm_chip *, u32);
+extern int tpm_pm_suspend(struct device *);
+extern int tpm_pm_resume(struct device *);
+extern int wait_for_tpm_stat(struct tpm_chip *, u8, unsigned long,
+			     wait_queue_head_t *, bool);
+>>>>>>> upstream/rpi-4.4.y
 
 struct tpm_chip *tpm_chip_find_get(int chip_num);
 __must_check int tpm_try_get_ops(struct tpm_chip *chip);

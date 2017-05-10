@@ -210,5 +210,8 @@ intel-soc-pmic-$(CONFIG_INTEL_PMC_IPC)	+= intel_soc_pmic_bxtwc.o
 obj-$(CONFIG_INTEL_SOC_PMIC)	+= intel-soc-pmic.o
 obj-$(CONFIG_MFD_MT6397)	+= mt6397-core.o
 
+<<<<<<< HEAD
 obj-$(CONFIG_MFD_ALTERA_A10SR)	+= altera-a10sr.o
+=======
+>>>>>>> upstream/rpi-4.4.y
 obj-$(CONFIG_MFD_RPISENSE_CORE)	+= rpisense-core.o

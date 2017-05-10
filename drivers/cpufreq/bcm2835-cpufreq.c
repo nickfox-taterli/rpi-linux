@@ -45,8 +45,17 @@
 
 /* ---------- GLOBALS ---------- */
 static struct cpufreq_driver bcm2835_cpufreq_driver;	/* the cpufreq driver global */
+<<<<<<< HEAD
 static unsigned int min_frequency, max_frequency;
 static struct cpufreq_frequency_table bcm2835_freq_table[3];
+=======
+
+static struct cpufreq_frequency_table bcm2835_freq_table[] = {
+	{0, 0, 0},
+	{0, 0, 0},
+	{0, 0, CPUFREQ_TABLE_END},
+};
+>>>>>>> upstream/rpi-4.4.y
 
 /*
  ===============================================
@@ -151,6 +160,7 @@ static int bcm2835_cpufreq_driver_init(struct cpufreq_policy *policy)
 	}
 
 	/* now find out what the maximum and minimum frequencies are */
+<<<<<<< HEAD
 	min_frequency = bcm2835_cpufreq_get_clock(RPI_FIRMWARE_GET_MIN_CLOCK_RATE);
 	max_frequency = bcm2835_cpufreq_get_clock(RPI_FIRMWARE_GET_MAX_CLOCK_RATE);
 
@@ -164,6 +174,12 @@ static int bcm2835_cpufreq_driver_init(struct cpufreq_policy *policy)
 	}
 
 	print_info("min=%d max=%d\n", min_frequency, max_frequency);
+=======
+	bcm2835_freq_table[0].frequency = bcm2835_cpufreq_get_clock(RPI_FIRMWARE_GET_MIN_CLOCK_RATE);
+	bcm2835_freq_table[1].frequency = bcm2835_cpufreq_get_clock(RPI_FIRMWARE_GET_MAX_CLOCK_RATE);
+
+	print_info("min=%d max=%d\n", bcm2835_freq_table[0].frequency, bcm2835_freq_table[1].frequency);
+>>>>>>> upstream/rpi-4.4.y
 	return cpufreq_generic_init(policy, bcm2835_freq_table, transition_latency);
 }
 
@@ -175,7 +191,11 @@ static int bcm2835_cpufreq_driver_init(struct cpufreq_policy *policy)
 
 static int bcm2835_cpufreq_driver_target_index(struct cpufreq_policy *policy, unsigned int state)
 {
+<<<<<<< HEAD
 	unsigned int target_freq = state == 0 ? min_frequency : max_frequency;
+=======
+	unsigned int target_freq = bcm2835_freq_table[state].frequency;
+>>>>>>> upstream/rpi-4.4.y
 	unsigned int cur = bcm2835_cpufreq_set_clock(policy->cur, target_freq);
 
 	if (!cur)
@@ -197,7 +217,11 @@ static unsigned int bcm2835_cpufreq_driver_get(unsigned int cpu)
 {
 	unsigned int actual_rate = bcm2835_cpufreq_get_clock(RPI_FIRMWARE_GET_CLOCK_RATE);
 	print_debug("cpu%d: freq=%d\n", cpu, actual_rate);
+<<<<<<< HEAD
 	return actual_rate <= min_frequency ? min_frequency : max_frequency;
+=======
+	return actual_rate <= bcm2835_freq_table[0].frequency ? bcm2835_freq_table[0].frequency : bcm2835_freq_table[1].frequency;
+>>>>>>> upstream/rpi-4.4.y
 }
 
 /* the CPUFreq driver */

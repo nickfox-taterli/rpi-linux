@@ -592,7 +592,11 @@ static int __init imx6_add_pcie_port(struct imx6_pcie *imx6_pcie,
 		ret = devm_request_irq(dev, pp->msi_irq,
 				       imx6_pcie_msi_handler,
 				       IRQF_SHARED | IRQF_NO_THREAD,
+<<<<<<< HEAD
 				       "mx6-pcie-msi", imx6_pcie);
+=======
+				       "mx6-pcie-msi", pp);
+>>>>>>> upstream/rpi-4.4.y
 		if (ret) {
 			dev_err(dev, "failed to request MSI irq\n");
 			return ret;

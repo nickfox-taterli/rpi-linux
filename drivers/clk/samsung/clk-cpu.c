@@ -256,6 +256,7 @@ static int exynos_cpuclk_post_rate_change(struct clk_notifier_data *ndata,
 
 	exynos_set_safe_div(base, div, div_mask);
 	spin_unlock_irqrestore(cpuclk->lock, flags);
+<<<<<<< HEAD
 	return 0;
 }
 
@@ -352,6 +353,8 @@ static int exynos5433_cpuclk_post_rate_change(struct clk_notifier_data *ndata,
 
 	exynos5433_set_safe_div(base, div, div_mask);
 	spin_unlock_irqrestore(cpuclk->lock, flags);
+=======
+>>>>>>> upstream/rpi-4.4.y
 	return 0;
 }
 

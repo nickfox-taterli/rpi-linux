@@ -51,9 +51,13 @@
 #include <linux/dma-mapping.h>
 #include <linux/version.h>
 #include <asm/io.h>
+<<<<<<< HEAD
 #ifdef CONFIG_ARM
 #include <asm/fiq.h>
 #endif
+=======
+#include <asm/fiq.h>
+>>>>>>> upstream/rpi-4.4.y
 #include <linux/usb.h>
 #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,35)
 #include <../drivers/usb/core/hcd.h>
@@ -73,6 +77,7 @@
 #include "dwc_otg_driver.h"
 #include "dwc_otg_hcd.h"
 
+<<<<<<< HEAD
 #ifndef __virt_to_bus
 #define __virt_to_bus	__virt_to_phys
 #define __bus_to_virt	__phys_to_virt
@@ -80,6 +85,8 @@
 #define __bus_to_pfn(x)	__phys_to_pfn(x)
 #endif
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 extern unsigned char  _dwc_otg_fiq_stub, _dwc_otg_fiq_stub_end;
 
 /**
@@ -404,6 +411,7 @@ static struct dwc_otg_hcd_function_ops hcd_fops = {
 	.get_b_hnp_enable = _get_b_hnp_enable,
 };
 
+<<<<<<< HEAD
 #ifdef CONFIG_ARM64
 
 static int simfiq_irq = -1;
@@ -433,20 +441,28 @@ irqreturn_t fiq_irq_handler(int irq, void *dev_id)
 }
 
 #else
+=======
+>>>>>>> upstream/rpi-4.4.y
 static struct fiq_handler fh = {
   .name = "usb_fiq",
 };
 
+<<<<<<< HEAD
 #endif
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 static void hcd_init_fiq(void *cookie)
 {
 	dwc_otg_device_t *otg_dev = cookie;
 	dwc_otg_hcd_t *dwc_otg_hcd = otg_dev->hcd;
+<<<<<<< HEAD
 #ifdef CONFIG_ARM64
 	int retval = 0;
 	int irq;
 #else
+=======
+>>>>>>> upstream/rpi-4.4.y
 	struct pt_regs regs;
 	int irq;
 
@@ -474,7 +490,10 @@ static void hcd_init_fiq(void *cookie)
 
 //		__show_regs(&regs);
 	set_fiq_regs(&regs);
+<<<<<<< HEAD
 #endif
+=======
+>>>>>>> upstream/rpi-4.4.y
 
 	//Set the mphi periph to  the required registers
 	dwc_otg_hcd->fiq_state->mphi_regs.base    = otg_dev->os_dep.mphi_base;
@@ -493,6 +512,7 @@ static void hcd_init_fiq(void *cookie)
 		DWC_WARN("MPHI periph has NOT been enabled");
 #endif
 	// Enable FIQ interrupt from USB peripheral
+<<<<<<< HEAD
 #ifdef CONFIG_ARM64
 	irq = platform_get_irq(otg_dev->os_dep.platformdev, 1);
 
@@ -510,6 +530,8 @@ static void hcd_init_fiq(void *cookie)
 
 	simfiq_irq = irq;
 #else
+=======
+>>>>>>> upstream/rpi-4.4.y
 #ifdef CONFIG_MULTI_IRQ_HANDLER
 	irq = platform_get_irq(otg_dev->os_dep.platformdev, 1);
 #else
@@ -521,8 +543,11 @@ static void hcd_init_fiq(void *cookie)
 	}
 	enable_fiq(irq);
 	local_fiq_enable();
+<<<<<<< HEAD
 #endif
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 }
 
 /**
@@ -583,6 +608,7 @@ int hcd_init(dwc_bus_dev_t *_dev)
 	((struct wrapper_priv_data *)(hcd->hcd_priv))->dwc_otg_hcd =
 	    dwc_otg_hcd;
 	otg_dev->hcd = dwc_otg_hcd;
+<<<<<<< HEAD
 	otg_dev->hcd->otg_dev = otg_dev;
 
 #ifdef CONFIG_ARM64
@@ -592,6 +618,9 @@ int hcd_init(dwc_bus_dev_t *_dev)
 	if (fiq_enable)
 		hcd_init_fiq(otg_dev);
 #else
+=======
+
+>>>>>>> upstream/rpi-4.4.y
 	if (dwc_otg_hcd_init(dwc_otg_hcd, otg_dev->core_if)) {
 		goto error2;
 	}
@@ -604,8 +633,13 @@ int hcd_init(dwc_bus_dev_t *_dev)
 			smp_call_function_single(0, hcd_init_fiq, otg_dev, 1);
 		}
 	}
+<<<<<<< HEAD
 #endif
 
+=======
+
+	otg_dev->hcd->otg_dev = otg_dev;
+>>>>>>> upstream/rpi-4.4.y
 	hcd->self.otg_port = dwc_otg_hcd_otg_port(dwc_otg_hcd);
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,33) //don't support for LM(with 2.6.20.1 kernel)
 #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,35) //version field absent later

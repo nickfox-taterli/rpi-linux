@@ -890,6 +890,7 @@ smb3_set_integrity(const unsigned int xid, struct cifs_tcon *tcon,
 			true /* is_fsctl */, (char *)&integr_info,
 			sizeof(struct fsctl_set_integrity_information_req),
 			NULL,
+<<<<<<< HEAD
 			&ret_data_len);
 
 }
@@ -908,6 +909,8 @@ smb3_enum_snapshots(const unsigned int xid, struct cifs_tcon *tcon,
 			FSCTL_SRV_ENUMERATE_SNAPSHOTS,
 			true /* is_fsctl */, NULL, 0 /* no input data */,
 			(char **)&retbuf,
+=======
+>>>>>>> upstream/rpi-4.4.y
 			&ret_data_len);
 	cifs_dbg(FYI, "enum snaphots ioctl returned %d and ret buflen is %d\n",
 			rc, ret_data_len);

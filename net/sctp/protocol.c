@@ -1422,6 +1422,18 @@ static __init int sctp_init(void)
 
 	/* Then compute the page order for said goal */
 	order = get_order(goal);
+<<<<<<< HEAD
+=======
+
+	/* Now compute the required page order for the maximum sized table we
+	 * want to create
+	 */
+	max_entry_order = get_order(MAX_SCTP_PORT_HASH_ENTRIES *
+				    sizeof(struct sctp_bind_hashbucket));
+
+	/* Limit the page order by that maximum hash table size */
+	order = min(order, max_entry_order);
+>>>>>>> upstream/rpi-4.4.y
 
 	/* Now compute the required page order for the maximum sized table we
 	 * want to create

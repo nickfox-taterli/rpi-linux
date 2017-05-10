@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 // Definitions for I2C based sensors using the Industrial IO or HWMON interface.
+=======
+// Definitions for I2C based sensors using the Industrial IO interface.
+>>>>>>> upstream/rpi-4.4.y
 /dts-v1/;
 /plugin/;
 
@@ -12,12 +16,15 @@
 			#size-cells = <0>;
 			status = "okay";
 
+<<<<<<< HEAD
 			bme280: bme280@76 {
 				compatible = "bosch,bme280";
 				reg = <0x76>;
 				status = "disable";
 			};
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 			bmp085: bmp085@77 {
 				compatible = "bosch,bmp085";
 				reg = <0x77>;
@@ -25,39 +32,49 @@
 				status = "disable";
 			};
 
+<<<<<<< HEAD
 			bmp180: bmp180@77 {
 				compatible = "bosch,bmp180";
 				reg = <0x77>;
 				status = "disable";
 			};
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 			bmp280: bmp280@76 {
 				compatible = "bosch,bmp280";
 				reg = <0x76>;
 				status = "disable";
 			};
 
+<<<<<<< HEAD
 			lm75: lm75@4f {
 				compatible = "lm75";
 				reg = <0x4f>;
 				status = "disable";
 			};
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 			si7020: si7020@40 {
 				compatible = "si7020";
 				reg = <0x40>;
 				status = "disable";
 			};
+<<<<<<< HEAD
 
 			tmp102: tmp102@48 {
 				compatible = "ti,tmp102";
 				reg = <0x48>;
 				status = "disable";
 			};
+=======
+>>>>>>> upstream/rpi-4.4.y
 		};
 	};
 
 	__overrides__ {
+<<<<<<< HEAD
 		addr =  <&bme280>,"reg:0", <&bmp280>,"reg:0", <&tmp102>,"reg:0";
 		bme280 = <&bme280>,"status";
 		bmp085 = <&bmp085>,"status";
@@ -67,5 +84,10 @@
 		lm75addr = <&lm75>,"reg:0";
 		si7020 = <&si7020>,"status";
 		tmp102 = <&tmp102>,"status";
+=======
+		bmp085 = <&bmp085>,"status";
+		bmp280 = <&bmp280>,"status";
+		si7020 = <&si7020>,"status";
+>>>>>>> upstream/rpi-4.4.y
 	};
 };

@@ -51,10 +51,14 @@ static void i40e_unmap_and_free_tx_resource(struct i40e_ring *ring,
 					    struct i40e_tx_buffer *tx_buffer)
 {
 	if (tx_buffer->skb) {
+<<<<<<< HEAD
 		if (tx_buffer->tx_flags & I40E_TX_FLAGS_FD_SB)
 			kfree(tx_buffer->raw_buf);
 		else
 			dev_kfree_skb_any(tx_buffer->skb);
+=======
+		dev_kfree_skb_any(tx_buffer->skb);
+>>>>>>> upstream/rpi-4.4.y
 		if (dma_unmap_len(tx_buffer, len))
 			dma_unmap_single(ring->dev,
 					 dma_unmap_addr(tx_buffer, dma),
@@ -67,6 +71,12 @@ static void i40e_unmap_and_free_tx_resource(struct i40e_ring *ring,
 			       DMA_TO_DEVICE);
 	}
 
+<<<<<<< HEAD
+=======
+	if (tx_buffer->tx_flags & I40E_TX_FLAGS_FD_SB)
+		kfree(tx_buffer->raw_buf);
+
+>>>>>>> upstream/rpi-4.4.y
 	tx_buffer->next_to_watch = NULL;
 	tx_buffer->skb = NULL;
 	dma_unmap_len_set(tx_buffer, len, 0);
@@ -257,6 +267,7 @@ static bool i40e_clean_tx_irq(struct i40e_vsi *vsi,
 	tx_ring->q_vector->tx.total_bytes += total_bytes;
 	tx_ring->q_vector->tx.total_packets += total_packets;
 
+<<<<<<< HEAD
 	if (tx_ring->flags & I40E_TXR_FLAGS_WB_ON_ITR) {
 		/* check to see if there are < 4 descriptors
 		 * waiting to be written back, then kick the hardware to force
@@ -274,6 +285,10 @@ static bool i40e_clean_tx_irq(struct i40e_vsi *vsi,
 
 	/* notify netdev of completed buffers */
 	netdev_tx_completed_queue(txring_txq(tx_ring),
+=======
+	netdev_tx_completed_queue(netdev_get_tx_queue(tx_ring->netdev,
+						      tx_ring->queue_index),
+>>>>>>> upstream/rpi-4.4.y
 				  total_packets, total_bytes);
 
 #define TX_WAKE_THRESHOLD (DESC_NEEDED * 2)
@@ -836,7 +851,11 @@ checksum_fail:
  *
  * Returns a hash type to be used by skb_set_hash
  **/
+<<<<<<< HEAD
 static inline int i40e_ptype_to_htype(u8 ptype)
+=======
+static inline enum pkt_hash_types i40e_ptype_to_htype(u8 ptype)
+>>>>>>> upstream/rpi-4.4.y
 {
 	struct i40e_rx_ptype_decoded decoded = decode_rx_desc_ptype(ptype);
 
@@ -864,7 +883,11 @@ static inline void i40e_rx_hash(struct i40e_ring *ring,
 				u8 rx_ptype)
 {
 	u32 hash;
+<<<<<<< HEAD
 	const __le64 rss_mask =
+=======
+	const __le64 rss_mask  =
+>>>>>>> upstream/rpi-4.4.y
 		cpu_to_le64((u64)I40E_RX_DESC_FLTSTAT_RSS_HASH <<
 			    I40E_RX_DESC_STATUS_FLTSTAT_SHIFT);
 
@@ -878,11 +901,17 @@ static inline void i40e_rx_hash(struct i40e_ring *ring,
 }
 
 /**
+<<<<<<< HEAD
  * i40evf_process_skb_fields - Populate skb header fields from Rx descriptor
  * @rx_ring: rx descriptor ring packet is being transacted on
  * @rx_desc: pointer to the EOP Rx descriptor
  * @skb: pointer to current skb being populated
  * @rx_ptype: the packet type decoded by hardware
+=======
+ * i40e_clean_rx_irq_ps - Reclaim resources after receive; packet split
+ * @rx_ring:  rx ring to clean
+ * @budget:   how many cleans we're allowed
+>>>>>>> upstream/rpi-4.4.y
  *
  * This function checks the ring, descriptor, and packet information in
  * order to populate the hash, checksum, VLAN, protocol, and
@@ -965,8 +994,16 @@ static bool i40e_cleanup_headers(struct i40e_ring *rx_ring, struct sk_buff *skb)
 	if (eth_skb_pad(skb))
 		return true;
 
+<<<<<<< HEAD
 	return false;
 }
+=======
+		i40e_rx_hash(rx_ring, rx_desc, skb, rx_ptype);
+
+		/* probably a little skewed due to removing CRC */
+		total_rx_bytes += skb->len;
+		total_rx_packets++;
+>>>>>>> upstream/rpi-4.4.y
 
 /**
  * i40e_reuse_rx_page - page flip buffer and store it back on the ring
@@ -1265,9 +1302,13 @@ static int i40e_clean_rx_irq(struct i40e_ring *rx_ring, int budget)
 			continue;
 		}
 
+<<<<<<< HEAD
 		if (i40e_cleanup_headers(rx_ring, skb))
 			continue;
 
+=======
+		i40e_rx_hash(rx_ring, rx_desc, skb, rx_ptype);
+>>>>>>> upstream/rpi-4.4.y
 		/* probably a little skewed due to removing CRC */
 		total_rx_bytes += skb->len;
 
@@ -2020,6 +2061,10 @@ static inline void i40evf_tx_map(struct i40e_ring *tx_ring, struct sk_buff *skb,
 		tx_bi = &tx_ring->tx_bi[i];
 	}
 
+<<<<<<< HEAD
+=======
+#define WB_STRIDE 0x3
+>>>>>>> upstream/rpi-4.4.y
 	/* set next_to_watch value indicating a packet is present */
 	first->next_to_watch = tx_desc;
 
@@ -2029,8 +2074,15 @@ static inline void i40evf_tx_map(struct i40e_ring *tx_ring, struct sk_buff *skb,
 
 	tx_ring->next_to_use = i;
 
+<<<<<<< HEAD
 	netdev_tx_sent_queue(txring_txq(tx_ring), first->bytecount);
 	i40e_maybe_stop_tx(tx_ring, DESC_NEEDED);
+=======
+	netdev_tx_sent_queue(netdev_get_tx_queue(tx_ring->netdev,
+						 tx_ring->queue_index),
+						 first->bytecount);
+	i40evf_maybe_stop_tx(tx_ring, DESC_NEEDED);
+>>>>>>> upstream/rpi-4.4.y
 
 	/* Algorithm to optimize tail and RS bit setting:
 	 * if xmit_more is supported
@@ -2044,6 +2096,15 @@ static inline void i40evf_tx_map(struct i40e_ring *tx_ring, struct sk_buff *skb,
 	 *			update tail and set RS bit on every packet.
 	 *	if xmit_more is false and last_xmit_more was true
 	 *		update tail and set RS bit.
+<<<<<<< HEAD
+=======
+	 * else (kernel < 3.18)
+	 *	if every packet spanned less than 4 desc
+	 *		then set RS bit on 4th packet and update tail
+	 *		on every packet
+	 *	else
+	 *		set RS bit on EOP for every packet and update tail
+>>>>>>> upstream/rpi-4.4.y
 	 *
 	 * Optimization: wmb to be issued only in case of tail update.
 	 * Also optimize the Descriptor WB path for RS bit with the same
@@ -2054,11 +2115,21 @@ static inline void i40evf_tx_map(struct i40e_ring *tx_ring, struct sk_buff *skb,
 	 * trigger a force WB.
 	 */
 	if (skb->xmit_more  &&
+<<<<<<< HEAD
 	    !netif_xmit_stopped(txring_txq(tx_ring))) {
 		tx_ring->flags |= I40E_TXR_FLAGS_LAST_XMIT_MORE_SET;
 		tail_bump = false;
 	} else if (!skb->xmit_more &&
 		   !netif_xmit_stopped(txring_txq(tx_ring)) &&
+=======
+	    !netif_xmit_stopped(netdev_get_tx_queue(tx_ring->netdev,
+						    tx_ring->queue_index))) {
+		tx_ring->flags |= I40E_TXR_FLAGS_LAST_XMIT_MORE_SET;
+		tail_bump = false;
+	} else if (!skb->xmit_more &&
+		   !netif_xmit_stopped(netdev_get_tx_queue(tx_ring->netdev,
+						       tx_ring->queue_index)) &&
+>>>>>>> upstream/rpi-4.4.y
 		   (!(tx_ring->flags & I40E_TXR_FLAGS_LAST_XMIT_MORE_SET)) &&
 		   (tx_ring->packet_stride < WB_STRIDE) &&
 		   (desc_count < WB_STRIDE)) {
@@ -2078,9 +2149,16 @@ static inline void i40evf_tx_map(struct i40e_ring *tx_ring, struct sk_buff *skb,
 						  I40E_TXD_QW1_CMD_SHIFT);
 
 	/* notify HW of packet */
+<<<<<<< HEAD
 	if (!tail_bump) {
 		prefetchw(tx_desc + 1);
 	} else {
+=======
+	if (!tail_bump)
+		prefetchw(tx_desc + 1);
+
+	if (tail_bump) {
+>>>>>>> upstream/rpi-4.4.y
 		/* Force memory writes to complete before letting h/w
 		 * know there are new descriptors to fetch.  (Only
 		 * applicable for weak-ordered memory model archs,
@@ -2089,6 +2167,10 @@ static inline void i40evf_tx_map(struct i40e_ring *tx_ring, struct sk_buff *skb,
 		wmb();
 		writel(i, tx_ring->tail);
 	}
+<<<<<<< HEAD
+=======
+
+>>>>>>> upstream/rpi-4.4.y
 	return;
 
 dma_error:

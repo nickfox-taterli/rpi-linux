@@ -3439,7 +3439,11 @@ static bool __tcp_oow_rate_limited(struct net *net, int mib_idx,
 		s32 elapsed = (s32)(tcp_time_stamp - *last_oow_ack_time);
 
 		if (0 <= elapsed && elapsed < sysctl_tcp_invalid_ratelimit) {
+<<<<<<< HEAD
 			NET_INC_STATS(net, mib_idx);
+=======
+			NET_INC_STATS_BH(net, mib_idx);
+>>>>>>> upstream/rpi-4.4.y
 			return true;	/* rate-limited: don't send yet! */
 		}
 	}
@@ -3494,7 +3498,11 @@ static void tcp_send_challenge_ack(struct sock *sk, const struct sk_buff *skb)
 	count = READ_ONCE(challenge_count);
 	if (count > 0) {
 		WRITE_ONCE(challenge_count, count - 1);
+<<<<<<< HEAD
 		NET_INC_STATS(sock_net(sk), LINUX_MIB_TCPCHALLENGEACK);
+=======
+		NET_INC_STATS_BH(sock_net(sk), LINUX_MIB_TCPCHALLENGEACK);
+>>>>>>> upstream/rpi-4.4.y
 		tcp_send_ack(sk);
 	}
 }

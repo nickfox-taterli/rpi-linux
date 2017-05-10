@@ -90,10 +90,37 @@ static __always_inline
 cycle_t __pvclock_read_cycles(const struct pvclock_vcpu_time_info *src,
 			      u64 tsc)
 {
+<<<<<<< HEAD
 	u64 delta = tsc - src->tsc_timestamp;
 	cycle_t offset = pvclock_scale_delta(delta, src->tsc_to_system_mul,
 					     src->tsc_shift);
 	return src->system_time + offset;
+=======
+	u64 delta = rdtsc_ordered() - src->tsc_timestamp;
+	return pvclock_scale_delta(delta, src->tsc_to_system_mul,
+				   src->tsc_shift);
+}
+
+static __always_inline
+unsigned __pvclock_read_cycles(const struct pvclock_vcpu_time_info *src,
+			       cycle_t *cycles, u8 *flags)
+{
+	unsigned version;
+	cycle_t ret, offset;
+	u8 ret_flags;
+
+	version = src->version;
+	/* Make the latest version visible */
+	smp_rmb();
+
+	offset = pvclock_get_nsec_offset(src);
+	ret = src->system_time + offset;
+	ret_flags = src->flags;
+
+	*cycles = ret;
+	*flags = ret_flags;
+	return version;
+>>>>>>> upstream/rpi-4.4.y
 }
 
 struct pvclock_vsyscall_time_info {

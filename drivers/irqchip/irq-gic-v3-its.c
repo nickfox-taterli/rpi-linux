@@ -87,7 +87,10 @@ struct its_node {
 	struct list_head	its_device_list;
 	u64			flags;
 	u32			ite_size;
+<<<<<<< HEAD
 	u32			device_ids;
+=======
+>>>>>>> upstream/rpi-4.4.y
 	int			numa_node;
 };
 
@@ -1598,6 +1601,7 @@ static void __maybe_unused its_enable_quirk_cavium_23144(void *data)
 	its->flags |= ITS_FLAGS_WORKAROUND_CAVIUM_23144;
 }
 
+<<<<<<< HEAD
 static void __maybe_unused its_enable_quirk_qdf2400_e0065(void *data)
 {
 	struct its_node *its = data;
@@ -1606,6 +1610,8 @@ static void __maybe_unused its_enable_quirk_qdf2400_e0065(void *data)
 	its->ite_size = 16;
 }
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 static const struct gic_quirk its_quirks[] = {
 #ifdef CONFIG_CAVIUM_ERRATUM_22375
 	{
@@ -1623,6 +1629,7 @@ static const struct gic_quirk its_quirks[] = {
 		.init	= its_enable_quirk_cavium_23144,
 	},
 #endif
+<<<<<<< HEAD
 #ifdef CONFIG_QCOM_QDF2400_ERRATUM_0065
 	{
 		.desc	= "ITS: QDF2400 erratum 0065",
@@ -1631,6 +1638,8 @@ static const struct gic_quirk its_quirks[] = {
 		.init	= its_enable_quirk_qdf2400_e0065,
 	},
 #endif
+=======
+>>>>>>> upstream/rpi-4.4.y
 	{
 	}
 };
@@ -1706,9 +1715,15 @@ static int __init its_probe_one(struct resource *res,
 	INIT_LIST_HEAD(&its->entry);
 	INIT_LIST_HEAD(&its->its_device_list);
 	its->base = its_base;
+<<<<<<< HEAD
 	its->phys_base = res->start;
 	its->ite_size = ((gic_read_typer(its_base + GITS_TYPER) >> 4) & 0xf) + 1;
 	its->numa_node = numa_node;
+=======
+	its->phys_base = res.start;
+	its->ite_size = ((readl_relaxed(its_base + GITS_TYPER) >> 4) & 0xf) + 1;
+	its->numa_node = of_node_to_nid(node);
+>>>>>>> upstream/rpi-4.4.y
 
 	its->cmd_base = kzalloc(ITS_CMD_QUEUE_SZ, GFP_KERNEL);
 	if (!its->cmd_base) {

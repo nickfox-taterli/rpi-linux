@@ -2055,7 +2055,10 @@ int __sys_sendmmsg(int fd, struct mmsghdr __user *mmsg, unsigned int vlen,
 		++datagrams;
 		if (msg_data_left(&msg_sys))
 			break;
+<<<<<<< HEAD
 		cond_resched();
+=======
+>>>>>>> upstream/rpi-4.4.y
 	}
 
 	fput_light(sock->file, fput_needed);
@@ -2258,12 +2261,21 @@ int __sys_recvmmsg(int fd, struct mmsghdr __user *mmsg, unsigned int vlen,
 
 	if (err == 0)
 		goto out_put;
+<<<<<<< HEAD
 
 	if (datagrams == 0) {
 		datagrams = err;
 		goto out_put;
 	}
 
+=======
+
+	if (datagrams == 0) {
+		datagrams = err;
+		goto out_put;
+	}
+
+>>>>>>> upstream/rpi-4.4.y
 	/*
 	 * We may return less entries than requested (vlen) if the
 	 * sock is non block and there aren't enough datagrams...

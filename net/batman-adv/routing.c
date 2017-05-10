@@ -112,6 +112,30 @@ static void _batadv_update_route(struct batadv_priv *bat_priv,
 			   curr_router->addr);
 	}
 
+<<<<<<< HEAD
+=======
+	if (curr_router)
+		batadv_neigh_node_free_ref(curr_router);
+
+	/* increase refcount of new best neighbor */
+	if (neigh_node && !atomic_inc_not_zero(&neigh_node->refcount))
+		neigh_node = NULL;
+
+	spin_lock_bh(&orig_node->neigh_list_lock);
+	/* curr_router used earlier may not be the current orig_ifinfo->router
+	 * anymore because it was dereferenced outside of the neigh_list_lock
+	 * protected region. After the new best neighbor has replace the current
+	 * best neighbor the reference counter needs to decrease. Consequently,
+	 * the code needs to ensure the curr_router variable contains a pointer
+	 * to the replaced best neighbor.
+	 */
+	curr_router = rcu_dereference_protected(orig_ifinfo->router, true);
+
+	rcu_assign_pointer(orig_ifinfo->router, neigh_node);
+	spin_unlock_bh(&orig_node->neigh_list_lock);
+	batadv_orig_ifinfo_free_ref(orig_ifinfo);
+
+>>>>>>> upstream/rpi-4.4.y
 	/* decrease refcount of previous best neighbor */
 	if (curr_router)
 		batadv_neigh_node_put(curr_router);

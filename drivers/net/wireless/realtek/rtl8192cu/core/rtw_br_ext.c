@@ -51,7 +51,10 @@
 #include <linux/icmpv6.h>
 #include <net/ndisc.h>
 #include <net/checksum.h>
+<<<<<<< HEAD
 #include <net/ip6_checksum.h>
+=======
+>>>>>>> upstream/rpi-4.4.y
 #endif
 #endif
 

@@ -720,7 +720,10 @@ static int try_recover_peb(struct ubi_volume *vol, int pnum, int lnum,
 {
 	struct ubi_device *ubi = vol->ubi;
 	struct ubi_vid_hdr *vid_hdr;
+<<<<<<< HEAD
 	int new_pnum, err, vol_id = vol->vol_id, data_size;
+=======
+>>>>>>> upstream/rpi-4.4.y
 	uint32_t crc;
 
 	*retry = false;
@@ -741,7 +744,10 @@ static int try_recover_peb(struct ubi_volume *vol, int pnum, int lnum,
 		goto out_put;
 	}
 
+<<<<<<< HEAD
 	vid_hdr = ubi_get_vid_hdr(vidb);
+=======
+>>>>>>> upstream/rpi-4.4.y
 	ubi_assert(vid_hdr->vol_type == UBI_VID_DYNAMIC);
 
 	mutex_lock(&ubi->buf_mutex);
@@ -764,9 +770,18 @@ static int try_recover_peb(struct ubi_volume *vol, int pnum, int lnum,
 	vid_hdr->copy_flag = 1;
 	vid_hdr->data_size = cpu_to_be32(data_size);
 	vid_hdr->data_crc = cpu_to_be32(crc);
+<<<<<<< HEAD
 	err = ubi_io_write_vid_hdr(ubi, new_pnum, vidb);
 	if (err)
 		goto out_unlock;
+=======
+	err = ubi_io_write_vid_hdr(ubi, new_pnum, vid_hdr);
+	if (err) {
+		mutex_unlock(&ubi->buf_mutex);
+		up_read(&ubi->fm_eba_sem);
+		goto write_error;
+	}
+>>>>>>> upstream/rpi-4.4.y
 
 	err = ubi_io_write_data(ubi, ubi->peb_buf, new_pnum, 0, data_size);
 

@@ -528,10 +528,14 @@ __errata_finish:
 	orr	r0, r0, r6			@ set them
  THUMB(	orr	r0, r0, #1 << 30	)	@ Thumb exceptions
 	ret	lr				@ return to head.S:__ret
+<<<<<<< HEAD
 
 	.align	2
 __v7_setup_stack_ptr:
 	.word	PHYS_RELATIVE(__v7_setup_stack, .)
+=======
+        .space 256
+>>>>>>> upstream/rpi-4.4.y
 ENDPROC(__v7_setup)
 
 	.bss

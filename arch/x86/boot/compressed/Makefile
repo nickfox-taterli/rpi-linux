@@ -40,8 +40,13 @@ GCOV_PROFILE := n
 UBSAN_SANITIZE :=n
 
 LDFLAGS := -m elf_$(UTS_MACHINE)
+<<<<<<< HEAD
 # Compressed kernel should be built as PIE since it may be loaded at any
 # address by the bootloader.
+=======
+ifeq ($(CONFIG_RELOCATABLE),y)
+# If kernel is relocatable, build compressed kernel as PIE.
+>>>>>>> upstream/rpi-4.4.y
 ifeq ($(CONFIG_X86_32),y)
 LDFLAGS += $(call ld-option, -pie) $(call ld-option, --no-dynamic-linker)
 else
@@ -51,6 +56,10 @@ else
 LDFLAGS += $(shell $(LD) --help 2>&1 | grep -q "\-z noreloc-overflow" \
 	&& echo "-z noreloc-overflow -pie --no-dynamic-linker")
 endif
+<<<<<<< HEAD
+=======
+endif
+>>>>>>> upstream/rpi-4.4.y
 LDFLAGS_vmlinux := -T
 
 hostprogs-y	:= mkpiggy

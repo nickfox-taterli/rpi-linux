@@ -253,7 +253,11 @@ out:
 
 /**
  * ecryptfs_dir_open
+<<<<<<< HEAD
  * @inode: inode specifying file to open
+=======
+ * @inode: inode speciying file to open
+>>>>>>> upstream/rpi-4.4.y
  * @file: Structure to return filled in
  *
  * Opens the file specified by inode.

@@ -2120,8 +2120,12 @@ static int mos7840_calc_num_ports(struct usb_serial *serial)
 static int mos7840_attach(struct usb_serial *serial)
 {
 	if (serial->num_bulk_in < serial->num_ports ||
+<<<<<<< HEAD
 			serial->num_bulk_out < serial->num_ports ||
 			serial->num_interrupt_in < 1) {
+=======
+			serial->num_bulk_out < serial->num_ports) {
+>>>>>>> upstream/rpi-4.4.y
 		dev_err(&serial->interface->dev, "missing endpoints\n");
 		return -ENODEV;
 	}

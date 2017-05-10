@@ -60,7 +60,15 @@ static inline void __tlb_flush_full(struct mm_struct *mm)
 	preempt_enable();
 }
 
+<<<<<<< HEAD
 static inline void __tlb_flush_mm(struct mm_struct *mm)
+=======
+/*
+ * Flush TLB entries for a specific ASCE on all CPUs. Should never be used
+ * when more than one asce (e.g. gmap) ran on this mm.
+ */
+static inline void __tlb_flush_asce(struct mm_struct *mm, unsigned long asce)
+>>>>>>> upstream/rpi-4.4.y
 {
 	unsigned long gmap_asce;
 
@@ -106,10 +114,33 @@ static inline void __tlb_flush_mm(struct mm_struct *mm)
 
 static inline void __tlb_flush_kernel(void)
 {
+<<<<<<< HEAD
 	__tlb_flush_local();
 }
 #endif
 
+=======
+	if (MACHINE_HAS_TLB_LC)
+		__tlb_flush_idte_local(init_mm.context.asce);
+	else
+		__tlb_flush_local();
+}
+#endif
+
+static inline void __tlb_flush_mm(struct mm_struct * mm)
+{
+	/*
+	 * If the machine has IDTE we prefer to do a per mm flush
+	 * on all cpus instead of doing a local flush if the mm
+	 * only ran on the local cpu.
+	 */
+	if (MACHINE_HAS_IDTE && list_empty(&mm->context.gmap_list))
+		__tlb_flush_asce(mm, mm->context.asce);
+	else
+		__tlb_flush_full(mm);
+}
+
+>>>>>>> upstream/rpi-4.4.y
 static inline void __tlb_flush_mm_lazy(struct mm_struct * mm)
 {
 	if (mm->context.flush_mm) {

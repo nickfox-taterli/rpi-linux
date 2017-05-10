@@ -109,7 +109,11 @@ static int clk_hifiberry_dacpro_probe(struct platform_device *pdev)
 
 	init.name = "clk-hifiberry-dacpro";
 	init.ops = &clk_hifiberry_dacpro_rate_ops;
+<<<<<<< HEAD
 	init.flags = CLK_IS_BASIC;
+=======
+	init.flags = CLK_IS_ROOT | CLK_IS_BASIC;
+>>>>>>> upstream/rpi-4.4.y
 	init.parent_names = NULL;
 	init.num_parents = 0;
 

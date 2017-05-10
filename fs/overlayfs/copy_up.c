@@ -113,6 +113,7 @@ retry:
 			value = new;
 			value_size = size;
 			goto retry;
+<<<<<<< HEAD
 		}
 
 		error = security_inode_copy_up_xattr(name);
@@ -121,7 +122,10 @@ retry:
 		if (error == 1) {
 			error = 0;
 			continue; /* Discard */
+=======
+>>>>>>> upstream/rpi-4.4.y
 		}
+
 		error = vfs_setxattr(new, name, value, size, 0);
 		if (error)
 			break;

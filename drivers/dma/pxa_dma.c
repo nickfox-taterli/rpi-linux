@@ -684,15 +684,24 @@ static irqreturn_t pxad_chan_handler(int irq, void *dev_id)
 	list_for_each_entry_safe(vd, tmp, &chan->vc.desc_issued, node) {
 		vd_completed = is_desc_completed(vd);
 		dev_dbg(&chan->vc.chan.dev->device,
+<<<<<<< HEAD
 			"%s(): checking txd %p[%x]: completed=%d dcsr=0x%x\n",
 			__func__, vd, vd->tx.cookie, vd_completed,
 			dcsr);
 		last_started = vd->tx.cookie;
+=======
+			"%s(): checking txd %p[%x]: completed=%d\n",
+			__func__, vd, vd->tx.cookie, is_desc_completed(vd));
+>>>>>>> upstream/rpi-4.4.y
 		if (to_pxad_sw_desc(vd)->cyclic) {
 			vchan_cyclic_callback(vd);
 			break;
 		}
+<<<<<<< HEAD
 		if (vd_completed) {
+=======
+		if (is_desc_completed(vd)) {
+>>>>>>> upstream/rpi-4.4.y
 			list_del(&vd->node);
 			vchan_cookie_complete(vd);
 		} else {

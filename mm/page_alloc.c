@@ -293,6 +293,12 @@ static inline void reset_deferred_meminit(pg_data_t *pgdat)
 static inline bool __meminit early_page_uninitialised(unsigned long pfn)
 {
 	int nid = early_pfn_to_nid(pfn);
+<<<<<<< HEAD
+=======
+
+	if (node_online(nid) && pfn >= NODE_DATA(nid)->first_deferred_pfn)
+		return true;
+>>>>>>> upstream/rpi-4.4.y
 
 	if (node_online(nid) && pfn >= NODE_DATA(nid)->first_deferred_pfn)
 		return true;

@@ -1673,13 +1673,18 @@ int btrfs_init_fs_root(struct btrfs_root *root)
 
 	ret = get_anon_bdev(&root->anon_dev);
 	if (ret)
+<<<<<<< HEAD
 		goto fail;
+=======
+		goto free_writers;
+>>>>>>> upstream/rpi-4.4.y
 
 	mutex_lock(&root->objectid_mutex);
 	ret = btrfs_find_highest_objectid(root,
 					&root->highest_objectid);
 	if (ret) {
 		mutex_unlock(&root->objectid_mutex);
+<<<<<<< HEAD
 		goto fail;
 	}
 
@@ -1688,6 +1693,21 @@ int btrfs_init_fs_root(struct btrfs_root *root)
 	mutex_unlock(&root->objectid_mutex);
 
 	return 0;
+=======
+		goto free_root_dev;
+	}
+
+	ASSERT(root->highest_objectid <= BTRFS_LAST_FREE_OBJECTID);
+
+	mutex_unlock(&root->objectid_mutex);
+
+	return 0;
+
+free_root_dev:
+	free_anon_bdev(root->anon_dev);
+free_writers:
+	btrfs_free_subvolume_writers(root->subv_writers);
+>>>>>>> upstream/rpi-4.4.y
 fail:
 	/* the caller is responsible to call free_fs_root */
 	return ret;

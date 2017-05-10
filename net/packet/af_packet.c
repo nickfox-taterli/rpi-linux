@@ -2509,11 +2509,18 @@ static int tpacket_fill_skb(struct packet_sock *po, struct sk_buff *skb,
 				NULL, tp_len);
 		if (unlikely(err < 0))
 			return -EINVAL;
+<<<<<<< HEAD
 	} else if (copylen) {
 		int hdrlen = min_t(int, copylen, tp_len);
 
 		skb_push(skb, dev->hard_header_len);
 		skb_put(skb, copylen - dev->hard_header_len);
+=======
+	} else if (dev->hard_header_len) {
+		int hdrlen = min_t(int, dev->hard_header_len, tp_len);
+
+		skb_push(skb, dev->hard_header_len);
+>>>>>>> upstream/rpi-4.4.y
 		err = skb_store_bits(skb, 0, data, hdrlen);
 		if (unlikely(err))
 			return err;
@@ -2826,6 +2833,10 @@ static int packet_snd(struct socket *sock, struct msghdr *msg, size_t len)
 	struct virtio_net_hdr vnet_hdr = { 0 };
 	int offset = 0;
 	struct packet_sock *po = pkt_sk(sk);
+<<<<<<< HEAD
+=======
+	unsigned short gso_type = 0;
+>>>>>>> upstream/rpi-4.4.y
 	int hlen, tlen, linear;
 	int extra_len = 0;
 
@@ -2914,7 +2925,11 @@ static int packet_snd(struct socket *sock, struct msghdr *msg, size_t len)
 		goto out_free;
 	}
 
+<<<<<<< HEAD
 	sock_tx_timestamp(sk, sockc.tsflags, &skb_shinfo(skb)->tx_flags);
+=======
+	sock_tx_timestamp(sk, &skb_shinfo(skb)->tx_flags);
+>>>>>>> upstream/rpi-4.4.y
 
 	if (!vnet_hdr.gso_type && (len > dev->mtu + reserve + extra_len) &&
 	    !packet_extra_vlan_len_allowed(dev, skb)) {
@@ -3983,6 +3998,7 @@ static int packet_notifier(struct notifier_block *this,
 				}
 				if (msg == NETDEV_UNREGISTER) {
 					packet_cached_dev_reset(po);
+					fanout_release(sk);
 					po->ifindex = -1;
 					if (po->prot_hook.dev)
 						dev_put(po->prot_hook.dev);

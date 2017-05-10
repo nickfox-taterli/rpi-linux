@@ -103,6 +103,7 @@ static void kvp_poll_wrapper(void *channel)
 	hv_kvp_onchannelcallback(channel);
 }
 
+<<<<<<< HEAD
 static void kvp_register_done(void)
 {
 	/*
@@ -114,6 +115,8 @@ static void kvp_register_done(void)
 	hv_poll_channel(kvp_transaction.recv_channel, kvp_poll_wrapper);
 }
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 static void
 kvp_register(int reg_value)
 {
@@ -143,11 +146,14 @@ static void kvp_timeout_func(struct work_struct *dummy)
 	kvp_respond_to_host(NULL, HV_E_FAIL);
 
 	hv_poll_channel(kvp_transaction.recv_channel, kvp_poll_wrapper);
+<<<<<<< HEAD
 }
 
 static void kvp_host_handshake_func(struct work_struct *dummy)
 {
 	hv_poll_channel(kvp_transaction.recv_channel, hv_kvp_onchannelcallback);
+=======
+>>>>>>> upstream/rpi-4.4.y
 }
 
 static int kvp_handle_handshake(struct hv_kvp_msg *msg)
@@ -617,6 +623,7 @@ void hv_kvp_onchannelcallback(void *context)
 		     NEGO_IN_PROGRESS,
 		     NEGO_FINISHED} host_negotiatied = NEGO_NOT_STARTED;
 
+<<<<<<< HEAD
 	if (host_negotiatied == NEGO_NOT_STARTED &&
 	    kvp_transaction.state < HVUTIL_READY) {
 		/*
@@ -631,6 +638,10 @@ void hv_kvp_onchannelcallback(void *context)
 	}
 	if (kvp_transaction.state > HVUTIL_READY)
 		return;
+=======
+	if (kvp_transaction.state > HVUTIL_READY)
+		return;
+>>>>>>> upstream/rpi-4.4.y
 
 	vmbus_recvpacket(channel, recv_buffer, PAGE_SIZE * 4, &recvlen,
 			 &requestid);

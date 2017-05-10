@@ -1334,11 +1334,14 @@ static int ds1307_probe(struct i2c_client *client,
 	if (of_property_read_bool(client->dev.of_node, "wakeup-source")) {
 		ds1307_can_wakeup_device = true;
 	}
+<<<<<<< HEAD
 	/* Intersil ISL12057 DT backward compatibility */
 	if (of_property_read_bool(client->dev.of_node,
 				  "isil,irq2-can-wakeup-machine")) {
 		ds1307_can_wakeup_device = true;
 	}
+=======
+>>>>>>> upstream/rpi-4.4.y
 #endif
 
 	switch (ds1307->type) {
@@ -1601,7 +1604,11 @@ read_rtc:
 		return PTR_ERR(ds1307->rtc);
 	}
 
+<<<<<<< HEAD
 	if (ds1307_can_wakeup_device && ds1307->client->irq <= 0) {
+=======
+	if (ds1307_can_wakeup_device) {
+>>>>>>> upstream/rpi-4.4.y
 		/* Disable request for an IRQ */
 		want_irq = false;
 		dev_info(&client->dev, "'wakeup-source' is set, request for an IRQ is disabled!\n");

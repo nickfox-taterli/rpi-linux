@@ -123,6 +123,7 @@ static int handle_conflicting_encoders(struct drm_atomic_state *state,
 					new_encoder->base.id, new_encoder->name,
 					connector->base.id, connector->name);
 
+<<<<<<< HEAD
 				return -EINVAL;
 			}
 
@@ -132,6 +133,17 @@ static int handle_conflicting_encoders(struct drm_atomic_state *state,
 
 	if (!encoder_mask)
 		return 0;
+=======
+static int
+steal_encoder(struct drm_atomic_state *state,
+	      struct drm_encoder *encoder,
+	      struct drm_crtc *encoder_crtc)
+{
+	struct drm_mode_config *config = &state->dev->mode_config;
+	struct drm_crtc_state *crtc_state;
+	struct drm_connector *connector;
+	struct drm_connector_state *connector_state;
+>>>>>>> upstream/rpi-4.4.y
 
 	/*
 	 * Second loop, iterate over all connectors not part of the state.
@@ -174,6 +186,7 @@ static int handle_conflicting_encoders(struct drm_atomic_state *state,
 
 		crtc_state = drm_atomic_get_existing_crtc_state(state, conn_state->crtc);
 
+<<<<<<< HEAD
 		ret = drm_atomic_set_crtc_for_connector(conn_state, NULL);
 		if (ret)
 			return ret;
@@ -186,6 +199,9 @@ static int handle_conflicting_encoders(struct drm_atomic_state *state,
 
 			crtc_state->active = false;
 		}
+=======
+		connector_state->best_encoder = NULL;
+>>>>>>> upstream/rpi-4.4.y
 	}
 
 	return 0;

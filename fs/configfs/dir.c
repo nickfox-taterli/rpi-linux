@@ -432,7 +432,11 @@ static int configfs_attach_attr(struct configfs_dirent * sd, struct dentry * den
 				(sd->s_type & CONFIGFS_ITEM_BIN_ATTR) ?
 					configfs_init_bin_file :
 					configfs_init_file);
+<<<<<<< HEAD
 	if (error)
+=======
+	if (error) {
+>>>>>>> upstream/rpi-4.4.y
 		configfs_put(sd);
 	return error;
 }

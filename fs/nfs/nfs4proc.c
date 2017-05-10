@@ -2715,6 +2715,7 @@ static int _nfs4_open_and_get_state(struct nfs4_opendata *opendata,
 	if (d_really_is_negative(dentry)) {
 		struct dentry *alias;
 		d_drop(dentry);
+<<<<<<< HEAD
 		alias = d_exact_alias(dentry, state->inode);
 		if (!alias)
 			alias = d_splice_alias(igrab(state->inode), dentry);
@@ -2722,6 +2723,14 @@ static int _nfs4_open_and_get_state(struct nfs4_opendata *opendata,
 		if (alias) {
 			dput(ctx->dentry);
 			ctx->dentry = dentry = alias;
+=======
+		dentry = d_add_unique(dentry, igrab(state->inode));
+		if (dentry == NULL) {
+			dentry = opendata->dentry;
+		} else {
+			dput(ctx->dentry);
+			ctx->dentry = dentry;
+>>>>>>> upstream/rpi-4.4.y
 		}
 		nfs_set_verifier(dentry,
 				nfs_save_change_attribute(d_inode(opendata->dir)));
@@ -3132,8 +3141,12 @@ static void nfs4_close_prepare(struct rpc_task *task, void *data)
 	} else if (is_rdwr)
 		calldata->arg.fmode |= FMODE_READ|FMODE_WRITE;
 
+<<<<<<< HEAD
 	if (!nfs4_valid_open_stateid(state) ||
 	    test_bit(NFS_OPEN_STATE, &state->flags) == 0)
+=======
+	if (!nfs4_valid_open_stateid(state))
+>>>>>>> upstream/rpi-4.4.y
 		call_close = 0;
 	spin_unlock(&state->owner->so_lock);
 

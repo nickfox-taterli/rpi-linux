@@ -101,6 +101,7 @@ static inline pgste_t pgste_get(pte_t *ptep)
 	return __pgste(pgste);
 }
 
+<<<<<<< HEAD
 static inline void pgste_set(pte_t *ptep, pgste_t pgste)
 {
 #ifdef CONFIG_PGSTE
@@ -110,10 +111,40 @@ static inline void pgste_set(pte_t *ptep, pgste_t pgste)
 
 static inline pgste_t pgste_update_all(pte_t pte, pgste_t pgste,
 				       struct mm_struct *mm)
+=======
+int crst_table_upgrade(struct mm_struct *mm)
+{
+	unsigned long *table, *pgd;
+
+	/* upgrade should only happen from 3 to 4 levels */
+	BUG_ON(mm->context.asce_limit != (1UL << 42));
+
+	table = crst_table_alloc(mm);
+	if (!table)
+		return -ENOMEM;
+
+	spin_lock_bh(&mm->page_table_lock);
+	pgd = (unsigned long *) mm->pgd;
+	crst_table_init(table, _REGION2_ENTRY_EMPTY);
+	pgd_populate(mm, (pgd_t *) table, (pud_t *) pgd);
+	mm->pgd = (pgd_t *) table;
+	mm->context.asce_limit = 1UL << 53;
+	mm->context.asce = __pa(mm->pgd) | _ASCE_TABLE_LENGTH |
+			   _ASCE_USER_BITS | _ASCE_TYPE_REGION2;
+	mm->task_size = mm->context.asce_limit;
+	spin_unlock_bh(&mm->page_table_lock);
+
+	on_each_cpu(__crst_table_upgrade, mm, 0);
+	return 0;
+}
+
+void crst_table_downgrade(struct mm_struct *mm)
+>>>>>>> upstream/rpi-4.4.y
 {
 #ifdef CONFIG_PGSTE
 	unsigned long address, bits, skey;
 
+<<<<<<< HEAD
 	if (!mm_use_skey(mm) || pte_val(pte) & _PAGE_INVALID)
 		return pgste;
 	address = pte_val(pte) & PAGE_MASK;
@@ -172,6 +203,26 @@ static inline pgste_t pgste_set_pte(pte_t *ptep, pgste_t pgste, pte_t entry)
 #endif
 	*ptep = entry;
 	return pgste;
+=======
+	/* downgrade should only happen from 3 to 2 levels (compat only) */
+	BUG_ON(mm->context.asce_limit != (1UL << 42));
+
+	if (current->active_mm == mm) {
+		clear_user_asce();
+		__tlb_flush_mm(mm);
+	}
+
+	pgd = mm->pgd;
+	mm->pgd = (pgd_t *) (pgd_val(*pgd) & _REGION_ENTRY_ORIGIN);
+	mm->context.asce_limit = 1UL << 31;
+	mm->context.asce = __pa(mm->pgd) | _ASCE_TABLE_LENGTH |
+			   _ASCE_USER_BITS | _ASCE_TYPE_SEGMENT;
+	mm->task_size = mm->context.asce_limit;
+	crst_table_free(mm, (unsigned long *) pgd);
+
+	if (current->active_mm == mm)
+		set_user_asce(mm);
+>>>>>>> upstream/rpi-4.4.y
 }
 
 static inline pgste_t pgste_pte_notify(struct mm_struct *mm,
@@ -193,6 +244,7 @@ static inline pgste_t pgste_pte_notify(struct mm_struct *mm,
 static inline pgste_t ptep_xchg_start(struct mm_struct *mm,
 				      unsigned long addr, pte_t *ptep)
 {
+<<<<<<< HEAD
 	pgste_t pgste = __pgste(0);
 
 	if (mm_has_pgste(mm)) {
@@ -200,6 +252,12 @@ static inline pgste_t ptep_xchg_start(struct mm_struct *mm,
 		pgste = pgste_pte_notify(mm, addr, ptep, pgste);
 	}
 	return pgste;
+=======
+	if (MACHINE_HAS_IDTE)
+		__tlb_flush_idte(gmap->asce);
+	else
+		__tlb_flush_global();
+>>>>>>> upstream/rpi-4.4.y
 }
 
 static inline pte_t ptep_xchg_commit(struct mm_struct *mm,
@@ -229,12 +287,30 @@ pte_t ptep_xchg_direct(struct mm_struct *mm, unsigned long addr,
 	pgste_t pgste;
 	pte_t old;
 
+<<<<<<< HEAD
 	preempt_disable();
 	pgste = ptep_xchg_start(mm, addr, ptep);
 	old = ptep_flush_direct(mm, addr, ptep);
 	old = ptep_xchg_commit(mm, addr, ptep, pgste, old, new);
 	preempt_enable();
 	return old;
+=======
+	/* Flush tlb. */
+	if (MACHINE_HAS_IDTE)
+		__tlb_flush_idte(gmap->asce);
+	else
+		__tlb_flush_global();
+
+	/* Free all segment & region tables. */
+	list_for_each_entry_safe(page, next, &gmap->crst_list, lru)
+		__free_pages(page, 2);
+	gmap_radix_tree_free(&gmap->guest_to_host);
+	gmap_radix_tree_free(&gmap->host_to_guest);
+	down_write(&gmap->mm->mmap_sem);
+	list_del(&gmap->list);
+	up_write(&gmap->mm->mmap_sem);
+	kfree(gmap);
+>>>>>>> upstream/rpi-4.4.y
 }
 EXPORT_SYMBOL(ptep_xchg_direct);
 

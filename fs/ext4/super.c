@@ -1845,6 +1845,7 @@ static int parse_options(char *options, struct super_block *sb,
 			return 0;
 	}
 #ifdef CONFIG_QUOTA
+<<<<<<< HEAD
 	/*
 	 * We do the test below only for project quotas. 'usrquota' and
 	 * 'grpquota' mount options are allowed even without quota feature
@@ -1856,6 +1857,15 @@ static int parse_options(char *options, struct super_block *sb,
 		return 0;
 	}
 	if (sbi->s_qf_names[USRQUOTA] || sbi->s_qf_names[GRPQUOTA]) {
+=======
+	if (ext4_has_feature_quota(sb) &&
+	    (test_opt(sb, USRQUOTA) || test_opt(sb, GRPQUOTA))) {
+		ext4_msg(sb, KERN_INFO, "Quota feature enabled, usrquota and grpquota "
+			 "mount options ignored.");
+		clear_opt(sb, USRQUOTA);
+		clear_opt(sb, GRPQUOTA);
+	} else if (sbi->s_qf_names[USRQUOTA] || sbi->s_qf_names[GRPQUOTA]) {
+>>>>>>> upstream/rpi-4.4.y
 		if (test_opt(sb, USRQUOTA) && sbi->s_qf_names[USRQUOTA])
 			clear_opt(sb, USRQUOTA);
 
@@ -3830,7 +3840,11 @@ static int ext4_fill_super(struct super_block *sb, void *data, int silent)
 	db_count = (sbi->s_groups_count + EXT4_DESC_PER_BLOCK(sb) - 1) /
 		   EXT4_DESC_PER_BLOCK(sb);
 	if (ext4_has_feature_meta_bg(sb)) {
+<<<<<<< HEAD
 		if (le32_to_cpu(es->s_first_meta_bg) > db_count) {
+=======
+		if (le32_to_cpu(es->s_first_meta_bg) >= db_count) {
+>>>>>>> upstream/rpi-4.4.y
 			ext4_msg(sb, KERN_WARNING,
 				 "first meta block group too large: %u "
 				 "(group descriptor block count %u)",

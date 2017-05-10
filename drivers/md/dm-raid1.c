@@ -1278,6 +1278,10 @@ static int mirror_end_io(struct dm_target *ti, struct bio *bio, int error)
 			bd = &bio_record->details;
 
 			dm_bio_restore(bd, bio);
+<<<<<<< HEAD
+=======
+			bio_record->details.bi_bdev = NULL;
+>>>>>>> upstream/rpi-4.4.y
 			bio->bi_error = 0;
 
 			queue_bio(ms, bio, rw);

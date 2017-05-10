@@ -71,9 +71,16 @@ static __u32 ext4_inode_csum(struct inode *inode, struct ext4_inode *raw,
 			csum = ext4_chksum(sbi, csum, (__u8 *)&dummy_csum,
 					   csum_size);
 			offset += csum_size;
+<<<<<<< HEAD
 		}
 		csum = ext4_chksum(sbi, csum, (__u8 *)raw + offset,
 				   EXT4_INODE_SIZE(inode->i_sb) - offset);
+=======
+			csum = ext4_chksum(sbi, csum, (__u8 *)raw + offset,
+					   EXT4_INODE_SIZE(inode->i_sb) -
+					   offset);
+		}
+>>>>>>> upstream/rpi-4.4.y
 	}
 
 	return csum;
@@ -746,6 +753,12 @@ static void ext4_update_bh_state(struct buffer_head *bh, unsigned long flags)
 	} while (unlikely(
 		 cmpxchg(&bh->b_state, old_state, new_state) != old_state));
 }
+<<<<<<< HEAD
+=======
+
+/* Maximum number of blocks we map for direct IO at once. */
+#define DIO_MAX_BLOCKS 4096
+>>>>>>> upstream/rpi-4.4.y
 
 static int _ext4_get_block(struct inode *inode, sector_t iblock,
 			   struct buffer_head *bh, int flags)
@@ -764,6 +777,21 @@ static int _ext4_get_block(struct inode *inode, sector_t iblock,
 	if (ret > 0) {
 		map_bh(bh, inode->i_sb, map.m_pblk);
 		ext4_update_bh_state(bh, map.m_flags);
+<<<<<<< HEAD
+=======
+		if (IS_DAX(inode) && buffer_unwritten(bh)) {
+			/*
+			 * dgc: I suspect unwritten conversion on ext4+DAX is
+			 * fundamentally broken here when there are concurrent
+			 * read/write in progress on this inode.
+			 */
+			WARN_ON_ONCE(io_end);
+			bh->b_assoc_map = inode->i_mapping;
+			bh->b_private = (void *)(unsigned long)iblock;
+		}
+		if (io_end && io_end->flag & EXT4_IO_END_UNWRITTEN)
+			set_buffer_defer_completion(bh);
+>>>>>>> upstream/rpi-4.4.y
 		bh->b_size = inode->i_sb->s_blocksize * map.m_len;
 		ret = 0;
 	}
@@ -3894,7 +3922,11 @@ int ext4_update_disksize_before_punch(struct inode *inode, loff_t offset,
 	handle_t *handle;
 	loff_t size = i_size_read(inode);
 
+<<<<<<< HEAD
 	WARN_ON(!inode_is_locked(inode));
+=======
+	WARN_ON(!mutex_is_locked(&inode->i_mutex));
+>>>>>>> upstream/rpi-4.4.y
 	if (offset > size || offset + len < size)
 		return 0;
 
@@ -5771,6 +5803,7 @@ int ext4_filemap_fault(struct vm_area_struct *vma, struct vm_fault *vmf)
 
 	return err;
 }
+<<<<<<< HEAD
 
 /*
  * Find the first extent at or after @lblk in an inode that is not a hole.
@@ -5838,3 +5871,5 @@ int ext4_get_next_extent(struct inode *inode, ext4_lblk_t lblk,
 	result->es_len = 0;
 	return 0;
 }
+=======
+>>>>>>> upstream/rpi-4.4.y

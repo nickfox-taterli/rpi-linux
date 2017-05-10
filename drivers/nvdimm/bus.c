@@ -849,8 +849,11 @@ static int __nd_ioctl(struct nvdimm_bus *nvdimm_bus, struct nvdimm *nvdimm,
 		case ND_CMD_VENDOR:
 		case ND_CMD_SET_CONFIG_DATA:
 		case ND_CMD_ARS_START:
+<<<<<<< HEAD
 		case ND_CMD_CLEAR_ERROR:
 		case ND_CMD_CALL:
+=======
+>>>>>>> upstream/rpi-4.4.y
 			dev_dbg(&nvdimm_bus->dev, "'%s' command while read-only.\n",
 					nvdimm ? nvdimm_cmd_name(cmd)
 					: nvdimm_bus_cmd_name(cmd));

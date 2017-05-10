@@ -554,7 +554,10 @@ int zpci_dma_init_device(struct zpci_dev *zdev)
 	 * Also set zdev->end_dma to the actual end address of the usable
 	 * range, instead of the theoretical maximum as reported by hardware.
 	 */
+<<<<<<< HEAD
 	zdev->start_dma = PAGE_ALIGN(zdev->start_dma);
+=======
+>>>>>>> upstream/rpi-4.4.y
 	zdev->iommu_size = min3((u64) high_memory,
 				ZPCI_TABLE_SIZE_RT - zdev->start_dma,
 				zdev->end_dma - zdev->start_dma + 1);
@@ -572,7 +575,10 @@ int zpci_dma_init_device(struct zpci_dev *zdev)
 			goto free_bitmap;
 		}
 
+<<<<<<< HEAD
 	}
+=======
+>>>>>>> upstream/rpi-4.4.y
 	rc = zpci_register_ioat(zdev, 0, zdev->start_dma, zdev->end_dma,
 				(u64) zdev->dma_table);
 	if (rc)

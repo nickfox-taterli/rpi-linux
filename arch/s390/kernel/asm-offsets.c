@@ -178,6 +178,7 @@ int main(void)
 	/* software defined ABI-relevant lowcore locations 0xe00 - 0xe20 */
 	OFFSET(__LC_DUMP_REIPL, lowcore, ipib);
 	/* hardware defined lowcore locations 0x1000 - 0x18ff */
+<<<<<<< HEAD
 	OFFSET(__LC_VX_SAVE_AREA_ADDR, lowcore, vector_save_area_addr);
 	OFFSET(__LC_EXT_PARAMS2, lowcore, ext_params2);
 	OFFSET(__LC_FPREGS_SAVE_AREA, lowcore, floating_pt_save_area);
@@ -191,6 +192,22 @@ int main(void)
 	OFFSET(__LC_AREGS_SAVE_AREA, lowcore, access_regs_save_area);
 	OFFSET(__LC_CREGS_SAVE_AREA, lowcore, cregs_save_area);
 	OFFSET(__LC_PGM_TDB, lowcore, pgm_tdb);
+=======
+	OFFSET(__LC_VX_SAVE_AREA_ADDR, _lowcore, vector_save_area_addr);
+	OFFSET(__LC_EXT_PARAMS2, _lowcore, ext_params2);
+	OFFSET(SAVE_AREA_BASE, _lowcore, floating_pt_save_area);
+	OFFSET(__LC_FPREGS_SAVE_AREA, _lowcore, floating_pt_save_area);
+	OFFSET(__LC_GPREGS_SAVE_AREA, _lowcore, gpregs_save_area);
+	OFFSET(__LC_PSW_SAVE_AREA, _lowcore, psw_save_area);
+	OFFSET(__LC_PREFIX_SAVE_AREA, _lowcore, prefixreg_save_area);
+	OFFSET(__LC_FP_CREG_SAVE_AREA, _lowcore, fpt_creg_save_area);
+	OFFSET(__LC_TOD_PROGREG_SAVE_AREA, _lowcore, tod_progreg_save_area);
+	OFFSET(__LC_CPU_TIMER_SAVE_AREA, _lowcore, cpu_timer_save_area);
+	OFFSET(__LC_CLOCK_COMP_SAVE_AREA, _lowcore, clock_comp_save_area);
+	OFFSET(__LC_AREGS_SAVE_AREA, _lowcore, access_regs_save_area);
+	OFFSET(__LC_CREGS_SAVE_AREA, _lowcore, cregs_save_area);
+	OFFSET(__LC_PGM_TDB, _lowcore, pgm_tdb);
+>>>>>>> upstream/rpi-4.4.y
 	BLANK();
 	/* gmap/sie offsets */
 	OFFSET(__GMAP_ASCE, gmap, asce);

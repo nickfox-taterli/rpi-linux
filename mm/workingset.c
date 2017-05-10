@@ -426,12 +426,21 @@ static enum lru_status shadow_lru_isolate(struct list_head *item,
 			BUG_ON(!radix_tree_exceptional_entry(node->slots[i]));
 			node->slots[i] = NULL;
 			workingset_node_shadows_dec(node);
+<<<<<<< HEAD
 			BUG_ON(!mapping->nrexceptional);
 			mapping->nrexceptional--;
 		}
 	}
 	BUG_ON(workingset_node_shadows(node));
 	inc_node_state(page_pgdat(virt_to_page(node)), WORKINGSET_NODERECLAIM);
+=======
+			BUG_ON(!mapping->nrshadows);
+			mapping->nrshadows--;
+		}
+	}
+	BUG_ON(workingset_node_shadows(node));
+	inc_zone_state(page_zone(virt_to_page(node)), WORKINGSET_NODERECLAIM);
+>>>>>>> upstream/rpi-4.4.y
 	if (!__radix_tree_delete_node(&mapping->page_tree, node))
 		BUG();
 

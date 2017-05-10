@@ -658,7 +658,11 @@ int ip_defrag(struct net *net, struct sk_buff *skb, u32 user)
 	int vif = l3mdev_master_ifindex_rcu(dev);
 	struct ipq *qp;
 
+<<<<<<< HEAD
 	__IP_INC_STATS(net, IPSTATS_MIB_REASMREQDS);
+=======
+	IP_INC_STATS_BH(net, IPSTATS_MIB_REASMREQDS);
+>>>>>>> upstream/rpi-4.4.y
 	skb_orphan(skb);
 
 	/* Lookup (or create) queue header */

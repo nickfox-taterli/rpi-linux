@@ -1058,9 +1058,14 @@ static int omap2_mcspi_setup(struct spi_device *spi)
 
 	if (!mcspi_dma->dma_rx || !mcspi_dma->dma_tx) {
 		ret = omap2_mcspi_request_dma(spi);
+<<<<<<< HEAD
 		if (ret)
 			dev_warn(&spi->dev, "not using DMA for McSPI (%d)\n",
 				 ret);
+=======
+		if (ret < 0 && ret != -EAGAIN)
+			return ret;
+>>>>>>> upstream/rpi-4.4.y
 	}
 
 	ret = pm_runtime_get_sync(mcspi->dev);

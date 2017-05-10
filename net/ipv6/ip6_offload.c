@@ -258,11 +258,17 @@ out:
 	return pp;
 }
 
+<<<<<<< HEAD
 static struct sk_buff **sit_ip6ip6_gro_receive(struct sk_buff **head,
 					       struct sk_buff *skb)
 {
 	/* Common GRO receive for SIT and IP6IP6 */
 
+=======
+static struct sk_buff **sit_gro_receive(struct sk_buff **head,
+					struct sk_buff *skb)
+{
+>>>>>>> upstream/rpi-4.4.y
 	if (NAPI_GRO_CB(skb)->encap_mark) {
 		NAPI_GRO_CB(skb)->flush = 1;
 		return NULL;
@@ -273,6 +279,7 @@ static struct sk_buff **sit_ip6ip6_gro_receive(struct sk_buff **head,
 	return ipv6_gro_receive(head, skb);
 }
 
+<<<<<<< HEAD
 static struct sk_buff **ip4ip6_gro_receive(struct sk_buff **head,
 					   struct sk_buff *skb)
 {
@@ -288,6 +295,8 @@ static struct sk_buff **ip4ip6_gro_receive(struct sk_buff **head,
 	return inet_gro_receive(head, skb);
 }
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 static int ipv6_gro_complete(struct sk_buff *skb, int nhoff)
 {
 	const struct net_offload *ops;
@@ -348,7 +357,11 @@ static struct packet_offload ipv6_packet_offload __read_mostly = {
 static const struct net_offload sit_offload = {
 	.callbacks = {
 		.gso_segment	= ipv6_gso_segment,
+<<<<<<< HEAD
 		.gro_receive    = sit_ip6ip6_gro_receive,
+=======
+		.gro_receive    = sit_gro_receive,
+>>>>>>> upstream/rpi-4.4.y
 		.gro_complete   = sit_gro_complete,
 	},
 };

@@ -4951,9 +4951,12 @@ lpfc_rdp_res_speed(struct fc_rdp_port_speed_desc *desc, struct lpfc_hba *phba)
 	case LPFC_LINK_SPEED_16GHZ:
 		rdp_speed = RDP_PS_16GB;
 		break;
+<<<<<<< HEAD
 	case LPFC_LINK_SPEED_32GHZ:
 		rdp_speed = RDP_PS_32GB;
 		break;
+=======
+>>>>>>> upstream/rpi-4.4.y
 	default:
 		rdp_speed = RDP_PS_UNKNOWN;
 		break;

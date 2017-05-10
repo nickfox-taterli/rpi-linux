@@ -933,7 +933,12 @@ static void neigh_add_path(struct sk_buff *skb, u8 *daddr,
 			}
 			if (skb_queue_len(&neigh->queue) <
 			    IPOIB_MAX_PATH_REC_QUEUE) {
+<<<<<<< HEAD
 				push_pseudo_header(skb, neigh->daddr);
+=======
+				/* put pseudoheader back on for next time */
+				skb_push(skb, IPOIB_PSEUDO_LEN);
+>>>>>>> upstream/rpi-4.4.y
 				__skb_queue_tail(&neigh->queue, skb);
 			} else {
 				ipoib_warn(priv, "queue length limit %d. Packet drop.\n",
@@ -992,7 +997,12 @@ static void unicast_arp_send(struct sk_buff *skb, struct net_device *dev,
 		}
 		if (path) {
 			if (skb_queue_len(&path->queue) < IPOIB_MAX_PATH_REC_QUEUE) {
+<<<<<<< HEAD
 				push_pseudo_header(skb, phdr->hwaddr);
+=======
+				/* put pseudoheader back on for next time */
+				skb_push(skb, IPOIB_PSEUDO_LEN);
+>>>>>>> upstream/rpi-4.4.y
 				__skb_queue_tail(&path->queue, skb);
 			} else {
 				++dev->stats.tx_dropped;
@@ -1024,7 +1034,12 @@ static void unicast_arp_send(struct sk_buff *skb, struct net_device *dev,
 		return;
 	} else if ((path->query || !path_rec_start(dev, path)) &&
 		   skb_queue_len(&path->queue) < IPOIB_MAX_PATH_REC_QUEUE) {
+<<<<<<< HEAD
 		push_pseudo_header(skb, phdr->hwaddr);
+=======
+		/* put pseudoheader back on for next time */
+		skb_push(skb, IPOIB_PSEUDO_LEN);
+>>>>>>> upstream/rpi-4.4.y
 		__skb_queue_tail(&path->queue, skb);
 	} else {
 		++dev->stats.tx_dropped;
@@ -1105,7 +1120,12 @@ send_using_neigh:
 	}
 
 	if (skb_queue_len(&neigh->queue) < IPOIB_MAX_PATH_REC_QUEUE) {
+<<<<<<< HEAD
 		push_pseudo_header(skb, phdr->hwaddr);
+=======
+		/* put pseudoheader back on for next time */
+		skb_push(skb, sizeof(*phdr));
+>>>>>>> upstream/rpi-4.4.y
 		spin_lock_irqsave(&priv->lock, flags);
 		__skb_queue_tail(&neigh->queue, skb);
 		spin_unlock_irqrestore(&priv->lock, flags);
@@ -1137,6 +1157,7 @@ static int ipoib_hard_header(struct sk_buff *skb,
 			     unsigned short type,
 			     const void *daddr, const void *saddr, unsigned len)
 {
+	struct ipoib_pseudo_header *phdr;
 	struct ipoib_header *header;
 
 	header = (struct ipoib_header *) skb_push(skb, sizeof *header);
@@ -1149,7 +1170,12 @@ static int ipoib_hard_header(struct sk_buff *skb,
 	 * destination address into skb hard header so we can figure out where
 	 * to send the packet later.
 	 */
+<<<<<<< HEAD
 	push_pseudo_header(skb, daddr);
+=======
+	phdr = (struct ipoib_pseudo_header *) skb_push(skb, sizeof(*phdr));
+	memcpy(phdr->hwaddr, daddr, INFINIBAND_ALEN);
+>>>>>>> upstream/rpi-4.4.y
 
 	return IPOIB_HARD_LEN;
 }

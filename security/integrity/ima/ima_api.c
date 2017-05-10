@@ -203,6 +203,12 @@ int ima_collect_measurement(struct integrity_iint_cache *iint,
 		char digest[IMA_MAX_DIGEST_SIZE];
 	} hash;
 
+<<<<<<< HEAD
+=======
+	if (xattr_value)
+		*xattr_len = ima_read_xattr(file_dentry(file), xattr_value);
+
+>>>>>>> upstream/rpi-4.4.y
 	if (!(iint->flags & IMA_COLLECTED)) {
 		u64 i_version = file_inode(file)->i_version;
 

@@ -3,7 +3,11 @@
 #
 
 obj-y				+= bcm/
+<<<<<<< HEAD
 obj-$(CONFIG_ARCH_DOVE)		+= dove/
+=======
+obj-$(CONFIG_SOC_BRCMSTB)	+= brcmstb/
+>>>>>>> upstream/rpi-4.4.y
 obj-$(CONFIG_MACH_DOVE)		+= dove/
 obj-y				+= fsl/
 obj-$(CONFIG_ARCH_MEDIATEK)	+= mediatek/

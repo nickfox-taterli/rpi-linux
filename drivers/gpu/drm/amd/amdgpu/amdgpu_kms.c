@@ -365,10 +365,65 @@ static int amdgpu_info_ioctl(struct drm_device *dev, void *data, struct drm_file
 		if (info->query_fw.ip_instance != 0)
 			return -EINVAL;
 
+<<<<<<< HEAD
 		ret = amdgpu_firmware_info(&fw_info, &info->query_fw, adev);
 		if (ret)
 			return ret;
 
+=======
+		switch (info->query_fw.fw_type) {
+		case AMDGPU_INFO_FW_VCE:
+			fw_info.ver = adev->vce.fw_version;
+			fw_info.feature = adev->vce.fb_version;
+			break;
+		case AMDGPU_INFO_FW_UVD:
+			fw_info.ver = adev->uvd.fw_version;
+			fw_info.feature = 0;
+			break;
+		case AMDGPU_INFO_FW_GMC:
+			fw_info.ver = adev->mc.fw_version;
+			fw_info.feature = 0;
+			break;
+		case AMDGPU_INFO_FW_GFX_ME:
+			fw_info.ver = adev->gfx.me_fw_version;
+			fw_info.feature = adev->gfx.me_feature_version;
+			break;
+		case AMDGPU_INFO_FW_GFX_PFP:
+			fw_info.ver = adev->gfx.pfp_fw_version;
+			fw_info.feature = adev->gfx.pfp_feature_version;
+			break;
+		case AMDGPU_INFO_FW_GFX_CE:
+			fw_info.ver = adev->gfx.ce_fw_version;
+			fw_info.feature = adev->gfx.ce_feature_version;
+			break;
+		case AMDGPU_INFO_FW_GFX_RLC:
+			fw_info.ver = adev->gfx.rlc_fw_version;
+			fw_info.feature = adev->gfx.rlc_feature_version;
+			break;
+		case AMDGPU_INFO_FW_GFX_MEC:
+			if (info->query_fw.index == 0) {
+				fw_info.ver = adev->gfx.mec_fw_version;
+				fw_info.feature = adev->gfx.mec_feature_version;
+			} else if (info->query_fw.index == 1) {
+				fw_info.ver = adev->gfx.mec2_fw_version;
+				fw_info.feature = adev->gfx.mec2_feature_version;
+			} else
+				return -EINVAL;
+			break;
+		case AMDGPU_INFO_FW_SMC:
+			fw_info.ver = adev->pm.fw_version;
+			fw_info.feature = 0;
+			break;
+		case AMDGPU_INFO_FW_SDMA:
+			if (info->query_fw.index >= adev->sdma.num_instances)
+				return -EINVAL;
+			fw_info.ver = adev->sdma.instance[info->query_fw.index].fw_version;
+			fw_info.feature = adev->sdma.instance[info->query_fw.index].feature_version;
+			break;
+		default:
+			return -EINVAL;
+		}
+>>>>>>> upstream/rpi-4.4.y
 		return copy_to_user(out, &fw_info,
 				    min((size_t)size, sizeof(fw_info))) ? -EFAULT : 0;
 	}

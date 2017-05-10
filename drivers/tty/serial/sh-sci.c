@@ -141,8 +141,11 @@ struct sci_port {
 	struct timer_list		rx_timer;
 	unsigned int			rx_timeout;
 #endif
+<<<<<<< HEAD
 
 	bool autorts;
+=======
+>>>>>>> upstream/rpi-4.4.y
 };
 
 #define SCI_NPORTS CONFIG_SERIAL_SH_SCI_NR_UARTS

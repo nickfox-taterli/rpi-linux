@@ -76,10 +76,15 @@
 
 #ifdef PLATFORM_INTERFACE
 #include <linux/platform_device.h>
+<<<<<<< HEAD
 #ifdef CONFIG_ARM
 #include <asm/mach/map.h>
 #endif
 #endif
+=======
+#include <asm/mach/map.h>
+#endif
+>>>>>>> upstream/rpi-4.4.y
 
 /** The OS page size */
 #define DWC_OS_PAGE_SIZE	PAGE_SIZE

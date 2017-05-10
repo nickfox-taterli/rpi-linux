@@ -685,7 +685,83 @@ unsigned int vb2_poll(struct vb2_queue *q, struct file *file, poll_table *wait)
 			poll_wait(file, &fh->wait, wait);
 	}
 
+<<<<<<< HEAD
 	return res | vb2_core_poll(q, file, wait);
+=======
+	if (!q->is_output && !(req_events & (POLLIN | POLLRDNORM)))
+		return res;
+	if (q->is_output && !(req_events & (POLLOUT | POLLWRNORM)))
+		return res;
+
+	/*
+	 * Start file I/O emulator only if streaming API has not been used yet.
+	 */
+	if (q->num_buffers == 0 && !vb2_fileio_is_active(q)) {
+		if (!q->is_output && (q->io_modes & VB2_READ) &&
+				(req_events & (POLLIN | POLLRDNORM))) {
+			if (__vb2_init_fileio(q, 1))
+				return res | POLLERR;
+		}
+		if (q->is_output && (q->io_modes & VB2_WRITE) &&
+				(req_events & (POLLOUT | POLLWRNORM))) {
+			if (__vb2_init_fileio(q, 0))
+				return res | POLLERR;
+			/*
+			 * Write to OUTPUT queue can be done immediately.
+			 */
+			return res | POLLOUT | POLLWRNORM;
+		}
+	}
+
+	/*
+	 * There is nothing to wait for if the queue isn't streaming, or if the
+	 * error flag is set.
+	 */
+	if (!vb2_is_streaming(q) || q->error)
+		return res | POLLERR;
+	/*
+	 * For compatibility with vb1: if QBUF hasn't been called yet, then
+	 * return POLLERR as well. This only affects capture queues, output
+	 * queues will always initialize waiting_for_buffers to false.
+	 */
+	if (q->waiting_for_buffers)
+		return res | POLLERR;
+
+	/*
+	 * For output streams you can call write() as long as there are fewer
+	 * buffers queued than there are buffers available.
+	 */
+	if (q->is_output && q->fileio && q->queued_count < q->num_buffers)
+		return res | POLLOUT | POLLWRNORM;
+
+	if (list_empty(&q->done_list)) {
+		/*
+		 * If the last buffer was dequeued from a capture queue,
+		 * return immediately. DQBUF will return -EPIPE.
+		 */
+		if (q->last_buffer_dequeued)
+			return res | POLLIN | POLLRDNORM;
+
+		poll_wait(file, &q->done_wq, wait);
+	}
+
+	/*
+	 * Take first buffer available for dequeuing.
+	 */
+	spin_lock_irqsave(&q->done_lock, flags);
+	if (!list_empty(&q->done_list))
+		vb = list_first_entry(&q->done_list, struct vb2_buffer,
+					done_entry);
+	spin_unlock_irqrestore(&q->done_lock, flags);
+
+	if (vb && (vb->state == VB2_BUF_STATE_DONE
+			|| vb->state == VB2_BUF_STATE_ERROR)) {
+		return (q->is_output) ?
+				res | POLLOUT | POLLWRNORM :
+				res | POLLIN | POLLRDNORM;
+	}
+	return res;
+>>>>>>> upstream/rpi-4.4.y
 }
 EXPORT_SYMBOL_GPL(vb2_poll);
 

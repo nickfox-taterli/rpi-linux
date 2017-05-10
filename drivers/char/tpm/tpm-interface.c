@@ -464,7 +464,25 @@ ssize_t tpm_getcap(struct tpm_chip *chip, __be32 subcap_id, cap_t *cap,
 		*cap = tpm_cmd.params.getcap_out.cap;
 	return rc;
 }
+<<<<<<< HEAD
 EXPORT_SYMBOL_GPL(tpm_getcap);
+=======
+
+void tpm_gen_interrupt(struct tpm_chip *chip)
+{
+	struct	tpm_cmd_t tpm_cmd;
+	ssize_t rc;
+
+	tpm_cmd.header.in = tpm_getcap_header;
+	tpm_cmd.params.getcap_in.cap = TPM_CAP_PROP;
+	tpm_cmd.params.getcap_in.subcap_size = cpu_to_be32(4);
+	tpm_cmd.params.getcap_in.subcap = TPM_CAP_PROP_TIS_TIMEOUT;
+
+	rc = tpm_transmit_cmd(chip, &tpm_cmd, TPM_INTERNAL_RESULT_SIZE, 0,
+			      "attempting to determine the timeouts");
+}
+EXPORT_SYMBOL_GPL(tpm_gen_interrupt);
+>>>>>>> upstream/rpi-4.4.y
 
 #define TPM_ORD_STARTUP cpu_to_be32(153)
 #define TPM_ST_CLEAR cpu_to_be16(1)
@@ -811,8 +829,14 @@ int tpm_do_selftest(struct tpm_chip *chip)
 
 	do {
 		/* Attempt to read a PCR value */
+<<<<<<< HEAD
 		rc = tpm_pcr_read_dev(chip, 0, dummy);
 
+=======
+		cmd.header.in = pcrread_header;
+		cmd.params.pcrread_in.pcr_idx = cpu_to_be32(0);
+		rc = tpm_transmit(chip, (u8 *) &cmd, READ_PCR_RESULT_SIZE, 0);
+>>>>>>> upstream/rpi-4.4.y
 		/* Some buggy TPMs will not respond to tpm_tis_ready() for
 		 * around 300ms while the self test is ongoing, keep trying
 		 * until the self test duration expires. */

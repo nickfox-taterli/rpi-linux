@@ -286,6 +286,7 @@
 	INTEL_VGA_DEVICE(0x1A85, info), \
 	INTEL_VGA_DEVICE(0x5A84, info), /* APL HD Graphics 505 */ \
 	INTEL_VGA_DEVICE(0x5A85, info)  /* APL HD Graphics 500 */
+<<<<<<< HEAD
 
 #define INTEL_KBL_GT1_IDS(info)	\
 	INTEL_VGA_DEVICE(0x5913, info), /* ULT GT1.5 */ \
@@ -320,5 +321,7 @@
 	INTEL_KBL_GT2_IDS(info), \
 	INTEL_KBL_GT3_IDS(info), \
 	INTEL_KBL_GT4_IDS(info)
+=======
+>>>>>>> upstream/rpi-4.4.y
 
 #endif /* _I915_PCIIDS_H */

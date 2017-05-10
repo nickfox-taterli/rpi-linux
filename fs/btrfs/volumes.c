@@ -6737,13 +6737,19 @@ int btrfs_read_sys_array(struct btrfs_root *root)
 
 			num_stripes = btrfs_chunk_num_stripes(sb, chunk);
 			if (!num_stripes) {
+<<<<<<< HEAD
 				btrfs_err(fs_info,
 					"invalid number of stripes %u in sys_array at offset %u",
+=======
+				printk(KERN_ERR
+	    "BTRFS: invalid number of stripes %u in sys_array at offset %u\n",
+>>>>>>> upstream/rpi-4.4.y
 					num_stripes, cur_offset);
 				ret = -EIO;
 				break;
 			}
 
+<<<<<<< HEAD
 			type = btrfs_chunk_type(sb, chunk);
 			if ((type & BTRFS_BLOCK_GROUP_SYSTEM) == 0) {
 				btrfs_err(fs_info,
@@ -6753,6 +6759,8 @@ int btrfs_read_sys_array(struct btrfs_root *root)
 				break;
 			}
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 			len = btrfs_chunk_item_size(num_stripes);
 			if (cur_offset + len > array_size)
 				goto out_short_read;

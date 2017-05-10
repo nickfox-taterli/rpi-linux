@@ -81,6 +81,13 @@ static void vss_poll_wrapper(void *channel)
 	hv_vss_onchannelcallback(channel);
 }
 
+static void vss_poll_wrapper(void *channel)
+{
+	/* Transaction is finished, reset the state here to avoid races. */
+	vss_transaction.state = HVUTIL_READY;
+	hv_vss_onchannelcallback(channel);
+}
+
 /*
  * Callback when data is received from user mode.
  */
@@ -94,12 +101,15 @@ static void vss_timeout_func(struct work_struct *dummy)
 	vss_respond_to_host(HV_E_FAIL);
 
 	hv_poll_channel(vss_transaction.recv_channel, vss_poll_wrapper);
+<<<<<<< HEAD
 }
 
 static void vss_register_done(void)
 {
 	hv_poll_channel(vss_transaction.recv_channel, vss_poll_wrapper);
 	pr_debug("VSS: userspace daemon registered\n");
+=======
+>>>>>>> upstream/rpi-4.4.y
 }
 
 static int vss_handle_handshake(struct hv_vss_msg *vss_msg)
@@ -337,7 +347,10 @@ static void vss_on_reset(void)
 int
 hv_vss_init(struct hv_util_service *srv)
 {
+<<<<<<< HEAD
 	init_completion(&release_event);
+=======
+>>>>>>> upstream/rpi-4.4.y
 	if (vmbus_proto_version < VERSION_WIN8_1) {
 		pr_warn("Integration service 'Backup (volume snapshot)'"
 			" not supported on this host version.\n");

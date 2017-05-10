@@ -124,6 +124,7 @@ unsigned long task_statm(struct mm_struct *mm,
 }
 
 static int is_stack(struct proc_maps_private *priv,
+<<<<<<< HEAD
 		    struct vm_area_struct *vma)
 {
 	struct mm_struct *mm = vma->vm_mm;
@@ -135,6 +136,27 @@ static int is_stack(struct proc_maps_private *priv,
 	 */
 	return vma->vm_start <= mm->start_stack &&
 		vma->vm_end >= mm->start_stack;
+=======
+		    struct vm_area_struct *vma, int is_pid)
+{
+	struct mm_struct *mm = vma->vm_mm;
+	int stack = 0;
+
+	if (is_pid) {
+		stack = vma->vm_start <= mm->start_stack &&
+			vma->vm_end >= mm->start_stack;
+	} else {
+		struct inode *inode = priv->inode;
+		struct task_struct *task;
+
+		rcu_read_lock();
+		task = pid_task(proc_pid(inode), PIDTYPE_PID);
+		if (task)
+			stack = vma_is_stack_for_task(vma, task);
+		rcu_read_unlock();
+	}
+	return stack;
+>>>>>>> upstream/rpi-4.4.y
 }
 
 /*
@@ -176,7 +198,11 @@ static int nommu_vma_show(struct seq_file *m, struct vm_area_struct *vma,
 	if (file) {
 		seq_pad(m, ' ');
 		seq_file_path(m, file, "");
+<<<<<<< HEAD
 	} else if (mm && is_stack(priv, vma)) {
+=======
+	} else if (mm && is_stack(priv, vma, is_pid)) {
+>>>>>>> upstream/rpi-4.4.y
 		seq_pad(m, ' ');
 		seq_printf(m, "[stack]");
 	}

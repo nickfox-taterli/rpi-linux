@@ -317,5 +317,10 @@ u64  nicvf_queue_reg_read(struct nicvf *nic,
 void nicvf_update_rq_stats(struct nicvf *nic, int rq_idx);
 void nicvf_update_sq_stats(struct nicvf *nic, int sq_idx);
 int nicvf_check_cqe_rx_errs(struct nicvf *nic, struct cqe_rx_t *cqe_rx);
+<<<<<<< HEAD
 int nicvf_check_cqe_tx_errs(struct nicvf *nic, struct cqe_send_t *cqe_tx);
+=======
+int nicvf_check_cqe_tx_errs(struct nicvf *nic,
+			    struct cmp_queue *cq, struct cqe_send_t *cqe_tx);
+>>>>>>> upstream/rpi-4.4.y
 #endif /* NICVF_QUEUES_H */

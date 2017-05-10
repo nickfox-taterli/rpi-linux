@@ -875,6 +875,7 @@ static sector_t max_io_len(sector_t sector, struct dm_target *ti)
 	/*
 	 * Does the target need to split even further?
 	 */
+<<<<<<< HEAD
 	if (ti->max_io_len) {
 		offset = dm_target_offset(ti, sector);
 		if (unlikely(ti->max_io_len & (ti->max_io_len - 1)))
@@ -886,6 +887,10 @@ static sector_t max_io_len(sector_t sector, struct dm_target *ti)
 		if (len > max_len)
 			len = max_len;
 	}
+=======
+	if (!md->queue->mq_ops && run_queue)
+		blk_run_queue_async(md->queue);
+>>>>>>> upstream/rpi-4.4.y
 
 	return len;
 }
@@ -925,11 +930,18 @@ static long dm_blk_direct_access(struct block_device *bdev, sector_t sector,
 	len = max_io_len(sector, ti) << SECTOR_SHIFT;
 	size = min(len, size);
 
+<<<<<<< HEAD
 	if (ti->type->direct_access)
 		ret = ti->type->direct_access(ti, sector, kaddr, pfn, size);
 out:
 	dm_put_live_table(md, srcu_idx);
 	return min(ret, size);
+=======
+	if (clone)
+		free_rq_clone(clone);
+	else if (!tio->md->queue->mq_ops)
+		free_rq_tio(tio);
+>>>>>>> upstream/rpi-4.4.y
 }
 
 /*
@@ -972,6 +984,7 @@ void dm_accept_partial_bio(struct bio *bio, unsigned n_sectors)
 }
 EXPORT_SYMBOL_GPL(dm_accept_partial_bio);
 
+<<<<<<< HEAD
 /*
  * Flush current->bio_list when the target map method blocks.
  * This fixes deadlocks in snapshot and possibly in other targets.
@@ -980,6 +993,25 @@ struct dm_offload {
 	struct blk_plug plug;
 	struct blk_plug_cb cb;
 };
+=======
+static void dm_requeue_original_request(struct mapped_device *md,
+					struct request *rq)
+{
+	int rw = rq_data_dir(rq);
+
+	rq_end_stats(md, rq);
+	dm_unprep_request(rq);
+
+	if (!rq->q->mq_ops)
+		old_requeue_request(rq);
+	else {
+		blk_mq_requeue_request(rq);
+		blk_mq_kick_requeue_list(rq->q);
+	}
+
+	rq_completed(md, rw, false);
+}
+>>>>>>> upstream/rpi-4.4.y
 
 static void flush_current_bio_list(struct blk_plug_cb *cb, bool from_schedule)
 {
@@ -1033,6 +1065,223 @@ static void __map_bio(struct dm_target_io *tio)
 	struct bio *clone = &tio->clone;
 	struct dm_target *ti = tio->ti;
 
+<<<<<<< HEAD
+=======
+static void dm_done(struct request *clone, int error, bool mapped)
+{
+	int r = error;
+	struct dm_rq_target_io *tio = clone->end_io_data;
+	dm_request_endio_fn rq_end_io = NULL;
+
+	if (tio->ti) {
+		rq_end_io = tio->ti->type->rq_end_io;
+
+		if (mapped && rq_end_io)
+			r = rq_end_io(tio->ti, clone, error, &tio->info);
+	}
+
+	if (unlikely(r == -EREMOTEIO && (clone->cmd_flags & REQ_WRITE_SAME) &&
+		     !clone->q->limits.max_write_same_sectors))
+		disable_write_same(tio->md);
+
+	if (r <= 0)
+		/* The target wants to complete the I/O */
+		dm_end_request(clone, r);
+	else if (r == DM_ENDIO_INCOMPLETE)
+		/* The target will handle the I/O */
+		return;
+	else if (r == DM_ENDIO_REQUEUE)
+		/* The target wants to requeue the I/O */
+		dm_requeue_original_request(tio->md, tio->orig);
+	else {
+		DMWARN("unimplemented target endio return value: %d", r);
+		BUG();
+	}
+}
+
+/*
+ * Request completion handler for request-based dm
+ */
+static void dm_softirq_done(struct request *rq)
+{
+	bool mapped = true;
+	struct dm_rq_target_io *tio = tio_from_request(rq);
+	struct request *clone = tio->clone;
+	int rw;
+
+	if (!clone) {
+		rq_end_stats(tio->md, rq);
+		rw = rq_data_dir(rq);
+		if (!rq->q->mq_ops) {
+			blk_end_request_all(rq, tio->error);
+			rq_completed(tio->md, rw, false);
+			free_rq_tio(tio);
+		} else {
+			blk_mq_end_request(rq, tio->error);
+			rq_completed(tio->md, rw, false);
+		}
+		return;
+	}
+
+	if (rq->cmd_flags & REQ_FAILED)
+		mapped = false;
+
+	dm_done(clone, tio->error, mapped);
+}
+
+/*
+ * Complete the clone and the original request with the error status
+ * through softirq context.
+ */
+static void dm_complete_request(struct request *rq, int error)
+{
+	struct dm_rq_target_io *tio = tio_from_request(rq);
+
+	tio->error = error;
+	if (!rq->q->mq_ops)
+		blk_complete_request(rq);
+	else
+		blk_mq_complete_request(rq, error);
+}
+
+/*
+ * Complete the not-mapped clone and the original request with the error status
+ * through softirq context.
+ * Target's rq_end_io() function isn't called.
+ * This may be used when the target's map_rq() or clone_and_map_rq() functions fail.
+ */
+static void dm_kill_unmapped_request(struct request *rq, int error)
+{
+	rq->cmd_flags |= REQ_FAILED;
+	dm_complete_request(rq, error);
+}
+
+/*
+ * Called with the clone's queue lock held (for non-blk-mq)
+ */
+static void end_clone_request(struct request *clone, int error)
+{
+	struct dm_rq_target_io *tio = clone->end_io_data;
+
+	if (!clone->q->mq_ops) {
+		/*
+		 * For just cleaning up the information of the queue in which
+		 * the clone was dispatched.
+		 * The clone is *NOT* freed actually here because it is alloced
+		 * from dm own mempool (REQ_ALLOCED isn't set).
+		 */
+		__blk_put_request(clone->q, clone);
+	}
+
+	/*
+	 * Actual request completion is done in a softirq context which doesn't
+	 * hold the clone's queue lock.  Otherwise, deadlock could occur because:
+	 *     - another request may be submitted by the upper level driver
+	 *       of the stacking during the completion
+	 *     - the submission which requires queue lock may be done
+	 *       against this clone's queue
+	 */
+	dm_complete_request(tio->orig, error);
+}
+
+/*
+ * Return maximum size of I/O possible at the supplied sector up to the current
+ * target boundary.
+ */
+static sector_t max_io_len_target_boundary(sector_t sector, struct dm_target *ti)
+{
+	sector_t target_offset = dm_target_offset(ti, sector);
+
+	return ti->len - target_offset;
+}
+
+static sector_t max_io_len(sector_t sector, struct dm_target *ti)
+{
+	sector_t len = max_io_len_target_boundary(sector, ti);
+	sector_t offset, max_len;
+
+	/*
+	 * Does the target need to split even further?
+	 */
+	if (ti->max_io_len) {
+		offset = dm_target_offset(ti, sector);
+		if (unlikely(ti->max_io_len & (ti->max_io_len - 1)))
+			max_len = sector_div(offset, ti->max_io_len);
+		else
+			max_len = offset & (ti->max_io_len - 1);
+		max_len = ti->max_io_len - max_len;
+
+		if (len > max_len)
+			len = max_len;
+	}
+
+	return len;
+}
+
+int dm_set_target_max_io_len(struct dm_target *ti, sector_t len)
+{
+	if (len > UINT_MAX) {
+		DMERR("Specified maximum size of target IO (%llu) exceeds limit (%u)",
+		      (unsigned long long)len, UINT_MAX);
+		ti->error = "Maximum size of target IO is too large";
+		return -EINVAL;
+	}
+
+	ti->max_io_len = (uint32_t) len;
+
+	return 0;
+}
+EXPORT_SYMBOL_GPL(dm_set_target_max_io_len);
+
+/*
+ * A target may call dm_accept_partial_bio only from the map routine.  It is
+ * allowed for all bio types except REQ_FLUSH.
+ *
+ * dm_accept_partial_bio informs the dm that the target only wants to process
+ * additional n_sectors sectors of the bio and the rest of the data should be
+ * sent in a next bio.
+ *
+ * A diagram that explains the arithmetics:
+ * +--------------------+---------------+-------+
+ * |         1          |       2       |   3   |
+ * +--------------------+---------------+-------+
+ *
+ * <-------------- *tio->len_ptr --------------->
+ *                      <------- bi_size ------->
+ *                      <-- n_sectors -->
+ *
+ * Region 1 was already iterated over with bio_advance or similar function.
+ *	(it may be empty if the target doesn't use bio_advance)
+ * Region 2 is the remaining bio size that the target wants to process.
+ *	(it may be empty if region 1 is non-empty, although there is no reason
+ *	 to make it empty)
+ * The target requires that region 3 is to be sent in the next bio.
+ *
+ * If the target wants to receive multiple copies of the bio (via num_*bios, etc),
+ * the partially processed part (the sum of regions 1+2) must be the same for all
+ * copies of the bio.
+ */
+void dm_accept_partial_bio(struct bio *bio, unsigned n_sectors)
+{
+	struct dm_target_io *tio = container_of(bio, struct dm_target_io, clone);
+	unsigned bi_size = bio->bi_iter.bi_size >> SECTOR_SHIFT;
+	BUG_ON(bio->bi_rw & REQ_FLUSH);
+	BUG_ON(bi_size > *tio->len_ptr);
+	BUG_ON(n_sectors > bi_size);
+	*tio->len_ptr -= bi_size - n_sectors;
+	bio->bi_iter.bi_size = n_sectors << SECTOR_SHIFT;
+}
+EXPORT_SYMBOL_GPL(dm_accept_partial_bio);
+
+static void __map_bio(struct dm_target_io *tio)
+{
+	int r;
+	sector_t sector;
+	struct mapped_device *md;
+	struct bio *clone = &tio->clone;
+	struct dm_target *ti = tio->ti;
+
+>>>>>>> upstream/rpi-4.4.y
 	clone->bi_end_io = clone_endio;
 
 	/*
@@ -2146,7 +2395,11 @@ static void unlock_fs(struct mapped_device *md)
  * Caller must hold md->suspend_lock
  */
 static int __dm_suspend(struct mapped_device *md, struct dm_table *map,
+<<<<<<< HEAD
 			unsigned suspend_flags, long task_state,
+=======
+			unsigned suspend_flags, int interruptible,
+>>>>>>> upstream/rpi-4.4.y
 			int dmf_suspended_flag)
 {
 	bool do_lockfs = suspend_flags & DM_SUSPEND_LOCKFS_FLAG;
@@ -2215,7 +2468,11 @@ static int __dm_suspend(struct mapped_device *md, struct dm_table *map,
 	 * We call dm_wait_for_completion to wait for all existing requests
 	 * to finish.
 	 */
+<<<<<<< HEAD
 	r = dm_wait_for_completion(md, task_state);
+=======
+	r = dm_wait_for_completion(md, interruptible);
+>>>>>>> upstream/rpi-4.4.y
 	if (!r)
 		set_bit(dmf_suspended_flag, &md->flags);
 

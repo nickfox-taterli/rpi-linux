@@ -280,6 +280,7 @@ static inline void __inc_node_state(struct pglist_data *pgdat, enum node_stat_it
 static inline void __dec_zone_state(struct zone *zone, enum zone_stat_item item)
 {
 	atomic_long_dec(&zone->vm_stat[item]);
+<<<<<<< HEAD
 	atomic_long_dec(&vm_zone_stat[item]);
 }
 
@@ -287,6 +288,13 @@ static inline void __dec_node_state(struct pglist_data *pgdat, enum node_stat_it
 {
 	atomic_long_dec(&pgdat->vm_stat[item]);
 	atomic_long_dec(&vm_node_stat[item]);
+=======
+	if (item == NR_FILE_DIRTY && unlikely(atomic_long_read(&zone->vm_stat[item]) < 0))
+		atomic_long_set(&zone->vm_stat[item], 0);
+	atomic_long_dec(&vm_stat[item]);
+	if (item == NR_FILE_DIRTY && unlikely(atomic_long_read(&vm_stat[item]) < 0))
+		atomic_long_set(&vm_stat[item], 0);
+>>>>>>> upstream/rpi-4.4.y
 }
 
 static inline void __inc_zone_page_state(struct page *page,

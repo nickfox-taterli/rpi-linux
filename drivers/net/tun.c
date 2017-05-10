@@ -645,9 +645,14 @@ static int tun_attach(struct tun_struct *tun, struct file *file, bool skip_filte
 
 	/* Re-attach the filter to persist device */
 	if (!skip_filter && (tun->filter_attached == true)) {
+<<<<<<< HEAD
 		lock_sock(tfile->socket.sk);
 		err = sk_attach_filter(&tun->fprog, tfile->socket.sk);
 		release_sock(tfile->socket.sk);
+=======
+		err = __sk_attach_filter(&tun->fprog, tfile->socket.sk,
+					 lockdep_rtnl_is_held());
+>>>>>>> upstream/rpi-4.4.y
 		if (!err)
 			goto out;
 	}
@@ -1499,8 +1504,14 @@ static ssize_t tun_do_read(struct tun_struct *tun, struct tun_file *tfile,
 	if (!iov_iter_count(to))
 		return 0;
 
+<<<<<<< HEAD
 	/* Read frames from ring */
 	skb = tun_ring_recv(tfile, noblock, &err);
+=======
+	/* Read frames from queue */
+	skb = __skb_recv_datagram(tfile->socket.sk, noblock ? MSG_DONTWAIT : 0,
+				  &peeked, &off, &err);
+>>>>>>> upstream/rpi-4.4.y
 	if (!skb)
 		return err;
 
@@ -1919,9 +1930,13 @@ static void tun_detach_filter(struct tun_struct *tun, int n)
 
 	for (i = 0; i < n; i++) {
 		tfile = rtnl_dereference(tun->tfiles[i]);
+<<<<<<< HEAD
 		lock_sock(tfile->socket.sk);
 		sk_detach_filter(tfile->socket.sk);
 		release_sock(tfile->socket.sk);
+=======
+		__sk_detach_filter(tfile->socket.sk, lockdep_rtnl_is_held());
+>>>>>>> upstream/rpi-4.4.y
 	}
 
 	tun->filter_attached = false;
@@ -1934,9 +1949,14 @@ static int tun_attach_filter(struct tun_struct *tun)
 
 	for (i = 0; i < tun->numqueues; i++) {
 		tfile = rtnl_dereference(tun->tfiles[i]);
+<<<<<<< HEAD
 		lock_sock(tfile->socket.sk);
 		ret = sk_attach_filter(&tun->fprog, tfile->socket.sk);
 		release_sock(tfile->socket.sk);
+=======
+		ret = __sk_attach_filter(&tun->fprog, tfile->socket.sk,
+					 lockdep_rtnl_is_held());
+>>>>>>> upstream/rpi-4.4.y
 		if (ret) {
 			tun_detach_filter(tun, i);
 			return ret;

@@ -58,6 +58,7 @@ vc4_overflow_mem_work(struct work_struct *work)
 {
 	struct vc4_dev *vc4 =
 		container_of(work, struct vc4_dev, overflow_mem_work);
+<<<<<<< HEAD
 	struct vc4_bo *bo = vc4->bin_bo;
 	int bin_bo_slot;
 	struct vc4_exec_info *exec;
@@ -65,10 +66,18 @@ vc4_overflow_mem_work(struct work_struct *work)
 
 	bin_bo_slot = vc4_v3d_get_bin_slot(vc4);
 	if (bin_bo_slot < 0) {
+=======
+	struct drm_device *dev = vc4->dev;
+	struct vc4_bo *bo;
+
+	bo = vc4_bo_create(dev, 256 * 1024, true);
+	if (IS_ERR(bo)) {
+>>>>>>> upstream/rpi-4.4.y
 		DRM_ERROR("Couldn't allocate binner overflow mem\n");
 		return;
 	}
 
+<<<<<<< HEAD
 	spin_lock_irqsave(&vc4->job_lock, irqflags);
 
 	if (vc4->bin_alloc_overflow) {
@@ -97,6 +106,43 @@ vc4_overflow_mem_work(struct work_struct *work)
 	V3D_WRITE(V3D_INTCTL, V3D_INT_OUTOMEM);
 	V3D_WRITE(V3D_INTENA, V3D_INT_OUTOMEM);
 	spin_unlock_irqrestore(&vc4->job_lock, irqflags);
+=======
+	/* If there's a job executing currently, then our previous
+	 * overflow allocation is getting used in that job and we need
+	 * to queue it to be released when the job is done.  But if no
+	 * job is executing at all, then we can free the old overflow
+	 * object direcctly.
+	 *
+	 * No lock necessary for this pointer since we're the only
+	 * ones that update the pointer, and our workqueue won't
+	 * reenter.
+	 */
+	if (vc4->overflow_mem) {
+		struct vc4_exec_info *current_exec;
+		unsigned long irqflags;
+
+		spin_lock_irqsave(&vc4->job_lock, irqflags);
+		current_exec = vc4_first_bin_job(vc4);
+		if (!current_exec)
+			current_exec = vc4_last_render_job(vc4);
+		if (current_exec) {
+			vc4->overflow_mem->seqno = current_exec->seqno;
+			list_add_tail(&vc4->overflow_mem->unref_head,
+				      &current_exec->unref_list);
+			vc4->overflow_mem = NULL;
+		}
+		spin_unlock_irqrestore(&vc4->job_lock, irqflags);
+	}
+
+	if (vc4->overflow_mem)
+		drm_gem_object_unreference_unlocked(&vc4->overflow_mem->base.base);
+	vc4->overflow_mem = bo;
+
+	V3D_WRITE(V3D_BPOA, bo->base.paddr);
+	V3D_WRITE(V3D_BPOS, bo->base.base.size);
+	V3D_WRITE(V3D_INTCTL, V3D_INT_OUTOMEM);
+	V3D_WRITE(V3D_INTENA, V3D_INT_OUTOMEM);
+>>>>>>> upstream/rpi-4.4.y
 }
 
 static void

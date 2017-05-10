@@ -9,6 +9,7 @@
 
 #include <linux/clk.h>
 #include <linux/component.h>
+#include <linux/debugfs.h>
 #include <linux/device.h>
 #include <linux/io.h>
 #include <linux/module.h>
@@ -43,6 +44,75 @@ void __iomem *vc4_ioremap_regs(struct platform_device *dev, int index)
 	}
 
 	return map;
+}
+
+static int vc4_get_param_ioctl(struct drm_device *dev, void *data,
+			       struct drm_file *file_priv)
+{
+	struct vc4_dev *vc4 = to_vc4_dev(dev);
+<<<<<<< HEAD
+	struct drm_vc4_get_param *args = data;
+	int ret;
+
+	if (args->pad != 0)
+		return -EINVAL;
+
+	switch (args->param) {
+	case DRM_VC4_PARAM_V3D_IDENT0:
+		ret = pm_runtime_get_sync(&vc4->v3d->pdev->dev);
+		if (ret < 0)
+			return ret;
+		args->value = V3D_READ(V3D_IDENT0);
+		pm_runtime_mark_last_busy(&vc4->v3d->pdev->dev);
+		pm_runtime_put_autosuspend(&vc4->v3d->pdev->dev);
+		break;
+	case DRM_VC4_PARAM_V3D_IDENT1:
+		ret = pm_runtime_get_sync(&vc4->v3d->pdev->dev);
+		if (ret < 0)
+			return ret;
+		args->value = V3D_READ(V3D_IDENT1);
+		pm_runtime_mark_last_busy(&vc4->v3d->pdev->dev);
+		pm_runtime_put_autosuspend(&vc4->v3d->pdev->dev);
+		break;
+	case DRM_VC4_PARAM_V3D_IDENT2:
+		ret = pm_runtime_get_sync(&vc4->v3d->pdev->dev);
+		if (ret < 0)
+			return ret;
+		args->value = V3D_READ(V3D_IDENT2);
+		pm_runtime_mark_last_busy(&vc4->v3d->pdev->dev);
+		pm_runtime_put_autosuspend(&vc4->v3d->pdev->dev);
+		break;
+	case DRM_VC4_PARAM_SUPPORTS_BRANCHES:
+	case DRM_VC4_PARAM_SUPPORTS_ETC1:
+	case DRM_VC4_PARAM_SUPPORTS_THREADED_FS:
+		args->value = true;
+		break;
+	default:
+		DRM_DEBUG("Unknown parameter %d\n", args->param);
+		return -EINVAL;
+	}
+
+=======
+	struct drm_crtc *crtc;
+
+	list_for_each_entry(crtc, &dev->mode_config.crtc_list, head) {
+		if (vc4->firmware_kms)
+			vc4_fkms_cancel_page_flip(crtc, file);
+		else
+			vc4_cancel_page_flip(crtc, file);
+	}
+}
+
+void vc4_dump_regs32(const struct debugfs_reg32 *regs, unsigned int num_regs,
+		     void __iomem *base, const char *prefix)
+{
+	unsigned int i;
+
+	for (i = 0; i < num_regs; i++) {
+		DRM_INFO("%s0x%04lx (%s): 0x%08x\n",
+			 prefix, regs[i].offset, regs[i].name,
+			 readl(base + regs[i].offset));
+	}
 }
 
 static int vc4_get_param_ioctl(struct drm_device *dev, void *data,
@@ -90,6 +160,7 @@ static int vc4_get_param_ioctl(struct drm_device *dev, void *data,
 		return -EINVAL;
 	}
 
+>>>>>>> upstream/rpi-4.4.y
 	return 0;
 }
 
@@ -139,6 +210,11 @@ static struct drm_driver vc4_drm_driver = {
 	.irq_postinstall = vc4_irq_postinstall,
 	.irq_uninstall = vc4_irq_uninstall,
 
+	.irq_handler = vc4_irq,
+	.irq_preinstall = vc4_irq_preinstall,
+	.irq_postinstall = vc4_irq_postinstall,
+	.irq_uninstall = vc4_irq_uninstall,
+
 	.enable_vblank = vc4_enable_vblank,
 	.disable_vblank = vc4_disable_vblank,
 	.get_vblank_counter = drm_vblank_no_hw_counter,
@@ -151,7 +227,11 @@ static struct drm_driver vc4_drm_driver = {
 #endif
 
 	.gem_create_object = vc4_create_object,
+<<<<<<< HEAD
 	.gem_free_object_unlocked = vc4_free_object,
+=======
+	.gem_free_object = vc4_free_object,
+>>>>>>> upstream/rpi-4.4.y
 	.gem_vm_ops = &drm_gem_cma_vm_ops,
 
 	.prime_handle_to_fd = drm_gem_prime_handle_to_fd,
@@ -220,7 +300,11 @@ static void vc4_kick_out_firmware_fb(void)
 	ap->ranges[0].base = 0;
 	ap->ranges[0].size = ~0;
 
+<<<<<<< HEAD
 	drm_fb_helper_remove_conflicting_framebuffers(ap, "vc4drmfb", false);
+=======
+	remove_conflicting_framebuffers(ap, "vc4drmfb", false);
+>>>>>>> upstream/rpi-4.4.y
 	kfree(ap);
 }
 
@@ -243,6 +327,8 @@ static int vc4_drm_bind(struct device *dev)
 	platform_set_drvdata(pdev, drm);
 	vc4->dev = drm;
 	drm->dev_private = vc4;
+
+	vc4_bo_cache_init(drm);
 
 	vc4_bo_cache_init(drm);
 
@@ -294,7 +380,10 @@ static const struct component_master_ops vc4_drm_ops = {
 
 static struct platform_driver *const component_drivers[] = {
 	&vc4_hdmi_driver,
+<<<<<<< HEAD
 	&vc4_vec_driver,
+=======
+>>>>>>> upstream/rpi-4.4.y
 	&vc4_dpi_driver,
 	&vc4_dsi_driver,
 	&vc4_hvs_driver,

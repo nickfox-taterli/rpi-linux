@@ -154,6 +154,7 @@ struct pt_regs {
 #define SET_USP(ptregs, value) \
 	(!compat_user_mode(regs) ? ((regs)->sp = value) : ((regs)->compat_sp = value))
 
+<<<<<<< HEAD
 extern int regs_query_register_offset(const char *name);
 extern unsigned long regs_get_kernel_stack_nth(struct pt_regs *regs,
 					       unsigned int n);
@@ -204,6 +205,11 @@ static inline unsigned long regs_return_value(struct pt_regs *regs)
 {
 	return regs->regs[0];
 }
+=======
+/* We must avoid circular header include via sched.h */
+struct task_struct;
+int valid_user_regs(struct user_pt_regs *regs, struct task_struct *task);
+>>>>>>> upstream/rpi-4.4.y
 
 /* We must avoid circular header include via sched.h */
 struct task_struct;

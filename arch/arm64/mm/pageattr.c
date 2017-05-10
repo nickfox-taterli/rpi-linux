@@ -92,7 +92,21 @@ static int change_memory_common(unsigned long addr, int numpages,
 	if (!numpages)
 		return 0;
 
+<<<<<<< HEAD
 	return __change_memory_common(start, size, set_mask, clear_mask);
+=======
+	if (!numpages)
+		return 0;
+
+	data.set_mask = set_mask;
+	data.clear_mask = clear_mask;
+
+	ret = apply_to_page_range(&init_mm, start, size, change_page_range,
+					&data);
+
+	flush_tlb_kernel_range(start, end);
+	return ret;
+>>>>>>> upstream/rpi-4.4.y
 }
 
 int set_memory_ro(unsigned long addr, int numpages)

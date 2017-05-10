@@ -266,7 +266,11 @@ static inline unsigned long copy_from_user(void *to, const void __user *from, un
 	if (n && __access_ok((unsigned long) from, n)) {
 		check_object_size(to, n, false);
 		return __copy_user((__force void __user *) to, from, n);
+<<<<<<< HEAD
 	} else {
+=======
+	else {
+>>>>>>> upstream/rpi-4.4.y
 		memset(to, 0, n);
 		return n;
 	}

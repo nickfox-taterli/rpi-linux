@@ -587,7 +587,11 @@ static u32 bcm_sf2_sw_get_phy_flags(struct dsa_switch *ds, int port)
 static void bcm_sf2_sw_adjust_link(struct dsa_switch *ds, int port,
 				   struct phy_device *phydev)
 {
+<<<<<<< HEAD
 	struct bcm_sf2_priv *priv = bcm_sf2_to_priv(ds);
+=======
+	struct bcm_sf2_priv *priv = ds_to_priv(ds);
+>>>>>>> upstream/rpi-4.4.y
 	struct ethtool_eee *p = &priv->port_sts[port].eee;
 	u32 id_mode_dis = 0, port_mode;
 	const char *str = NULL;

@@ -2308,6 +2308,7 @@ static int dvb_register(struct cx23885_tsport *port)
 		}
 		break;
 	}
+<<<<<<< HEAD
 	case CX23885_BOARD_HAUPPAUGE_QUADHD_DVB:
 		switch (port->nr) {
 		/* port b - Terrestrial/cable */
@@ -2481,6 +2482,8 @@ static int dvb_register(struct cx23885_tsport *port)
 		}
 		break;
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 	default:
 		printk(KERN_INFO "%s: The frontend of your DVB/ATSC card "
 		       " isn't supported yet\n",

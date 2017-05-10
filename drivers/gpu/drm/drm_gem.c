@@ -369,10 +369,17 @@ drm_gem_handle_create_tail(struct drm_file *file_priv,
 	mutex_unlock(&dev->object_name_lock);
 	if (ret < 0)
 		goto err_unref;
+<<<<<<< HEAD
 
 	handle = ret;
 
 	ret = drm_vma_node_allow(&obj->vma_node, file_priv);
+=======
+
+	*handlep = ret;
+
+	ret = drm_vma_node_allow(&obj->vma_node, file_priv->filp);
+>>>>>>> upstream/rpi-4.4.y
 	if (ret)
 		goto err_remove;
 
@@ -386,10 +393,17 @@ drm_gem_handle_create_tail(struct drm_file *file_priv,
 	return 0;
 
 err_revoke:
+<<<<<<< HEAD
 	drm_vma_node_revoke(&obj->vma_node, file_priv);
 err_remove:
 	spin_lock(&file_priv->table_lock);
 	idr_remove(&file_priv->object_idr, handle);
+=======
+	drm_vma_node_revoke(&obj->vma_node, file_priv->filp);
+err_remove:
+	spin_lock(&file_priv->table_lock);
+	idr_remove(&file_priv->object_idr, *handlep);
+>>>>>>> upstream/rpi-4.4.y
 	spin_unlock(&file_priv->table_lock);
 err_unref:
 	drm_gem_object_handle_unreference_unlocked(obj);

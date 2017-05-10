@@ -75,12 +75,20 @@ static inline uint16_t frame_incr_val(dwc_otg_qh_t * qh)
 		: qh->interval);
 }
 
+<<<<<<< HEAD
 static int desc_list_alloc(struct device *dev, dwc_otg_qh_t * qh)
+=======
+static int desc_list_alloc(dwc_otg_qh_t * qh)
+>>>>>>> upstream/rpi-4.4.y
 {
 	int retval = 0;
 
 	qh->desc_list = (dwc_otg_host_dma_desc_t *)
+<<<<<<< HEAD
 	    DWC_DMA_ALLOC(dev, sizeof(dwc_otg_host_dma_desc_t) * max_desc_num(qh),
+=======
+	    DWC_DMA_ALLOC(sizeof(dwc_otg_host_dma_desc_t) * max_desc_num(qh),
+>>>>>>> upstream/rpi-4.4.y
 			  &qh->desc_list_dma);
 
 	if (!qh->desc_list) {
@@ -106,10 +114,17 @@ static int desc_list_alloc(struct device *dev, dwc_otg_qh_t * qh)
 
 }
 
+<<<<<<< HEAD
 static void desc_list_free(struct device *dev, dwc_otg_qh_t * qh)
 {
 	if (qh->desc_list) {
 		DWC_DMA_FREE(dev, max_desc_num(qh), qh->desc_list,
+=======
+static void desc_list_free(dwc_otg_qh_t * qh)
+{
+	if (qh->desc_list) {
+		DWC_DMA_FREE(max_desc_num(qh), qh->desc_list,
+>>>>>>> upstream/rpi-4.4.y
 			     qh->desc_list_dma);
 		qh->desc_list = NULL;
 	}
@@ -122,6 +137,7 @@ static void desc_list_free(struct device *dev, dwc_otg_qh_t * qh)
 
 static int frame_list_alloc(dwc_otg_hcd_t * hcd)
 {
+<<<<<<< HEAD
 	struct device *dev = dwc_otg_hcd_to_dev(hcd);
 	int retval = 0;
 
@@ -129,6 +145,13 @@ static int frame_list_alloc(dwc_otg_hcd_t * hcd)
 		return 0;
 
 	hcd->frame_list = DWC_DMA_ALLOC(dev, 4 * MAX_FRLIST_EN_NUM,
+=======
+	int retval = 0;
+	if (hcd->frame_list)
+		return 0;
+
+	hcd->frame_list = DWC_DMA_ALLOC(4 * MAX_FRLIST_EN_NUM,
+>>>>>>> upstream/rpi-4.4.y
 					&hcd->frame_list_dma);
 	if (!hcd->frame_list) {
 		retval = -DWC_E_NO_MEMORY;
@@ -142,12 +165,19 @@ static int frame_list_alloc(dwc_otg_hcd_t * hcd)
 
 static void frame_list_free(dwc_otg_hcd_t * hcd)
 {
+<<<<<<< HEAD
 	struct device *dev = dwc_otg_hcd_to_dev(hcd);
 
 	if (!hcd->frame_list)
 		return;
 
 	DWC_DMA_FREE(dev, 4 * MAX_FRLIST_EN_NUM, hcd->frame_list, hcd->frame_list_dma);
+=======
+	if (!hcd->frame_list)
+		return;
+
+	DWC_DMA_FREE(4 * MAX_FRLIST_EN_NUM, hcd->frame_list, hcd->frame_list_dma);
+>>>>>>> upstream/rpi-4.4.y
 	hcd->frame_list = NULL;
 }
 
@@ -325,7 +355,10 @@ static void release_channel_ddma(dwc_otg_hcd_t * hcd, dwc_otg_qh_t * qh)
  */
 int dwc_otg_hcd_qh_init_ddma(dwc_otg_hcd_t * hcd, dwc_otg_qh_t * qh)
 {
+<<<<<<< HEAD
 	struct device *dev = dwc_otg_hcd_to_dev(hcd);
+=======
+>>>>>>> upstream/rpi-4.4.y
 	int retval = 0;
 
 	if (qh->do_split) {
@@ -333,7 +366,11 @@ int dwc_otg_hcd_qh_init_ddma(dwc_otg_hcd_t * hcd, dwc_otg_qh_t * qh)
 		return -1;
 	}
 
+<<<<<<< HEAD
 	retval = desc_list_alloc(dev, qh);
+=======
+	retval = desc_list_alloc(qh);
+>>>>>>> upstream/rpi-4.4.y
 
 	if ((retval == 0)
 	    && (qh->ep_type == UE_ISOCHRONOUS || qh->ep_type == UE_INTERRUPT)) {
@@ -360,9 +397,13 @@ int dwc_otg_hcd_qh_init_ddma(dwc_otg_hcd_t * hcd, dwc_otg_qh_t * qh)
  */
 void dwc_otg_hcd_qh_free_ddma(dwc_otg_hcd_t * hcd, dwc_otg_qh_t * qh)
 {
+<<<<<<< HEAD
 	struct device *dev = dwc_otg_hcd_to_dev(hcd);
 
 	desc_list_free(dev, qh);
+=======
+	desc_list_free(qh);
+>>>>>>> upstream/rpi-4.4.y
 
 	/*
 	 * Channel still assigned due to some reasons.

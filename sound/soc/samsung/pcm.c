@@ -555,11 +555,17 @@ static int s3c_pcm_dev_probe(struct platform_device *pdev)
 	s3c_pcm_stereo_in[pdev->id].addr = mem_res->start + S3C_PCM_RXFIFO;
 	s3c_pcm_stereo_out[pdev->id].addr = mem_res->start + S3C_PCM_TXFIFO;
 
+<<<<<<< HEAD
 	filter = NULL;
 	if (pcm_pdata) {
 		s3c_pcm_stereo_in[pdev->id].filter_data = pcm_pdata->dma_capture;
 		s3c_pcm_stereo_out[pdev->id].filter_data = pcm_pdata->dma_playback;
 		filter = pcm_pdata->dma_filter;
+=======
+	if (pcm_pdata) {
+		s3c_pcm_stereo_in[pdev->id].slave = pcm_pdata->dma_capture;
+		s3c_pcm_stereo_out[pdev->id].slave = pcm_pdata->dma_playback;
+>>>>>>> upstream/rpi-4.4.y
 	}
 
 	pcm->dma_capture = &s3c_pcm_stereo_in[pdev->id];

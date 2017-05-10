@@ -6178,10 +6178,14 @@ static int inject_pending_event(struct kvm_vcpu *vcpu, bool req_int_win)
 	}
 
 	/* try to inject new event if pending */
+<<<<<<< HEAD
 	if (vcpu->arch.smi_pending && !is_smm(vcpu)) {
 		vcpu->arch.smi_pending = false;
 		enter_smm(vcpu);
 	} else if (vcpu->arch.nmi_pending && kvm_x86_ops->nmi_allowed(vcpu)) {
+=======
+	if (vcpu->arch.nmi_pending && kvm_x86_ops->nmi_allowed(vcpu)) {
+>>>>>>> upstream/rpi-4.4.y
 		--vcpu->arch.nmi_pending;
 		vcpu->arch.nmi_injected = true;
 		kvm_x86_ops->set_nmi(vcpu);
@@ -6654,6 +6658,7 @@ static int vcpu_enter_guest(struct kvm_vcpu *vcpu)
 
 		if (inject_pending_event(vcpu, req_int_win) != 0)
 			req_immediate_exit = true;
+<<<<<<< HEAD
 		else {
 			/* Enable NMI/IRQ window open exits if needed.
 			 *
@@ -6666,6 +6671,10 @@ static int vcpu_enter_guest(struct kvm_vcpu *vcpu)
 			 */
 			if (vcpu->arch.smi_pending && !is_smm(vcpu))
 				req_immediate_exit = true;
+=======
+		/* enable NMI/IRQ window open exits if needed */
+		else {
+>>>>>>> upstream/rpi-4.4.y
 			if (vcpu->arch.nmi_pending)
 				kvm_x86_ops->enable_nmi_window(vcpu);
 			if (kvm_cpu_has_injectable_intr(vcpu) || req_int_win)
@@ -6716,8 +6725,12 @@ static int vcpu_enter_guest(struct kvm_vcpu *vcpu)
 
 	kvm_load_guest_xcr0(vcpu);
 
+<<<<<<< HEAD
 	if (req_immediate_exit) {
 		kvm_make_request(KVM_REQ_EVENT, vcpu);
+=======
+	if (req_immediate_exit)
+>>>>>>> upstream/rpi-4.4.y
 		smp_send_reschedule(vcpu->cpu);
 	}
 
@@ -6769,6 +6782,10 @@ static int vcpu_enter_guest(struct kvm_vcpu *vcpu)
 
 	kvm_put_guest_xcr0(vcpu);
 
+<<<<<<< HEAD
+=======
+	/* Interrupt is enabled by handle_external_intr() */
+>>>>>>> upstream/rpi-4.4.y
 	kvm_x86_ops->handle_external_intr(vcpu);
 
 	++vcpu->stat.exits;

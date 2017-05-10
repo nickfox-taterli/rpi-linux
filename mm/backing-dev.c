@@ -1001,8 +1001,25 @@ long wait_iff_congested(struct pglist_data *pgdat, int sync, long timeout)
 	 * of sleeping on the congestion queue
 	 */
 	if (atomic_read(&nr_wb_congested[sync]) == 0 ||
+<<<<<<< HEAD
 	    !test_bit(PGDAT_CONGESTED, &pgdat->flags)) {
 		cond_resched();
+=======
+	    !test_bit(ZONE_CONGESTED, &zone->flags)) {
+
+		/*
+		 * Memory allocation/reclaim might be called from a WQ
+		 * context and the current implementation of the WQ
+		 * concurrency control doesn't recognize that a particular
+		 * WQ is congested if the worker thread is looping without
+		 * ever sleeping. Therefore we have to do a short sleep
+		 * here rather than calling cond_resched().
+		 */
+		if (current->flags & PF_WQ_WORKER)
+			schedule_timeout_uninterruptible(1);
+		else
+			cond_resched();
+>>>>>>> upstream/rpi-4.4.y
 
 		/* In case we scheduled, work out time remaining */
 		ret = timeout - (jiffies - start);

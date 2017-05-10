@@ -675,9 +675,15 @@ extern void __DWC_FREE(void *mem_ctx, void *addr);
 #define DWC_FREE(_addr_) __DWC_FREE(NULL, _addr_)
 
 # ifdef DWC_LINUX
+<<<<<<< HEAD
 #define DWC_DMA_ALLOC(_dev, _size_, _dma_) __DWC_DMA_ALLOC(_dev, _size_, _dma_)
 #define DWC_DMA_ALLOC_ATOMIC(_dev, _size_, _dma_) __DWC_DMA_ALLOC_ATOMIC(_dev, _size_, _dma_)
 #define DWC_DMA_FREE(_dev, _size_,_virt_, _dma_) __DWC_DMA_FREE(_dev, _size_, _virt_, _dma_)
+=======
+#define DWC_DMA_ALLOC(_size_,_dma_) __DWC_DMA_ALLOC(NULL, _size_, _dma_)
+#define DWC_DMA_ALLOC_ATOMIC(_size_,_dma_) __DWC_DMA_ALLOC_ATOMIC(NULL, _size_,_dma_)
+#define DWC_DMA_FREE(_size_,_virt_,_dma_) __DWC_DMA_FREE(NULL, _size_, _virt_, _dma_)
+>>>>>>> upstream/rpi-4.4.y
 # endif
 
 # if defined(DWC_FREEBSD) || defined(DWC_NETBSD)
@@ -708,12 +714,21 @@ extern void dwc_memory_debug_report(void);
 #define DWC_FREE(_addr_) dwc_free_debug(NULL, _addr_, __func__, __LINE__)
 
 # ifdef DWC_LINUX
+<<<<<<< HEAD
 #define DWC_DMA_ALLOC(_dev, _size_, _dma_) \
 	dwc_dma_alloc_debug(_dev, _size_, _dma_, __func__, __LINE__)
 #define DWC_DMA_ALLOC_ATOMIC(_dev, _size_, _dma_) \
 	dwc_dma_alloc_atomic_debug(_dev, _size_, _dma_, __func__, __LINE__)
 #define DWC_DMA_FREE(_dev, _size_, _virt_, _dma_) \
 	dwc_dma_free_debug(_dev, _size_, _virt_, _dma_, __func__, __LINE__)
+=======
+#define DWC_DMA_ALLOC(_size_,_dma_) dwc_dma_alloc_debug(NULL, _size_, \
+						_dma_, __func__, __LINE__)
+#define DWC_DMA_ALLOC_ATOMIC(_size_,_dma_) dwc_dma_alloc_atomic_debug(NULL, _size_, \
+						_dma_, __func__, __LINE__)
+#define DWC_DMA_FREE(_size_,_virt_,_dma_) dwc_dma_free_debug(NULL, _size_, \
+						_virt_, _dma_, __func__, __LINE__)
+>>>>>>> upstream/rpi-4.4.y
 # endif
 
 # if defined(DWC_FREEBSD) || defined(DWC_NETBSD)

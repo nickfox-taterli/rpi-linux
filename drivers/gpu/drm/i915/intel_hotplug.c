@@ -504,12 +504,17 @@ static void i915_hpd_poll_init_work(struct work_struct *work)
 			continue;
 
 		if (!connector->polled && I915_HAS_HOTPLUG(dev) &&
+<<<<<<< HEAD
 		    intel_connector->encoder->hpd_pin > HPD_NONE) {
 			connector->polled = enabled ?
 				DRM_CONNECTOR_POLL_CONNECT |
 				DRM_CONNECTOR_POLL_DISCONNECT :
 				DRM_CONNECTOR_POLL_HPD;
 		}
+=======
+		    intel_connector->encoder->hpd_pin > HPD_NONE)
+			connector->polled = DRM_CONNECTOR_POLL_HPD;
+>>>>>>> upstream/rpi-4.4.y
 	}
 
 	if (enabled)

@@ -187,6 +187,39 @@ ssize_t splice_to_pipe(struct pipe_inode_info *pipe,
 
 	if (!spd_pages)
 		return 0;
+<<<<<<< HEAD
+=======
+
+	ret = 0;
+	do_wakeup = 0;
+	page_nr = 0;
+
+	pipe_lock(pipe);
+
+	for (;;) {
+		if (!pipe->readers) {
+			send_sig(SIGPIPE, current, 0);
+			if (!ret)
+				ret = -EPIPE;
+			break;
+		}
+
+		if (pipe->nrbufs < pipe->buffers) {
+			int newbuf = (pipe->curbuf + pipe->nrbufs) & (pipe->buffers - 1);
+			struct pipe_buffer *buf = pipe->bufs + newbuf;
+
+			buf->page = spd->pages[page_nr];
+			buf->offset = spd->partial[page_nr].offset;
+			buf->len = spd->partial[page_nr].len;
+			buf->private = spd->partial[page_nr].private;
+			buf->ops = spd->ops;
+			if (spd->flags & SPLICE_F_GIFT)
+				buf->flags |= PIPE_BUF_FLAG_GIFT;
+
+			pipe->nrbufs++;
+			page_nr++;
+			ret += buf->len;
+>>>>>>> upstream/rpi-4.4.y
 
 	if (unlikely(!pipe->readers)) {
 		send_sig(SIGPIPE, current, 0);

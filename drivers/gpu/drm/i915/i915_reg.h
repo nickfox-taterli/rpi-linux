@@ -7579,6 +7579,7 @@ enum {
 #define  TRANS_CLK_SEL_DISABLED		(0x0<<29)
 #define  TRANS_CLK_SEL_PORT(x)		(((x)+1)<<29)
 
+<<<<<<< HEAD
 #define CDCLK_FREQ			_MMIO(0x46200)
 
 #define _TRANSA_MSA_MISC		0x60410
@@ -7586,6 +7587,15 @@ enum {
 #define _TRANSC_MSA_MISC		0x62410
 #define _TRANS_EDP_MSA_MISC		0x6f410
 #define TRANS_MSA_MISC(tran) _MMIO_TRANS2(tran, _TRANSA_MSA_MISC)
+=======
+#define CDCLK_FREQ			0x46200
+
+#define TRANSA_MSA_MISC			0x60410
+#define TRANSB_MSA_MISC			0x61410
+#define TRANSC_MSA_MISC			0x62410
+#define TRANS_EDP_MSA_MISC		0x6f410
+#define TRANS_MSA_MISC(tran) _TRANSCODER2(tran, TRANSA_MSA_MISC)
+>>>>>>> upstream/rpi-4.4.y
 
 #define  TRANS_MSA_SYNC_CLK		(1<<0)
 #define  TRANS_MSA_6_BPC		(0<<5)

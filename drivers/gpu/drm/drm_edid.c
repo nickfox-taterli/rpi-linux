@@ -4102,6 +4102,9 @@ int drm_add_edid_modes(struct drm_connector *connector, struct edid *edid)
 	if (quirks & EDID_QUIRK_FORCE_6BPC)
 		connector->display_info.bpc = 6;
 
+	if (quirks & EDID_QUIRK_FORCE_6BPC)
+		connector->display_info.bpc = 6;
+
 	if (quirks & EDID_QUIRK_FORCE_8BPC)
 		connector->display_info.bpc = 8;
 

@@ -1599,6 +1599,7 @@ xfs_wait_buftarg(
 	int loop = 0;
 
 	/*
+<<<<<<< HEAD
 	 * First wait on the buftarg I/O count for all in-flight buffers to be
 	 * released. This is critical as new buffers do not make the LRU until
 	 * they are released.
@@ -1612,6 +1613,15 @@ xfs_wait_buftarg(
 	 */
 	while (percpu_counter_sum(&btp->bt_io_count))
 		delay(100);
+=======
+	 * We need to flush the buffer workqueue to ensure that all IO
+	 * completion processing is 100% done. Just waiting on buffer locks is
+	 * not sufficient for async IO as the reference count held over IO is
+	 * not released until after the buffer lock is dropped. Hence we need to
+	 * ensure here that all reference counts have been dropped before we
+	 * start walking the LRU list.
+	 */
+>>>>>>> upstream/rpi-4.4.y
 	flush_workqueue(btp->bt_mount->m_buf_workqueue);
 
 	/* loop until there is nothing left on the lru list. */

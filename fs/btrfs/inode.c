@@ -3175,6 +3175,17 @@ void btrfs_add_delayed_iput(struct inode *inode)
 void btrfs_run_delayed_iputs(struct btrfs_root *root)
 {
 	struct btrfs_fs_info *fs_info = root->fs_info;
+<<<<<<< HEAD
+=======
+	struct delayed_iput *delayed;
+	int empty;
+
+	spin_lock(&fs_info->delayed_iput_lock);
+	empty = list_empty(&fs_info->delayed_iputs);
+	spin_unlock(&fs_info->delayed_iput_lock);
+	if (empty)
+		return;
+>>>>>>> upstream/rpi-4.4.y
 
 	spin_lock(&fs_info->delayed_iput_lock);
 	while (!list_empty(&fs_info->delayed_iputs)) {
@@ -3193,7 +3204,10 @@ void btrfs_run_delayed_iputs(struct btrfs_root *root)
 		iput(&inode->vfs_inode);
 		spin_lock(&fs_info->delayed_iput_lock);
 	}
+<<<<<<< HEAD
 	spin_unlock(&fs_info->delayed_iput_lock);
+=======
+>>>>>>> upstream/rpi-4.4.y
 }
 
 /*
@@ -5812,7 +5826,10 @@ static int btrfs_real_readdir(struct file *file, struct dir_context *ctx)
 	int name_len;
 	int is_curr = 0;	/* ctx->pos points to the current index? */
 	bool emitted;
+<<<<<<< HEAD
 	bool put = false;
+=======
+>>>>>>> upstream/rpi-4.4.y
 
 	/* FIXME, use a real flag for deciding about the key type */
 	if (root->fs_info->tree_root == root)

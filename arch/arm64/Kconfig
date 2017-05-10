@@ -474,6 +474,7 @@ config CAVIUM_ERRATUM_27456
 
 	  If unsure, say Y.
 
+<<<<<<< HEAD
 config QCOM_QDF2400_ERRATUM_0065
 	bool "QDF2400 E0065: Incorrect GITS_TYPER.ITT_Entry_size"
 	default y
@@ -484,6 +485,8 @@ config QCOM_QDF2400_ERRATUM_0065
 
 	  If unsure, say Y.
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 endmenu
 
 

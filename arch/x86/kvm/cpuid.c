@@ -536,8 +536,13 @@ static inline int __do_cpuid_ent(struct kvm_cpuid_entry2 *entry, u32 function,
 
 			do_cpuid_1_ent(&entry[i], function, idx);
 			if (idx == 1) {
+<<<<<<< HEAD
 				entry[i].eax &= kvm_cpuid_D_1_eax_x86_features;
 				cpuid_mask(&entry[i].eax, CPUID_D_1_EAX);
+=======
+				entry[i].eax &= kvm_supported_word10_x86_features;
+				cpuid_mask(&entry[i].eax, 10);
+>>>>>>> upstream/rpi-4.4.y
 				entry[i].ebx = 0;
 				if (entry[i].eax & (F(XSAVES)|F(XSAVEC)))
 					entry[i].ebx =

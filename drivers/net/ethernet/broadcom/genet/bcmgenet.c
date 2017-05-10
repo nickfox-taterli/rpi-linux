@@ -1199,13 +1199,23 @@ static unsigned int __bcmgenet_tx_reclaim(struct net_device *dev,
 		tx_cb_ptr = &priv->tx_cbs[ring->clean_ptr];
 		if (tx_cb_ptr->skb) {
 			pkts_compl++;
+<<<<<<< HEAD
 			bytes_compl += GENET_CB(tx_cb_ptr->skb)->bytes_sent;
+=======
+			dev->stats.tx_packets++;
+			dev->stats.tx_bytes += tx_cb_ptr->skb->len;
+>>>>>>> upstream/rpi-4.4.y
 			dma_unmap_single(kdev,
 					 dma_unmap_addr(tx_cb_ptr, dma_addr),
 					 dma_unmap_len(tx_cb_ptr, dma_len),
 					 DMA_TO_DEVICE);
 			bcmgenet_free_cb(tx_cb_ptr);
 		} else if (dma_unmap_addr(tx_cb_ptr, dma_addr)) {
+<<<<<<< HEAD
+=======
+			dev->stats.tx_bytes +=
+				dma_unmap_len(tx_cb_ptr, dma_len);
+>>>>>>> upstream/rpi-4.4.y
 			dma_unmap_page(kdev,
 				       dma_unmap_addr(tx_cb_ptr, dma_addr),
 				       dma_unmap_len(tx_cb_ptr, dma_len),

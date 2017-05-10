@@ -337,9 +337,16 @@ static int hdmi_eld_ctl_get(struct snd_kcontrol *kcontrol,
 	}
 	eld = &per_pin->sink_eld;
 
+<<<<<<< HEAD
 	if (eld->eld_size > ARRAY_SIZE(ucontrol->value.bytes.data) ||
 	    eld->eld_size > ELD_MAX_SIZE) {
 		mutex_unlock(&spec->pcm_lock);
+=======
+	mutex_lock(&per_pin->lock);
+	if (eld->eld_size > ARRAY_SIZE(ucontrol->value.bytes.data) ||
+	    eld->eld_size > ELD_MAX_SIZE) {
+		mutex_unlock(&per_pin->lock);
+>>>>>>> upstream/rpi-4.4.y
 		snd_BUG();
 		return -EINVAL;
 	}
@@ -2310,6 +2317,10 @@ static void intel_pin_eld_notify(void *audio_ptr, int port)
 		break;
 	}
 
+	/* we assume only from port-B to port-D */
+	if (port < 1 || port > 3)
+		return;
+
 	/* skip notification during system suspend (but not in runtime PM);
 	 * the state will be updated at resume
 	 */
@@ -3650,6 +3661,7 @@ HDA_CODEC_ENTRY(0x80860054, "IbexPeak HDMI",	patch_i915_cpt_hdmi),
 HDA_CODEC_ENTRY(0x80862801, "Bearlake HDMI",	patch_generic_hdmi),
 HDA_CODEC_ENTRY(0x80862802, "Cantiga HDMI",	patch_generic_hdmi),
 HDA_CODEC_ENTRY(0x80862803, "Eaglelake HDMI",	patch_generic_hdmi),
+<<<<<<< HEAD
 HDA_CODEC_ENTRY(0x80862804, "IbexPeak HDMI",	patch_i915_cpt_hdmi),
 HDA_CODEC_ENTRY(0x80862805, "CougarPoint HDMI",	patch_i915_cpt_hdmi),
 HDA_CODEC_ENTRY(0x80862806, "PantherPoint HDMI", patch_i915_cpt_hdmi),
@@ -3658,6 +3670,16 @@ HDA_CODEC_ENTRY(0x80862808, "Broadwell HDMI",	patch_i915_hsw_hdmi),
 HDA_CODEC_ENTRY(0x80862809, "Skylake HDMI",	patch_i915_hsw_hdmi),
 HDA_CODEC_ENTRY(0x8086280a, "Broxton HDMI",	patch_i915_hsw_hdmi),
 HDA_CODEC_ENTRY(0x8086280b, "Kabylake HDMI",	patch_i915_hsw_hdmi),
+=======
+HDA_CODEC_ENTRY(0x80862804, "IbexPeak HDMI",	patch_generic_hdmi),
+HDA_CODEC_ENTRY(0x80862805, "CougarPoint HDMI",	patch_generic_hdmi),
+HDA_CODEC_ENTRY(0x80862806, "PantherPoint HDMI", patch_generic_hdmi),
+HDA_CODEC_ENTRY(0x80862807, "Haswell HDMI",	patch_generic_hdmi),
+HDA_CODEC_ENTRY(0x80862808, "Broadwell HDMI",	patch_generic_hdmi),
+HDA_CODEC_ENTRY(0x80862809, "Skylake HDMI",	patch_generic_hdmi),
+HDA_CODEC_ENTRY(0x8086280a, "Broxton HDMI",	patch_generic_hdmi),
+HDA_CODEC_ENTRY(0x8086280b, "Kabylake HDMI",	patch_generic_hdmi),
+>>>>>>> upstream/rpi-4.4.y
 HDA_CODEC_ENTRY(0x80862880, "CedarTrail HDMI",	patch_generic_hdmi),
 HDA_CODEC_ENTRY(0x80862882, "Valleyview2 HDMI",	patch_i915_byt_hdmi),
 HDA_CODEC_ENTRY(0x80862883, "Braswell HDMI",	patch_i915_byt_hdmi),

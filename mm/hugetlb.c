@@ -1450,6 +1450,7 @@ static int dissolve_free_huge_page(struct page *page)
 		struct page *head = compound_head(page);
 		struct hstate *h = page_hstate(head);
 		int nid = page_to_nid(head);
+<<<<<<< HEAD
 		if (h->free_huge_pages - h->resv_huge_pages == 0) {
 			rc = -EBUSY;
 			goto out;
@@ -1458,6 +1459,11 @@ static int dissolve_free_huge_page(struct page *page)
 		h->free_huge_pages--;
 		h->free_huge_pages_node[nid]--;
 		h->max_huge_pages--;
+=======
+		list_del(&head->lru);
+		h->free_huge_pages--;
+		h->free_huge_pages_node[nid]--;
+>>>>>>> upstream/rpi-4.4.y
 		update_and_free_page(h, head);
 	}
 out:
@@ -1470,8 +1476,11 @@ out:
  * make specified memory blocks removable from the system.
  * Note that this will dissolve a free gigantic hugepage completely, if any
  * part of it lies within the given range.
+<<<<<<< HEAD
  * Also note that if dissolve_free_huge_page() returns with an error, all
  * free hugepages that were dissolved before that error are lost.
+=======
+>>>>>>> upstream/rpi-4.4.y
  */
 int dissolve_free_huge_pages(unsigned long start_pfn, unsigned long end_pfn)
 {
@@ -1491,7 +1500,12 @@ int dissolve_free_huge_pages(unsigned long start_pfn, unsigned long end_pfn)
 		}
 	}
 
+<<<<<<< HEAD
 	return rc;
+=======
+	for (pfn = start_pfn; pfn < end_pfn; pfn += 1 << minimum_order)
+		dissolve_free_huge_page(pfn_to_page(pfn));
+>>>>>>> upstream/rpi-4.4.y
 }
 
 /*

@@ -188,6 +188,8 @@ struct tpm_chip *tpm_chip_alloc(struct device *dev,
 	chip->cdev.owner = THIS_MODULE;
 	chip->cdev.kobj.parent = &chip->dev.kobj;
 
+	devm_add_action(dev, (void (*)(void *)) put_device, &chip->dev);
+
 	return chip;
 
 out:
@@ -262,6 +264,7 @@ static void tpm_del_char_device(struct tpm_chip *chip)
 {
 	cdev_del(&chip->cdev);
 	device_del(&chip->dev);
+<<<<<<< HEAD
 
 	/* Make the chip unavailable. */
 	mutex_lock(&idr_lock);
@@ -274,6 +277,8 @@ static void tpm_del_char_device(struct tpm_chip *chip)
 		tpm2_shutdown(chip, TPM2_SU_CLEAR);
 	chip->ops = NULL;
 	up_write(&chip->ops_sem);
+=======
+>>>>>>> upstream/rpi-4.4.y
 }
 
 static int tpm1_chip_register(struct tpm_chip *chip)
@@ -370,10 +375,20 @@ int tpm_chip_register(struct tpm_chip *chip)
 	tpm_add_ppi(chip);
 
 	rc = tpm_add_char_device(chip);
+<<<<<<< HEAD
 	if (rc) {
 		tpm1_chip_unregister(chip);
 		return rc;
 	}
+=======
+	if (rc)
+		goto out_err;
+
+	/* Make the chip available. */
+	spin_lock(&driver_lock);
+	list_add_tail_rcu(&chip->list, &tpm_chip_list);
+	spin_unlock(&driver_lock);
+>>>>>>> upstream/rpi-4.4.y
 
 	chip->flags |= TPM_CHIP_FLAG_REGISTERED;
 

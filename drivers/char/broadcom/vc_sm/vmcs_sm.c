@@ -1181,6 +1181,7 @@ static int vcsm_vma_fault(struct vm_area_struct *vma, struct vm_fault *vmf)
 	switch (ret) {
 	case 0:
 	case -ERESTARTSYS:
+<<<<<<< HEAD
 	/*
 	* EBUSY is ok: this just means that another thread
 	* already did the job.
@@ -1195,6 +1196,13 @@ static int vcsm_vma_fault(struct vm_area_struct *vma, struct vm_fault *vmf)
 	default:
 		pr_err("[%s]: failed to map page pfn:%lx virt:%lx ret:%d\n", __func__,
 			pfn, (unsigned long)vmf->virtual_address, ret);
+=======
+		return VM_FAULT_NOPAGE;
+	case -ENOMEM:
+	case -EAGAIN:
+		return VM_FAULT_OOM;
+	default:
+>>>>>>> upstream/rpi-4.4.y
 		return VM_FAULT_SIGBUS;
 	}
 }

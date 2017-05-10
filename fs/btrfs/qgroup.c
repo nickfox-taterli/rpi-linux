@@ -990,8 +990,13 @@ int btrfs_quota_disable(struct btrfs_trans_handle *trans,
 	mutex_lock(&fs_info->qgroup_ioctl_lock);
 	if (!fs_info->quota_root)
 		goto out;
+<<<<<<< HEAD
 	clear_bit(BTRFS_FS_QUOTA_ENABLED, &fs_info->flags);
 	set_bit(BTRFS_FS_QUOTA_DISABLING, &fs_info->flags);
+=======
+	fs_info->quota_enabled = 0;
+	fs_info->pending_quota_state = 0;
+>>>>>>> upstream/rpi-4.4.y
 	btrfs_qgroup_wait_for_completion(fs_info, false);
 	spin_lock(&fs_info->qgroup_lock);
 	quota_root = fs_info->quota_root;

@@ -350,8 +350,12 @@ tracesys_next:
 	stw     %r21, -56(%r30)                 /* 6th argument */
 #endif
 
+<<<<<<< HEAD
 	cmpib,COND(=),n -1,%r20,tracesys_exit /* seccomp may have returned -1 */
 	comiclr,>>	__NR_Linux_syscalls, %r20, %r0
+=======
+	comiclr,>>=	__NR_Linux_syscalls, %r20, %r0
+>>>>>>> upstream/rpi-4.4.y
 	b,n	.Ltracesys_nosys
 
 	LDREGX  %r20(%r19), %r19

@@ -1292,7 +1292,10 @@ static int port_parameter_get(struct vchiq_mmal_instance *instance,
 	struct mmal_msg m;
 	struct mmal_msg *rmsg;
 	VCHI_HELD_MSG_T rmsg_handle;
+<<<<<<< HEAD
 	u32 reply_size;
+=======
+>>>>>>> upstream/rpi-4.4.y
 
 	m.h.type = MMAL_MSG_TYPE_PORT_PARAMETER_GET;
 
@@ -1316,6 +1319,7 @@ static int port_parameter_get(struct vchiq_mmal_instance *instance,
 	}
 
 	ret = -rmsg->u.port_parameter_get_reply.status;
+<<<<<<< HEAD
 	/*
 	 * port_parameter_get_reply.size includes the header,
 	 * whilst *value_size doesn't.
@@ -1323,11 +1327,15 @@ static int port_parameter_get(struct vchiq_mmal_instance *instance,
 	reply_size = rmsg->u.port_parameter_get_reply.size - (2 * sizeof(u32));
 
 	if (ret || (reply_size > *value_size)) {
+=======
+	if (ret) {
+>>>>>>> upstream/rpi-4.4.y
 		/* Copy only as much as we have space for
 		 * but report true size of parameter
 		 */
 		memcpy(value, &rmsg->u.port_parameter_get_reply.value,
 		       *value_size);
+<<<<<<< HEAD
 	} else
 		memcpy(value, &rmsg->u.port_parameter_get_reply.value,
 		       reply_size);
@@ -1337,6 +1345,12 @@ static int port_parameter_get(struct vchiq_mmal_instance *instance,
 	 * or wanted if not big enough.
 	 */
 	*value_size = reply_size;
+=======
+		*value_size = rmsg->u.port_parameter_get_reply.size;
+	} else
+		memcpy(value, &rmsg->u.port_parameter_get_reply.value,
+		       rmsg->u.port_parameter_get_reply.size);
+>>>>>>> upstream/rpi-4.4.y
 
 	pr_debug("%s:result:%d component:0x%x port:%d parameter:%d\n", __func__,
 	        ret, port->component->handle, port->handle, parameter_id);

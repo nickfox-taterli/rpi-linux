@@ -189,7 +189,11 @@ static int fq_codel_enqueue(struct sk_buff *skb, struct Qdisc *sch,
 			    struct sk_buff **to_free)
 {
 	struct fq_codel_sched_data *q = qdisc_priv(sch);
+<<<<<<< HEAD
 	unsigned int idx, prev_backlog, prev_qlen;
+=======
+	unsigned int idx, prev_backlog;
+>>>>>>> upstream/rpi-4.4.y
 	struct fq_codel_flow *flow;
 	int uninitialized_var(ret);
 	unsigned int pkt_len;
@@ -223,6 +227,7 @@ static int fq_codel_enqueue(struct sk_buff *skb, struct Qdisc *sch,
 		return NET_XMIT_SUCCESS;
 
 	prev_backlog = sch->qstats.backlog;
+<<<<<<< HEAD
 	prev_qlen = sch->q.qlen;
 
 	/* save this packet length as it might be dropped by fq_codel_drop() */
@@ -231,9 +236,15 @@ static int fq_codel_enqueue(struct sk_buff *skb, struct Qdisc *sch,
 	 * in q->backlogs[] to find a fat flow.
 	 * So instead of dropping a single packet, drop half of its backlog
 	 * with a 64 packets limit to not add a too big cpu spike here.
+=======
+	q->drop_overlimit++;
+	/* Return Congestion Notification only if we dropped a packet
+	 * from this flow.
+>>>>>>> upstream/rpi-4.4.y
 	 */
 	ret = fq_codel_drop(sch, q->drop_batch_size, to_free);
 
+<<<<<<< HEAD
 	prev_qlen -= sch->q.qlen;
 	prev_backlog -= sch->qstats.backlog;
 	q->drop_overlimit += prev_qlen;
@@ -250,6 +261,10 @@ static int fq_codel_enqueue(struct sk_buff *skb, struct Qdisc *sch,
 		return NET_XMIT_CN;
 	}
 	qdisc_tree_reduce_backlog(sch, prev_qlen, prev_backlog);
+=======
+	/* As we dropped a packet, better let upper stack know this */
+	qdisc_tree_reduce_backlog(sch, 1, prev_backlog - sch->qstats.backlog);
+>>>>>>> upstream/rpi-4.4.y
 	return NET_XMIT_SUCCESS;
 }
 
@@ -438,7 +453,11 @@ static int fq_codel_change(struct Qdisc *sch, struct nlattr *opt)
 		struct sk_buff *skb = fq_codel_dequeue(sch);
 
 		q->cstats.drop_len += qdisc_pkt_len(skb);
+<<<<<<< HEAD
 		rtnl_kfree_skbs(skb, skb);
+=======
+		kfree_skb(skb);
+>>>>>>> upstream/rpi-4.4.y
 		q->cstats.drop_count++;
 	}
 	qdisc_tree_reduce_backlog(sch, q->cstats.drop_count, q->cstats.drop_len);

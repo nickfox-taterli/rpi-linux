@@ -1800,9 +1800,15 @@ static int migrate_zspage(struct zs_pool *pool, struct size_class *class,
 		}
 
 		used_obj = handle_to_obj(handle);
+<<<<<<< HEAD
 		free_obj = obj_malloc(class, get_zspage(d_page), handle);
 		zs_object_copy(class, free_obj, used_obj);
 		obj_idx++;
+=======
+		free_obj = obj_malloc(d_page, class, handle);
+		zs_object_copy(free_obj, used_obj, class);
+		index++;
+>>>>>>> upstream/rpi-4.4.y
 		/*
 		 * record_obj updates handle's value to free_obj and it will
 		 * invalidate lock bit(ie, HANDLE_PIN_BIT) of handle, which
@@ -2253,7 +2259,12 @@ static unsigned long zs_can_compact(struct size_class *class)
 		return 0;
 
 	obj_wasted = obj_allocated - obj_used;
+<<<<<<< HEAD
 	obj_wasted /= class->objs_per_zspage;
+=======
+	obj_wasted /= get_maxobj_per_zspage(class->size,
+			class->pages_per_zspage);
+>>>>>>> upstream/rpi-4.4.y
 
 	return obj_wasted * class->pages_per_zspage;
 }

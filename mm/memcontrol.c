@@ -265,7 +265,80 @@ static inline bool mem_cgroup_is_root(struct mem_cgroup *memcg)
 	return (memcg == root_mem_cgroup);
 }
 
+<<<<<<< HEAD
 #ifndef CONFIG_SLOB
+=======
+/*
+ * We restrict the id in the range of [1, 65535], so it can fit into
+ * an unsigned short.
+ */
+#define MEM_CGROUP_ID_MAX	USHRT_MAX
+
+static inline unsigned short mem_cgroup_id(struct mem_cgroup *memcg)
+{
+	return memcg->id.id;
+}
+
+/* Writing them here to avoid exposing memcg's inner layout */
+#if defined(CONFIG_INET) && defined(CONFIG_MEMCG_KMEM)
+
+void sock_update_memcg(struct sock *sk)
+{
+	if (mem_cgroup_sockets_enabled) {
+		struct mem_cgroup *memcg;
+		struct cg_proto *cg_proto;
+
+		BUG_ON(!sk->sk_prot->proto_cgroup);
+
+		/* Socket cloning can throw us here with sk_cgrp already
+		 * filled. It won't however, necessarily happen from
+		 * process context. So the test for root memcg given
+		 * the current task's memcg won't help us in this case.
+		 *
+		 * Respecting the original socket's memcg is a better
+		 * decision in this case.
+		 */
+		if (sk->sk_cgrp) {
+			BUG_ON(mem_cgroup_is_root(sk->sk_cgrp->memcg));
+			css_get(&sk->sk_cgrp->memcg->css);
+			return;
+		}
+
+		rcu_read_lock();
+		memcg = mem_cgroup_from_task(current);
+		cg_proto = sk->sk_prot->proto_cgroup(memcg);
+		if (cg_proto && test_bit(MEMCG_SOCK_ACTIVE, &cg_proto->flags) &&
+		    css_tryget_online(&memcg->css)) {
+			sk->sk_cgrp = cg_proto;
+		}
+		rcu_read_unlock();
+	}
+}
+EXPORT_SYMBOL(sock_update_memcg);
+
+void sock_release_memcg(struct sock *sk)
+{
+	if (mem_cgroup_sockets_enabled && sk->sk_cgrp) {
+		struct mem_cgroup *memcg;
+		WARN_ON(!sk->sk_cgrp->memcg);
+		memcg = sk->sk_cgrp->memcg;
+		css_put(&sk->sk_cgrp->memcg->css);
+	}
+}
+
+struct cg_proto *tcp_proto_cgroup(struct mem_cgroup *memcg)
+{
+	if (!memcg || mem_cgroup_is_root(memcg))
+		return NULL;
+
+	return &memcg->tcp_mem;
+}
+EXPORT_SYMBOL(tcp_proto_cgroup);
+
+#endif
+
+#ifdef CONFIG_MEMCG_KMEM
+>>>>>>> upstream/rpi-4.4.y
 /*
  * This will be the memcg's index in each cache's ->memcg_params.memcg_caches.
  * The main reason for not using cgroup id for this:
@@ -1245,7 +1318,11 @@ static bool mem_cgroup_out_of_memory(struct mem_cgroup *memcg, gfp_t gfp_mask,
 	mutex_lock(&oom_lock);
 	ret = out_of_memory(&oc);
 	mutex_unlock(&oom_lock);
+<<<<<<< HEAD
 	return ret;
+=======
+	return chosen;
+>>>>>>> upstream/rpi-4.4.y
 }
 
 #if MAX_NUMNODES > 1
@@ -3598,6 +3675,94 @@ static int mem_cgroup_oom_control_write(struct cgroup_subsys_state *css,
 	return 0;
 }
 
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_MEMCG_KMEM
+static int memcg_init_kmem(struct mem_cgroup *memcg, struct cgroup_subsys *ss)
+{
+	int ret;
+
+	ret = memcg_propagate_kmem(memcg);
+	if (ret)
+		return ret;
+
+	return mem_cgroup_sockets_init(memcg, ss);
+}
+
+static void memcg_deactivate_kmem(struct mem_cgroup *memcg)
+{
+	struct cgroup_subsys_state *css;
+	struct mem_cgroup *parent, *child;
+	int kmemcg_id;
+
+	if (!memcg->kmem_acct_active)
+		return;
+
+	/*
+	 * Clear the 'active' flag before clearing memcg_caches arrays entries.
+	 * Since we take the slab_mutex in memcg_deactivate_kmem_caches(), it
+	 * guarantees no cache will be created for this cgroup after we are
+	 * done (see memcg_create_kmem_cache()).
+	 */
+	memcg->kmem_acct_active = false;
+
+	memcg_deactivate_kmem_caches(memcg);
+
+	kmemcg_id = memcg->kmemcg_id;
+	BUG_ON(kmemcg_id < 0);
+
+	parent = parent_mem_cgroup(memcg);
+	if (!parent)
+		parent = root_mem_cgroup;
+
+	/*
+	 * Change kmemcg_id of this cgroup and all its descendants to the
+	 * parent's id, and then move all entries from this cgroup's list_lrus
+	 * to ones of the parent. After we have finished, all list_lrus
+	 * corresponding to this cgroup are guaranteed to remain empty. The
+	 * ordering is imposed by list_lru_node->lock taken by
+	 * memcg_drain_all_list_lrus().
+	 */
+	rcu_read_lock(); /* can be called from css_free w/o cgroup_mutex */
+	css_for_each_descendant_pre(css, &memcg->css) {
+		child = mem_cgroup_from_css(css);
+		BUG_ON(child->kmemcg_id != kmemcg_id);
+		child->kmemcg_id = parent->kmemcg_id;
+		if (!memcg->use_hierarchy)
+			break;
+	}
+	rcu_read_unlock();
+
+	memcg_drain_all_list_lrus(kmemcg_id, parent->kmemcg_id);
+
+	memcg_free_cache_id(kmemcg_id);
+}
+
+static void memcg_destroy_kmem(struct mem_cgroup *memcg)
+{
+	if (memcg->kmem_acct_activated) {
+		memcg_destroy_kmem_caches(memcg);
+		static_key_slow_dec(&memcg_kmem_enabled_key);
+		WARN_ON(page_counter_read(&memcg->kmem));
+	}
+	mem_cgroup_sockets_destroy(memcg);
+}
+#else
+static int memcg_init_kmem(struct mem_cgroup *memcg, struct cgroup_subsys *ss)
+{
+	return 0;
+}
+
+static void memcg_deactivate_kmem(struct mem_cgroup *memcg)
+{
+}
+
+static void memcg_destroy_kmem(struct mem_cgroup *memcg)
+{
+}
+#endif
+
+>>>>>>> upstream/rpi-4.4.y
 #ifdef CONFIG_CGROUP_WRITEBACK
 
 struct list_head *mem_cgroup_cgwb_list(struct mem_cgroup *memcg)
@@ -4071,6 +4236,7 @@ static DEFINE_IDR(mem_cgroup_idr);
 
 static void mem_cgroup_id_get_many(struct mem_cgroup *memcg, unsigned int n)
 {
+<<<<<<< HEAD
 	VM_BUG_ON(atomic_read(&memcg->id.ref) <= 0);
 	atomic_add(n, &memcg->id.ref);
 }
@@ -4078,6 +4244,31 @@ static void mem_cgroup_id_get_many(struct mem_cgroup *memcg, unsigned int n)
 static void mem_cgroup_id_put_many(struct mem_cgroup *memcg, unsigned int n)
 {
 	VM_BUG_ON(atomic_read(&memcg->id.ref) < n);
+=======
+	atomic_add(n, &memcg->id.ref);
+}
+
+static struct mem_cgroup *mem_cgroup_id_get_online(struct mem_cgroup *memcg)
+{
+	while (!atomic_inc_not_zero(&memcg->id.ref)) {
+		/*
+		 * The root cgroup cannot be destroyed, so it's refcount must
+		 * always be >= 1.
+		 */
+		if (WARN_ON_ONCE(memcg == root_mem_cgroup)) {
+			VM_BUG_ON(1);
+			break;
+		}
+		memcg = parent_mem_cgroup(memcg);
+		if (!memcg)
+			memcg = root_mem_cgroup;
+	}
+	return memcg;
+}
+
+static void mem_cgroup_id_put_many(struct mem_cgroup *memcg, unsigned int n)
+{
+>>>>>>> upstream/rpi-4.4.y
 	if (atomic_sub_and_test(n, &memcg->id.ref)) {
 		idr_remove(&mem_cgroup_idr, memcg->id.id);
 		memcg->id.id = 0;
@@ -4109,7 +4300,11 @@ struct mem_cgroup *mem_cgroup_from_id(unsigned short id)
 	return idr_find(&mem_cgroup_idr, id);
 }
 
+<<<<<<< HEAD
 static int alloc_mem_cgroup_per_node_info(struct mem_cgroup *memcg, int node)
+=======
+static int alloc_mem_cgroup_per_zone_info(struct mem_cgroup *memcg, int node)
+>>>>>>> upstream/rpi-4.4.y
 {
 	struct mem_cgroup_per_node *pn;
 	int tmp = node;
@@ -4184,8 +4379,87 @@ static struct mem_cgroup *mem_cgroup_alloc(void)
 		if (alloc_mem_cgroup_per_node_info(memcg, node))
 			goto fail;
 
+<<<<<<< HEAD
 	if (memcg_wb_domain_init(memcg, GFP_KERNEL))
 		goto fail;
+=======
+	memcg->id.id = idr_alloc(&mem_cgroup_idr, NULL,
+				 1, MEM_CGROUP_ID_MAX,
+				 GFP_KERNEL);
+	if (memcg->id.id < 0)
+		goto out_free_stat;
+
+	return memcg;
+
+out_free_stat:
+	free_percpu(memcg->stat);
+out_free:
+	kfree(memcg);
+	return NULL;
+}
+
+/*
+ * At destroying mem_cgroup, references from swap_cgroup can remain.
+ * (scanning all at force_empty is too costly...)
+ *
+ * Instead of clearing all references at force_empty, we remember
+ * the number of reference from swap_cgroup and free mem_cgroup when
+ * it goes down to 0.
+ *
+ * Removal of cgroup itself succeeds regardless of refs from swap.
+ */
+
+static void __mem_cgroup_free(struct mem_cgroup *memcg)
+{
+	int node;
+
+	mem_cgroup_remove_from_trees(memcg);
+
+	for_each_node(node)
+		free_mem_cgroup_per_zone_info(memcg, node);
+
+	free_percpu(memcg->stat);
+	memcg_wb_domain_exit(memcg);
+	kfree(memcg);
+}
+
+/*
+ * Returns the parent mem_cgroup in memcgroup hierarchy with hierarchy enabled.
+ */
+struct mem_cgroup *parent_mem_cgroup(struct mem_cgroup *memcg)
+{
+	if (!memcg->memory.parent)
+		return NULL;
+	return mem_cgroup_from_counter(memcg->memory.parent, memory);
+}
+EXPORT_SYMBOL(parent_mem_cgroup);
+
+static struct cgroup_subsys_state * __ref
+mem_cgroup_css_alloc(struct cgroup_subsys_state *parent_css)
+{
+	struct mem_cgroup *memcg;
+	long error = -ENOMEM;
+	int node;
+
+	memcg = mem_cgroup_alloc();
+	if (!memcg)
+		return ERR_PTR(error);
+
+	for_each_node(node)
+		if (alloc_mem_cgroup_per_zone_info(memcg, node))
+			goto free_out;
+
+	/* root ? */
+	if (parent_css == NULL) {
+		root_mem_cgroup = memcg;
+		mem_cgroup_root_css = &memcg->css;
+		page_counter_init(&memcg->memory, NULL);
+		memcg->high = PAGE_COUNTER_MAX;
+		memcg->soft_limit = PAGE_COUNTER_MAX;
+		page_counter_init(&memcg->memsw, NULL);
+		page_counter_init(&memcg->kmem, NULL);
+	}
+>>>>>>> upstream/rpi-4.4.y
 
 	INIT_WORK(&memcg->high_work, high_work_func);
 	memcg->last_scanned_node = MAX_NUMNODES;
@@ -4203,10 +4477,17 @@ static struct mem_cgroup *mem_cgroup_alloc(void)
 	INIT_LIST_HEAD(&memcg->cgwb_list);
 #endif
 	idr_replace(&mem_cgroup_idr, memcg, memcg->id.id);
+<<<<<<< HEAD
 	return memcg;
 fail:
 	if (memcg->id.id > 0)
 		idr_remove(&mem_cgroup_idr, memcg->id.id);
+=======
+	return &memcg->css;
+
+free_out:
+	idr_remove(&mem_cgroup_idr, memcg->id.id);
+>>>>>>> upstream/rpi-4.4.y
 	__mem_cgroup_free(memcg);
 	return NULL;
 }
@@ -4214,9 +4495,24 @@ fail:
 static struct cgroup_subsys_state * __ref
 mem_cgroup_css_alloc(struct cgroup_subsys_state *parent_css)
 {
+<<<<<<< HEAD
 	struct mem_cgroup *parent = mem_cgroup_from_css(parent_css);
 	struct mem_cgroup *memcg;
 	long error = -ENOMEM;
+=======
+	struct mem_cgroup *memcg = mem_cgroup_from_css(css);
+	struct mem_cgroup *parent = mem_cgroup_from_css(css->parent);
+	int ret;
+
+	/* Online state pins memcg ID, memcg ID pins CSS */
+	mem_cgroup_id_get(mem_cgroup_from_css(css));
+	css_get(css);
+
+	if (!parent)
+		return 0;
+
+	mutex_lock(&memcg_create_mutex);
+>>>>>>> upstream/rpi-4.4.y
 
 	memcg = mem_cgroup_alloc();
 	if (!memcg)
@@ -4985,8 +5281,12 @@ retry:
 	 * When we have consumed all precharges and failed in doing
 	 * additional charge, the page walk just aborts.
 	 */
+<<<<<<< HEAD
 	walk_page_range(0, mc.mm->highest_vm_end, &mem_cgroup_move_charge_walk);
 
+=======
+	walk_page_range(0, ~0UL, &mem_cgroup_move_charge_walk);
+>>>>>>> upstream/rpi-4.4.y
 	up_read(&mc.mm->mmap_sem);
 	atomic_dec(&mc.from->moving_account);
 }
@@ -5896,6 +6196,7 @@ void mem_cgroup_swapout(struct page *page, swp_entry_t entry)
 
 	if (!mem_cgroup_is_root(memcg))
 		css_put(&memcg->css);
+<<<<<<< HEAD
 }
 
 /*
@@ -5935,6 +6236,8 @@ int mem_cgroup_try_charge_swap(struct page *page, swp_entry_t entry)
 	mem_cgroup_swap_statistics(memcg, true);
 
 	return 0;
+=======
+>>>>>>> upstream/rpi-4.4.y
 }
 
 /**

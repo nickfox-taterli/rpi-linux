@@ -43,7 +43,10 @@
 
 #ifdef CONFIG_X86
 #include <asm/cpu_device_id.h>
+<<<<<<< HEAD
 #include <asm/intel-family.h>
+=======
+>>>>>>> upstream/rpi-4.4.y
 #include <asm/iosf_mbi.h>
 #endif
 
@@ -127,7 +130,11 @@ static const struct sdhci_acpi_chip sdhci_acpi_chip_int = {
 static bool sdhci_acpi_byt(void)
 {
 	static const struct x86_cpu_id byt[] = {
+<<<<<<< HEAD
 		{ X86_VENDOR_INTEL, 6, INTEL_FAM6_ATOM_SILVERMONT1 },
+=======
+		{ X86_VENDOR_INTEL, 6, 0x37 },
+>>>>>>> upstream/rpi-4.4.y
 		{}
 	};
 
@@ -145,7 +152,11 @@ static void sdhci_acpi_byt_setting(struct device *dev)
 	if (!sdhci_acpi_byt())
 		return;
 
+<<<<<<< HEAD
 	if (iosf_mbi_read(BYT_IOSF_SCCEP, MBI_CR_READ, BYT_IOSF_OCP_NETCTRL0,
+=======
+	if (iosf_mbi_read(BYT_IOSF_SCCEP, 0x06, BYT_IOSF_OCP_NETCTRL0,
+>>>>>>> upstream/rpi-4.4.y
 			  &val)) {
 		dev_err(dev, "%s read error\n", __func__);
 		return;
@@ -156,7 +167,11 @@ static void sdhci_acpi_byt_setting(struct device *dev)
 
 	val &= ~BYT_IOSF_OCP_TIMEOUT_BASE;
 
+<<<<<<< HEAD
 	if (iosf_mbi_write(BYT_IOSF_SCCEP, MBI_CR_WRITE, BYT_IOSF_OCP_NETCTRL0,
+=======
+	if (iosf_mbi_write(BYT_IOSF_SCCEP, 0x07, BYT_IOSF_OCP_NETCTRL0,
+>>>>>>> upstream/rpi-4.4.y
 			   val)) {
 		dev_err(dev, "%s write error\n", __func__);
 		return;
@@ -201,6 +216,11 @@ static int bxt_get_cd(struct mmc_host *mmc)
 	if (!gpio_cd)
 		return 0;
 
+<<<<<<< HEAD
+=======
+	pm_runtime_get_sync(mmc->parent);
+
+>>>>>>> upstream/rpi-4.4.y
 	spin_lock_irqsave(&host->lock, flags);
 
 	if (host->flags & SDHCI_DEVICE_DEAD)
@@ -210,6 +230,12 @@ static int bxt_get_cd(struct mmc_host *mmc)
 out:
 	spin_unlock_irqrestore(&host->lock, flags);
 
+<<<<<<< HEAD
+=======
+	pm_runtime_mark_last_busy(mmc->parent);
+	pm_runtime_put_autosuspend(mmc->parent);
+
+>>>>>>> upstream/rpi-4.4.y
 	return ret;
 }
 
@@ -263,10 +289,15 @@ static int sdhci_acpi_sd_probe_slot(struct platform_device *pdev,
 
 	/* Platform specific code during sd probe slot goes here */
 
+<<<<<<< HEAD
 	if (hid && !strcmp(hid, "80865ACA")) {
 		host->mmc_host_ops.get_cd = bxt_get_cd;
 		host->mmc->caps |= MMC_CAP_AGGRESSIVE_PM;
 	}
+=======
+	if (hid && !strcmp(hid, "80865ACA"))
+		host->mmc_host_ops.get_cd = bxt_get_cd;
+>>>>>>> upstream/rpi-4.4.y
 
 	return 0;
 }
@@ -275,7 +306,11 @@ static const struct sdhci_acpi_slot sdhci_acpi_slot_int_emmc = {
 	.chip    = &sdhci_acpi_chip_int,
 	.caps    = MMC_CAP_8_BIT_DATA | MMC_CAP_NONREMOVABLE |
 		   MMC_CAP_HW_RESET | MMC_CAP_1_8V_DDR |
+<<<<<<< HEAD
 		   MMC_CAP_CMD_DURING_TFR | MMC_CAP_WAIT_WHILE_BUSY,
+=======
+		   MMC_CAP_WAIT_WHILE_BUSY,
+>>>>>>> upstream/rpi-4.4.y
 	.caps2   = MMC_CAP2_HC_ERASE_SZ,
 	.flags   = SDHCI_ACPI_RUNTIME_PM,
 	.quirks  = SDHCI_QUIRK_NO_ENDATTR_IN_NOPDESC,

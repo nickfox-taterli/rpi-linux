@@ -176,7 +176,11 @@ static void exit_to_usermode_loop(struct pt_regs *regs, u32 cached_flags)
 /* Called with IRQs disabled. */
 __visible inline void prepare_exit_to_usermode(struct pt_regs *regs)
 {
+<<<<<<< HEAD
 	struct thread_info *ti = current_thread_info();
+=======
+	struct thread_info *ti = pt_regs_to_thread_info(regs);
+>>>>>>> upstream/rpi-4.4.y
 	u32 cached_flags;
 
 	if (IS_ENABLED(CONFIG_PROVE_LOCKING) && WARN_ON(!irqs_disabled()))
@@ -196,6 +200,7 @@ __visible inline void prepare_exit_to_usermode(struct pt_regs *regs)
 	 * handling, because syscall restart has a fixup for compat
 	 * syscalls.  The fixup is exercised by the ptrace_syscall_32
 	 * selftest.
+<<<<<<< HEAD
 	 *
 	 * We also need to clear TS_REGS_POKED_I386: the 32-bit tracer
 	 * special case only applies after poking regs and before the
@@ -205,6 +210,13 @@ __visible inline void prepare_exit_to_usermode(struct pt_regs *regs)
 #endif
 
 	user_enter_irqoff();
+=======
+	 */
+	ti->status &= ~TS_COMPAT;
+#endif
+
+	user_enter();
+>>>>>>> upstream/rpi-4.4.y
 }
 
 #define SYSCALL_EXIT_WORK_FLAGS				\
@@ -257,6 +269,7 @@ __visible inline void syscall_return_slowpath(struct pt_regs *regs)
 
 	local_irq_disable();
 	prepare_exit_to_usermode(regs);
+<<<<<<< HEAD
 }
 
 #ifdef CONFIG_X86_64
@@ -283,6 +296,8 @@ __visible void do_syscall_64(struct pt_regs *regs)
 	}
 
 	syscall_return_slowpath(regs);
+=======
+>>>>>>> upstream/rpi-4.4.y
 }
 #endif
 

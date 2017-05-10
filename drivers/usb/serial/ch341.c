@@ -561,7 +561,11 @@ static int ch341_reset_resume(struct usb_serial *serial)
 	/* reconfigure ch341 serial port after bus-reset */
 	ch341_configure(serial->dev, priv);
 
+<<<<<<< HEAD
 	if (tty_port_initialized(&port->port)) {
+=======
+	if (test_bit(ASYNCB_INITIALIZED, &port->port.flags)) {
+>>>>>>> upstream/rpi-4.4.y
 		ret = usb_submit_urb(port->interrupt_in_urb, GFP_NOIO);
 		if (ret) {
 			dev_err(&port->dev, "failed to submit interrupt urb: %d\n",

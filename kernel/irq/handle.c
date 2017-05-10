@@ -138,7 +138,12 @@ irqreturn_t __handle_irq_event_percpu(struct irq_desc *desc, unsigned int *flags
 	unsigned int irq = desc->irq_data.irq;
 	struct irqaction *action;
 
+<<<<<<< HEAD
 	for_each_action_of_desc(desc, action) {
+=======
+	/* action might have become NULL since we dropped the lock */
+	while (action) {
+>>>>>>> upstream/rpi-4.4.y
 		irqreturn_t res;
 
 		trace_irq_handler_entry(irq, action);
@@ -172,6 +177,7 @@ irqreturn_t __handle_irq_event_percpu(struct irq_desc *desc, unsigned int *flags
 		}
 
 		retval |= res;
+<<<<<<< HEAD
 	}
 
 	return retval;
@@ -183,6 +189,10 @@ irqreturn_t handle_irq_event_percpu(struct irq_desc *desc)
 	unsigned int flags = 0;
 
 	retval = __handle_irq_event_percpu(desc, &flags);
+=======
+		action = action->next;
+	}
+>>>>>>> upstream/rpi-4.4.y
 
 	add_interrupt_randomness(desc->irq_data.irq, flags);
 

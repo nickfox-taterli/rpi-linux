@@ -1194,6 +1194,7 @@ static const struct panel_desc okaya_rs800480t_7x0gp = {
 	.bus_format = MEDIA_BUS_FMT_RGB666_1X18,
 };
 
+<<<<<<< HEAD
 static const struct drm_display_mode olimex_lcd_olinuxino_43ts_mode = {
 	.clock = 9000,
 	.hdisplay = 480,
@@ -1217,6 +1218,8 @@ static const struct panel_desc olimex_lcd_olinuxino_43ts = {
 	.bus_format = MEDIA_BUS_FMT_RGB888_1X24,
 };
 
+=======
+>>>>>>> upstream/rpi-4.4.y
 /*
  * 800x480 CVT. The panel appears to be quite accepting, at least as far as
  * pixel clocks, but this is the timing that was being used in the Adafruit
@@ -1656,9 +1659,12 @@ static const struct of_device_id platform_of_match[] = {
 		.compatible = "okaya,rs800480t-7x0gp",
 		.data = &okaya_rs800480t_7x0gp,
 	}, {
+<<<<<<< HEAD
 		.compatible = "olimex,lcd-olinuxino-43-ts",
 		.data = &olimex_lcd_olinuxino_43ts,
 	}, {
+=======
+>>>>>>> upstream/rpi-4.4.y
 		.compatible = "ontat,yx700wv03",
 		.data = &ontat_yx700wv03,
 	}, {

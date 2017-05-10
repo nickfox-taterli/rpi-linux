@@ -322,6 +322,7 @@ static phys_addr_t __init i865_stolen_base(int num, int slot, int func,
 	toud = read_pci_config_16(0, 0, 0, I865_TOUD);
 
 	return (phys_addr_t)(toud << 16) + i845_tseg_size();
+<<<<<<< HEAD
 }
 
 static phys_addr_t __init gen3_stolen_base(int num, int slot, int func,
@@ -337,6 +338,8 @@ static phys_addr_t __init gen3_stolen_base(int num, int slot, int func,
 	bsm = read_pci_config(num, slot, func, INTEL_BSM);
 
 	return (phys_addr_t)bsm & INTEL_BSM_MASK;
+=======
+>>>>>>> upstream/rpi-4.4.y
 }
 
 static size_t __init i830_stolen_size(int num, int slot, int func)

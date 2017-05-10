@@ -109,6 +109,7 @@ static inline bool kvm_hv_vapic_assist_page_enabled(struct kvm_vcpu *vcpu)
 int kvm_lapic_enable_pv_eoi(struct kvm_vcpu *vcpu, u64 data);
 void kvm_lapic_init(void);
 void kvm_lapic_exit(void);
+<<<<<<< HEAD
 
 #define VEC_POS(v) ((v) & (32 - 1))
 #define REG_POS(v) (((v) >> 5) << 4)
@@ -117,6 +118,8 @@ static inline void kvm_lapic_set_vector(int vec, void *bitmap)
 {
 	set_bit(VEC_POS(vec), (bitmap) + REG_POS(vec));
 }
+=======
+>>>>>>> upstream/rpi-4.4.y
 
 static inline void kvm_lapic_set_irr(int vec, struct kvm_lapic *apic)
 {

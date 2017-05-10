@@ -709,7 +709,10 @@ lookup:
 			goto lookup;
 		}
 		sock_hold(sk);
+<<<<<<< HEAD
 		refcounted = true;
+=======
+>>>>>>> upstream/rpi-4.4.y
 		nsk = dccp_check_req(sk, skb, req);
 		if (!nsk) {
 			reqsk_put(req);

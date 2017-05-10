@@ -10,6 +10,12 @@ obj-$(CONFIG_INTEL_MID_PTI)	+= pti.o
 obj-$(CONFIG_ATMEL_SSC)		+= atmel-ssc.o
 obj-$(CONFIG_ATMEL_TCLIB)	+= atmel_tclib.o
 obj-$(CONFIG_BCM2835_SMI)	+= bcm2835_smi.o
+<<<<<<< HEAD
+=======
+obj-$(CONFIG_BMP085)		+= bmp085.o
+obj-$(CONFIG_BMP085_I2C)	+= bmp085-i2c.o
+obj-$(CONFIG_BMP085_SPI)	+= bmp085-spi.o
+>>>>>>> upstream/rpi-4.4.y
 obj-$(CONFIG_DUMMY_IRQ)		+= dummy-irq.o
 obj-$(CONFIG_ICS932S401)	+= ics932s401.o
 obj-$(CONFIG_LKDTM)		+= lkdtm.o
@@ -48,6 +54,7 @@ obj-$(CONFIG_INTEL_MEI)		+= mei/
 obj-$(CONFIG_VMWARE_VMCI)	+= vmw_vmci/
 obj-$(CONFIG_LATTICE_ECP3_CONFIG)	+= lattice-ecp3-config.o
 obj-$(CONFIG_SRAM)		+= sram.o
+obj-$(CONFIG_BCM2708_VCHIQ)	+= vc04_services/
 obj-y				+= mic/
 obj-$(CONFIG_GENWQE)		+= genwqe/
 obj-$(CONFIG_ECHO)		+= echo/

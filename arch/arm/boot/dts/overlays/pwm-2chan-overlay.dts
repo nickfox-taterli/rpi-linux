@@ -29,19 +29,39 @@ N.B.:
 
 	fragment@1 {
 		target = <&pwm>;
+<<<<<<< HEAD
 		frag1: __overlay__ {
 			pinctrl-names = "default";
 			pinctrl-0 = <&pwm_pins>;
 			assigned-clock-rates = <100000000>;
+=======
+		__overlay__ {
+			pinctrl-names = "default";
+			pinctrl-0 = <&pwm_pins>;
+>>>>>>> upstream/rpi-4.4.y
 			status = "okay";
 		};
 	};
 
+<<<<<<< HEAD
+=======
+	fragment@2 {
+		target = <&clk_pwm>;
+		frag2: __overlay__ {
+			clock-frequency = <100000000>;
+		};
+	};
+
+>>>>>>> upstream/rpi-4.4.y
 	__overrides__ {
 		pin   = <&pwm_pins>,"brcm,pins:0";
 		pin2  = <&pwm_pins>,"brcm,pins:4";
 		func  = <&pwm_pins>,"brcm,function:0";
 		func2 = <&pwm_pins>,"brcm,function:4";
+<<<<<<< HEAD
 		clock = <&frag1>,"assigned-clock-rates:0";
+=======
+		clock = <&frag2>,"clock-frequency:0";
+>>>>>>> upstream/rpi-4.4.y
 	};
 };

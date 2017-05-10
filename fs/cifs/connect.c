@@ -433,6 +433,7 @@ cifs_echo_request(struct work_struct *work)
 	 * If we need to renegotiate, set echo interval to zero to
 	 * immediately call echo service where we can renegotiate.
 	 */
+<<<<<<< HEAD
 	if (server->tcpStatus == CifsNeedNegotiate)
 		echo_interval = 0;
 	else
@@ -446,6 +447,11 @@ cifs_echo_request(struct work_struct *work)
 	if (server->tcpStatus == CifsNeedReconnect ||
 	    server->tcpStatus == CifsExiting ||
 	    server->tcpStatus == CifsNew ||
+=======
+
+	if (server->tcpStatus == CifsNeedReconnect ||
+	    server->tcpStatus == CifsExiting || server->tcpStatus == CifsNew ||
+>>>>>>> upstream/rpi-4.4.y
 	    (server->ops->can_echo && !server->ops->can_echo(server)) ||
 	    time_before(jiffies, server->lstrp + echo_interval - HZ))
 		goto requeue_echo;

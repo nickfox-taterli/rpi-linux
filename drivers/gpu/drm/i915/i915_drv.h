@@ -2284,6 +2284,61 @@ struct drm_i915_gem_object {
 		struct i915_mmu_object *mmu_object;
 		struct work_struct *work;
 	} userptr;
+<<<<<<< HEAD
+=======
+
+	/** for phys allocated objects */
+	struct drm_dma_handle *phys_handle;
+};
+#define to_intel_bo(x) container_of(x, struct drm_i915_gem_object, base)
+
+void i915_gem_track_fb(struct drm_i915_gem_object *old,
+		       struct drm_i915_gem_object *new,
+		       unsigned frontbuffer_bits);
+
+/**
+ * Request queue structure.
+ *
+ * The request queue allows us to note sequence numbers that have been emitted
+ * and may be associated with active buffers to be retired.
+ *
+ * By keeping this list, we can avoid having to do questionable sequence
+ * number comparisons on buffer last_read|write_seqno. It also allows an
+ * emission time to be associated with the request for tracking how far ahead
+ * of the GPU the submission is.
+ *
+ * The requests are reference counted, so upon creation they should have an
+ * initial reference taken using kref_init
+ */
+struct drm_i915_gem_request {
+	struct kref ref;
+
+	/** On Which ring this request was generated */
+	struct drm_i915_private *i915;
+	struct intel_engine_cs *ring;
+
+	 /** GEM sequence number associated with the previous request,
+	  * when the HWS breadcrumb is equal to this the GPU is processing
+	  * this request.
+	  */
+	u32 previous_seqno;
+
+	 /** GEM sequence number associated with this request,
+	  * when the HWS breadcrumb is equal or greater than this the GPU
+	  * has finished processing this request.
+	  */
+	u32 seqno;
+
+	/** Position in the ringbuffer of the start of the request */
+	u32 head;
+
+	/**
+	 * Position in the ringbuffer of the start of the postfix.
+	 * This is required to calculate the maximum available ringbuffer
+	 * space without overwriting the postfix.
+	 */
+	 u32 postfix;
+>>>>>>> upstream/rpi-4.4.y
 
 	/** for phys allocated objects */
 	struct drm_dma_handle *phys_handle;
@@ -2827,7 +2882,10 @@ struct drm_i915_cmd_table {
 #define INTEL_PCH_SPT_LP_DEVICE_ID_TYPE		0x9D00
 #define INTEL_PCH_KBP_DEVICE_ID_TYPE		0xA200
 #define INTEL_PCH_P2X_DEVICE_ID_TYPE		0x7100
+<<<<<<< HEAD
 #define INTEL_PCH_P3X_DEVICE_ID_TYPE		0x7000
+=======
+>>>>>>> upstream/rpi-4.4.y
 #define INTEL_PCH_QEMU_DEVICE_ID_TYPE		0x2900 /* qemu q35 has 2918 */
 
 #define INTEL_PCH_TYPE(dev) (__I915__(dev)->pch_type)
@@ -3584,6 +3642,7 @@ static inline bool intel_gmbus_is_forced_bit(struct i2c_adapter *adapter)
 extern void intel_i2c_reset(struct drm_device *dev);
 
 /* intel_bios.c */
+<<<<<<< HEAD
 int intel_bios_init(struct drm_i915_private *dev_priv);
 bool intel_bios_is_valid_vbt(const void *buf, size_t size);
 bool intel_bios_is_tv_present(struct drm_i915_private *dev_priv);
@@ -3594,6 +3653,9 @@ bool intel_bios_is_port_dp_dual_mode(struct drm_i915_private *dev_priv, enum por
 bool intel_bios_is_dsi_present(struct drm_i915_private *dev_priv, enum port *port);
 bool intel_bios_is_port_hpd_inverted(struct drm_i915_private *dev_priv,
 				     enum port port);
+=======
+bool intel_bios_is_port_present(struct drm_i915_private *dev_priv, enum port port);
+>>>>>>> upstream/rpi-4.4.y
 
 /* intel_opregion.c */
 #ifdef CONFIG_ACPI

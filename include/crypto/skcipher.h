@@ -62,6 +62,8 @@ struct crypto_skcipher {
 	unsigned int reqsize;
 	unsigned int keysize;
 
+	bool has_setkey;
+
 	struct crypto_tfm base;
 };
 
@@ -369,6 +371,7 @@ static inline int crypto_skcipher_setkey(struct crypto_skcipher *tfm,
 
 static inline bool crypto_skcipher_has_setkey(struct crypto_skcipher *tfm)
 {
+<<<<<<< HEAD
 	return tfm->keysize;
 }
 
@@ -376,6 +379,9 @@ static inline unsigned int crypto_skcipher_default_keysize(
 	struct crypto_skcipher *tfm)
 {
 	return tfm->keysize;
+=======
+	return tfm->has_setkey;
+>>>>>>> upstream/rpi-4.4.y
 }
 
 /**

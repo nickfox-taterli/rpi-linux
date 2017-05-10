@@ -402,6 +402,18 @@ ip6t_do_table(struct sk_buff *skb,
 	else return verdict;
 }
 
+static bool find_jump_target(const struct xt_table_info *t,
+			     const struct ip6t_entry *target)
+{
+	struct ip6t_entry *iter;
+
+	xt_entry_foreach(iter, t->entries, t->size) {
+		 if (iter == target)
+			return true;
+	}
+	return false;
+}
+
 /* Figures out from what hook each rule can be called: returns 0 if
    there are loops.  Puts hook bitmask in comefrom. */
 static int
@@ -476,11 +488,20 @@ mark_source_chains(const struct xt_table_info *newinfo,
 					   XT_STANDARD_TARGET) == 0 &&
 				    newpos >= 0) {
 					/* This a jump; chase it. */
+<<<<<<< HEAD
 					if (!xt_find_jump_offset(offsets, newpos,
 								 newinfo->number))
 						return 0;
 					e = (struct ip6t_entry *)
 						(entry0 + newpos);
+=======
+					duprintf("Jump rule %u -> %u\n",
+						 pos, newpos);
+					e = (struct ip6t_entry *)
+						(entry0 + newpos);
+					if (!find_jump_target(newinfo, e))
+						return 0;
+>>>>>>> upstream/rpi-4.4.y
 				} else {
 					/* ... this is a fallthru */
 					newpos = pos + e->next_offset;
@@ -576,8 +597,13 @@ find_check_entry(struct ip6t_entry *e, struct net *net, const char *name,
 	struct xt_entry_match *ematch;
 	unsigned long pcnt;
 
+<<<<<<< HEAD
 	pcnt = xt_percpu_counter_alloc();
 	if (IS_ERR_VALUE(pcnt))
+=======
+	e->counters.pcnt = xt_percpu_counter_alloc();
+	if (IS_ERR_VALUE(e->counters.pcnt))
+>>>>>>> upstream/rpi-4.4.y
 		return -ENOMEM;
 	e->counters.pcnt = pcnt;
 
@@ -650,12 +676,25 @@ check_entry_size_and_hooks(struct ip6t_entry *e,
 
 	if ((unsigned long)e % __alignof__(struct ip6t_entry) != 0 ||
 	    (unsigned char *)e + sizeof(struct ip6t_entry) >= limit ||
+<<<<<<< HEAD
 	    (unsigned char *)e + e->next_offset > limit)
+=======
+	    (unsigned char *)e + e->next_offset > limit) {
+		duprintf("Bad offset %p\n", e);
+>>>>>>> upstream/rpi-4.4.y
 		return -EINVAL;
 
 	if (e->next_offset
 	    < sizeof(struct ip6t_entry) + sizeof(struct xt_entry_target))
 		return -EINVAL;
+
+	if (!ip6_checkentry(&e->ipv6))
+		return -EINVAL;
+
+	err = xt_check_entry_offsets(e, e->elems, e->target_offset,
+				     e->next_offset);
+	if (err)
+		return err;
 
 	if (!ip6_checkentry(&e->ipv6))
 		return -EINVAL;
@@ -672,7 +711,14 @@ check_entry_size_and_hooks(struct ip6t_entry *e,
 		if ((unsigned char *)e - base == hook_entries[h])
 			newinfo->hook_entry[h] = hook_entries[h];
 		if ((unsigned char *)e - base == underflows[h]) {
+<<<<<<< HEAD
 			if (!check_underflow(e))
+=======
+			if (!check_underflow(e)) {
+				pr_debug("Underflows must be unconditional and "
+					 "use the STANDARD target with "
+					 "ACCEPT/DROP\n");
+>>>>>>> upstream/rpi-4.4.y
 				return -EINVAL;
 
 			newinfo->underflow[h] = underflows[h];
@@ -1343,7 +1389,12 @@ check_compat_entry_size_and_hooks(struct compat_ip6t_entry *e,
 
 	if ((unsigned long)e % __alignof__(struct compat_ip6t_entry) != 0 ||
 	    (unsigned char *)e + sizeof(struct compat_ip6t_entry) >= limit ||
+<<<<<<< HEAD
 	    (unsigned char *)e + e->next_offset > limit)
+=======
+	    (unsigned char *)e + e->next_offset > limit) {
+		duprintf("Bad offset %p, limit = %p\n", e, limit);
+>>>>>>> upstream/rpi-4.4.y
 		return -EINVAL;
 
 	if (e->next_offset < sizeof(struct compat_ip6t_entry) +
@@ -1450,6 +1501,10 @@ translate_compat_table(struct net *net,
 	size = compatr->size;
 	info->number = compatr->num_entries;
 
+<<<<<<< HEAD
+=======
+	duprintf("translate_compat_table: size %u\n", info->size);
+>>>>>>> upstream/rpi-4.4.y
 	j = 0;
 	xt_compat_lock(AF_INET6);
 	xt_compat_init_offsets(AF_INET6, compatr->num_entries);
@@ -1464,8 +1519,16 @@ translate_compat_table(struct net *net,
 	}
 
 	ret = -EINVAL;
+<<<<<<< HEAD
 	if (j != compatr->num_entries)
 		goto out_unlock;
+=======
+	if (j != compatr->num_entries) {
+		duprintf("translate_compat_table: %u not %u entries\n",
+			 j, compatr->num_entries);
+		goto out_unlock;
+	}
+>>>>>>> upstream/rpi-4.4.y
 
 	ret = -ENOMEM;
 	newinfo = xt_alloc_table_info(size);
